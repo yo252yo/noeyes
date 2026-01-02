@@ -231,8 +231,6 @@ document.addEventListener('DOMContentLoaded', function () {
     classWindow.addEventListener('mousemove', function (e) { updateCursor(e, classWindow); });
 
     // Global resize events
-    document.addEventListener('mousemove', moveResize);
-    document.addEventListener('touchmove', moveResize);
     document.addEventListener('mouseup', endResize);
     document.addEventListener('touchend', endResize);
 });
