@@ -1,3 +1,1 @@
-// Shared JavaScript file
-
-console.log("Script loaded");
+console.log('script');
