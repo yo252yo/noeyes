@@ -1,6 +1,9 @@
 const streamers = ['vedal987'];
 const chatters = new Set();
 
+// Expose chatters globally for access from iframes
+window.chatters = chatters;
+
 console.log('Starting Twitch IRC client…');
 
 const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
@@ -54,6 +57,12 @@ ws.onmessage = (e) => {
             chatters.add(username);
             //console.log('NEW CHATTER:', username);
             console.log('CHATTER SET:', [...chatters]);
+
+            // Send chatters update to nested iframes via postMessage
+            const iframe = document.querySelector('iframe');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({ type: 'chatters', data: [...chatters] }, '*');
+            }
         }
     }
 };
