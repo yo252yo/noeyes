@@ -125,6 +125,26 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('mouseup', endWindowDrag);
     document.addEventListener('touchend', endWindowDrag);
 
+    // Close button touch support
+    const closeBtn = diaryWindow.querySelector('.window-close-btn');
+    closeBtn.addEventListener('touchstart', function (e) {
+        this.classList.add('pressed');
+    });
+    closeBtn.addEventListener('touchend', function (e) {
+        this.classList.remove('pressed');
+        const rect = this.getBoundingClientRect();
+        const touch = e.changedTouches[0];
+        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+            closeDiaryWindow();
+        }
+    });
+
+    // Window resizing for diary window
+    diaryWindow.addEventListener('mousedown', function (e) { startResize(e, diaryWindow); });
+    diaryWindow.addEventListener('touchstart', function (e) { startResize(e, diaryWindow); });
+    diaryWindow.addEventListener('mousemove', function (e) { updateCursor(e, diaryWindow); });
+
     // Class icon and window
     const classIcon = document.getElementById('class-icon');
     const classWindow = document.getElementById('class-window');
@@ -189,4 +209,30 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('touchmove', moveClassWindowDrag);
     document.addEventListener('mouseup', endClassWindowDrag);
     document.addEventListener('touchend', endClassWindowDrag);
+
+    // Close button touch support for class window
+    const classCloseBtn = classWindow.querySelector('.window-close-btn');
+    classCloseBtn.addEventListener('touchstart', function (e) {
+        this.classList.add('pressed');
+    });
+    classCloseBtn.addEventListener('touchend', function (e) {
+        this.classList.remove('pressed');
+        const rect = this.getBoundingClientRect();
+        const touch = e.changedTouches[0];
+        if (touch.clientX >= rect.left && touch.clientX <= rect.right &&
+            touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+            closeClassWindow();
+        }
+    });
+
+    // Window resizing for class window
+    classWindow.addEventListener('mousedown', function (e) { startResize(e, classWindow); });
+    classWindow.addEventListener('touchstart', function (e) { startResize(e, classWindow); });
+    classWindow.addEventListener('mousemove', function (e) { updateCursor(e, classWindow); });
+
+    // Global resize events
+    document.addEventListener('mousemove', moveResize);
+    document.addEventListener('touchmove', moveResize);
+    document.addEventListener('mouseup', endResize);
+    document.addEventListener('touchend', endResize);
 });

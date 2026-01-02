@@ -198,8 +198,8 @@ a:hover {
 }
 
 .window-close-btn {
-    width: 16px;
-    height: 14px;
+    width: 20px;
+    height: 18px;
     background-color: #c0c0c0;
     border: 1px outset #c0c0c0;
     color: black;
@@ -210,14 +210,19 @@ a:hover {
     align-items: center;
     justify-content: center;
     margin-left: 2px;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .window-close-btn:hover {
     background-color: #dfdfdf;
 }
 
-.window-close-btn:active {
+.window-close-btn:active,
+.window-close-btn.pressed {
     border: 1px inset #c0c0c0;
+    background-color: #b0b0b0;
 }
 
 .window-content {
