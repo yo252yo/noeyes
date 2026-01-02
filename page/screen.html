@@ -14,7 +14,15 @@
         <img src="../resource/diary_icon.png" alt="Diary Icon">
         <span>diary.txt</span>
     </div>
-    <div id="diary-window" class="diary-window"></div>
+    <div id="diary-window" class="window" style="display: none;">
+        <div class="window-title-bar">
+            <span class="window-title">diary.txt</span>
+            <button class="window-close-btn" onclick="closeDiaryWindow()">×</button>
+        </div>
+        <div class="window-content">
+            <iframe src="diary.html"></iframe>
+        </div>
+    </div>
     <button id="start-button" onclick="callItADay()"><img src="../resource/start_icon.png" alt="Start Icon"> call it a
         day</button>
 </body>

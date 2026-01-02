@@ -6,6 +6,10 @@ function callItADay() {
     alert("WIP");
 }
 
+function closeDiaryWindow() {
+    document.getElementById('diary-window').style.display = 'none';
+}
+
 // Desktop icon dragging
 let isDragging = false;
 let dragElement = null;
@@ -17,18 +21,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const diaryWindow = document.getElementById('diary-window');
 
     // Toggle diary window
-    function toggleDiary() {
-        if (diaryWindow.style.display === 'none' || diaryWindow.style.display === '') {
-            diaryWindow.style.display = 'block';
-        } else {
-            diaryWindow.style.display = 'none';
-        }
+    function displayDiary() {
+        diaryWindow.style.display = 'block';
     }
 
     // Click for desktop
     diaryIcon.addEventListener('click', function () {
         if (!dragStarted) {
-            toggleDiary();
+            displayDiary();
         }
         dragStarted = false; // Reset flag
     });
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Touch end for mobile tap
     diaryIcon.addEventListener('touchend', function (e) {
         if (!dragStarted) {
-            toggleDiary();
+            displayDiary();
         }
         dragStarted = false; // Reset flag
         e.preventDefault();
@@ -93,4 +93,38 @@ document.addEventListener('DOMContentLoaded', function () {
     diaryIcon.addEventListener('touchstart', startDrag);
     document.addEventListener('touchmove', moveDrag);
     document.addEventListener('touchend', endDrag);
+
+    // Window dragging
+    const titleBar = diaryWindow.querySelector('.window-title-bar');
+    let windowDragging = false;
+    let windowOffsetX, windowOffsetY;
+
+    function startWindowDrag(e) {
+        windowDragging = true;
+        const rect = diaryWindow.getBoundingClientRect();
+        const coords = getClientCoords(e);
+        windowOffsetX = coords.clientX - rect.left;
+        windowOffsetY = coords.clientY - rect.top;
+        e.preventDefault();
+    }
+
+    function moveWindowDrag(e) {
+        if (windowDragging) {
+            const coords = getClientCoords(e);
+            diaryWindow.style.left = (coords.clientX - windowOffsetX) + 'px';
+            diaryWindow.style.top = (coords.clientY - windowOffsetY) + 'px';
+            e.preventDefault();
+        }
+    }
+
+    function endWindowDrag(e) {
+        windowDragging = false;
+    }
+
+    titleBar.addEventListener('mousedown', startWindowDrag);
+    titleBar.addEventListener('touchstart', startWindowDrag);
+    document.addEventListener('mousemove', moveWindowDrag);
+    document.addEventListener('touchmove', moveWindowDrag);
+    document.addEventListener('mouseup', endWindowDrag);
+    document.addEventListener('touchend', endWindowDrag);
 });
