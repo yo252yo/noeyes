@@ -1,7 +1,10 @@
-console.log("Script loaded");
 
 function closeDiaryWindow() {
     document.getElementById('diary-window').style.display = 'none';
+}
+
+function closeClassWindow() {
+    document.getElementById('class-window').style.display = 'none';
 }
 
 // Desktop icon dragging
@@ -121,4 +124,69 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('touchmove', moveWindowDrag);
     document.addEventListener('mouseup', endWindowDrag);
     document.addEventListener('touchend', endWindowDrag);
+
+    // Class icon and window
+    const classIcon = document.getElementById('class-icon');
+    const classWindow = document.getElementById('class-window');
+
+    // Toggle class window
+    function displayClass() {
+        classWindow.style.display = 'block';
+    }
+
+    // Click for desktop
+    classIcon.addEventListener('click', function () {
+        if (!dragStarted) {
+            displayClass();
+        }
+        dragStarted = false; // Reset flag
+    });
+
+    // Touch end for mobile tap
+    classIcon.addEventListener('touchend', function (e) {
+        if (!dragStarted) {
+            displayClass();
+        }
+        dragStarted = false; // Reset flag
+        e.preventDefault();
+    });
+
+    // Mouse events for class icon
+    classIcon.addEventListener('mousedown', startDrag);
+    // Touch events for class icon
+    classIcon.addEventListener('touchstart', startDrag);
+
+    // Window dragging for class window
+    const classTitleBar = classWindow.querySelector('.window-title-bar');
+    let classWindowDragging = false;
+    let classWindowOffsetX, classWindowOffsetY;
+
+    function startClassWindowDrag(e) {
+        classWindowDragging = true;
+        const rect = classWindow.getBoundingClientRect();
+        const coords = getClientCoords(e);
+        classWindowOffsetX = coords.clientX - rect.left;
+        classWindowOffsetY = coords.clientY - rect.top;
+        e.preventDefault();
+    }
+
+    function moveClassWindowDrag(e) {
+        if (classWindowDragging) {
+            const coords = getClientCoords(e);
+            classWindow.style.left = (coords.clientX - classWindowOffsetX) + 'px';
+            classWindow.style.top = (coords.clientY - classWindowOffsetY) + 'px';
+            e.preventDefault();
+        }
+    }
+
+    function endClassWindowDrag(e) {
+        classWindowDragging = false;
+    }
+
+    classTitleBar.addEventListener('mousedown', startClassWindowDrag);
+    classTitleBar.addEventListener('touchstart', startClassWindowDrag);
+    document.addEventListener('mousemove', moveClassWindowDrag);
+    document.addEventListener('touchmove', moveClassWindowDrag);
+    document.addEventListener('mouseup', endClassWindowDrag);
+    document.addEventListener('touchend', endClassWindowDrag);
 });
