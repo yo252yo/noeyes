@@ -7,14 +7,71 @@
     <title>Class</title>
     <link rel="stylesheet" href="../style.css">
     <style>
+        body {
+            background: linear-gradient(to bottom, #e0f0ff 0%, #ffffff 100%);
+            font-family: "Comic Sans MS", cursive, sans-serif;
+        }
+
         h1 {
             margin: 5px;
+            color: #2e5c8a;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            font-size: 28px;
+            text-align: center;
+        }
+
+        #tip-content {}
+
+        #class-content {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 2px inset #c0c0c0;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            background-color: #f0f8ff;
+            border: 1px outset #c0c0c0;
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 3px;
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        li:hover {
+            background-color: #e6f3ff;
+            border: 1px inset #c0c0c0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #800080;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+
+        .current {
+            color: #0066cc;
+        }
+
+        a:hover {
+            color: #004499;
         }
     </style>
     <script src="../resource/common.js"></script>
 </head>
 
-<body style="background-color: yellow; margin: 0; padding: 5px 20px 20px 20px; font-family: Arial, sans-serif;">
+<body style="margin: 0; padding: 5px 20px 20px 20px;">
     <h1>Welcome Larva!</h1>
     <div id="tip-content"></div>
     <div id="class-content"></div>
@@ -34,47 +91,47 @@
             </li>`,
             "2": `<li>
                 <a href="class.html">
-                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Introduction to Streaming
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">..PHD.. Introduction to Streaming
                 </a>
             </li>`,
             "3": `<li>
                 <a href="class.html">
-                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">The Art of Chat
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">..PHD.. The Art of Chat
                 </a>
             </li>`,
             "4": `<li>
                 <a href="class.html">
-                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Privacy vs Public Life
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">..PHD.. Privacy vs Public Life
                 </a>
             </li>`,
             "5": `<li>
                 <a href="class.html">
-                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Building Your Online Presence
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">..PHD.. Building Your Online Presence
                 </a>
             </li>`,
             "6": `<li>
                 <a href="class.html">
-                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Community Management
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">..PHD.. Community Management
                 </a>
             </li>`,
             "7": `<li>
                 <a href="class.html">
-                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Monetization Strategies
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">..PHD.. Monetization Strategies
                 </a>
             </li>`,
             "8": `<li>
                 <a href="class.html">
-                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Crisis Communication
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">..PHD.. Crisis Communication
                 </a>
             </li>`,
             "9": `<li>
                 <a href="class.html">
-                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Final Project Preparation
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">..PHD.. Final Project Preparation
                 </a>
             </li>`,
             "10": `<li>
                 <a href="class.html">
-                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Class Selection Ceremony
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">..PHD.. Class Selection Ceremony
                 </a>
             </li>`
         };
@@ -99,7 +156,11 @@
 
             let html = '<ul>';
             availableEntries.forEach(entry => {
-                html += entry.html;
+                let linkHtml = entry.html;
+                if (entry.day == currentDay) {
+                    linkHtml = linkHtml.replace('<a ', '<a class="current" ');
+                }
+                html += `<li>${linkHtml.replace('<li>', '').replace('</li>', '')}</li>`;
             });
             html += '</ul>';
 

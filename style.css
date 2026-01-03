@@ -304,7 +304,7 @@ a:hover {
     content: '';
     position: absolute;
     top: -8px;
-    left: 20px;
+    right: 80px;
     width: 0;
     height: 0;
     border-left: 8px solid transparent;
@@ -316,7 +316,7 @@ a:hover {
     content: '';
     position: absolute;
     top: -6px;
-    left: 21px;
+    right: 81px;
     width: 0;
     height: 0;
     border-left: 7px solid transparent;
