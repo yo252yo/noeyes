@@ -1,75 +1,75 @@
-const streamers = ['vedal987'];
-const chatters = new Set();
-const MAX_CHATTERS = 200;
+// Avatar URLs for streamers - simple dictionary storage
+const streamerAvatars = {};
 
-// Store streamers in localStorage on initialization
-setStreamers(streamers);
+// Fallback avatar
+const DEFAULT_AVATAR = '/resource/avatars/default.png';
 
-// Expose chatters globally for access from iframes
-window.chatters = chatters;
-
-console.log('Starting Twitch IRC client…');
-
-const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
-
-ws.onopen = () => {
-    //console.log('WS OPEN');
-    ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
-    ws.send(`NICK justinfan${Math.floor(Math.random() * 1e6)}`);
-    streamers.forEach(s => {
-        //console.log('JOINING', s);
-        ws.send(`JOIN #${s}`);
-    });
-};
-
-ws.onerror = (e) => {
-    console.error('WS ERROR', e);
-};
-
-ws.onclose = (e) => {
-    console.warn('WS CLOSED', e);
-};
-
-ws.onmessage = (e) => {
-    //console.log('RAW:', e.data);
-
-    const lines = e.data.trim().split('\r\n');
-    for (const line of lines) {
-
-        if (line.startsWith('PING')) {
-            ws.send('PONG :tmi.twitch.tv');
-            return;
-        }
-
-        if (!line.includes('PRIVMSG')) return;
-
-        // 1) Try display-name from tags
-        let userMatch = line.match(/display-name=([^;]*)/);
-        let username = userMatch?.[1];
-
-        // 2) Fallback to prefix parsing
-        if (!username) {
-            const prefixMatch = line.match(/:([^!]+)!/);
-            username = prefixMatch?.[1];
-        }
-
-        if (!username) return;
-
-        username = username.toLowerCase();
-
-        if (!chatters.has(username)) {
-            // If we've reached the max limit, remove the oldest chatter
-            if (chatters.size >= MAX_CHATTERS) {
-                const firstChatter = chatters.values().next().value;
-                chatters.delete(firstChatter);
-            }
-
-            chatters.add(username);
-            //console.log('NEW CHATTER:', username);
-            console.log('CHATTER SET:', [...chatters]);
-
-            // Store chatters in localStorage
-            setChatters([...chatters]);
-        }
+async function getAvatarUrl(username) {
+    // Check if we already have this avatar cached
+    if (streamerAvatars[username]) {
+        return streamerAvatars[username];
     }
-};
+
+    // First try local avatar file
+    const localAvatarPath = `/resource/avatars/${username}.png`;
+    try {
+        const response = await fetch(localAvatarPath, { method: 'HEAD' });
+        if (response.ok) {
+            streamerAvatars[username] = localAvatarPath;
+            return localAvatarPath;
+        }
+    } catch (error) {
+        // Local file doesn't exist, continue to API
+    }
+
+    // Try decapi.me API
+    try {
+        const response = await fetch(`https://decapi.me/twitch/avatar/${username}`);
+        if (response.ok) {
+            const avatarUrl = await response.text();
+            if (avatarUrl && avatarUrl.startsWith('http')) {
+                streamerAvatars[username] = avatarUrl;
+                return avatarUrl;
+            }
+        }
+    } catch (error) {
+        console.warn(`Failed to fetch avatar for ${username} from API:`, error);
+    }
+
+    // Fallback to default avatar
+    streamerAvatars[username] = DEFAULT_AVATAR;
+    return DEFAULT_AVATAR;
+}
+
+function displayStreamers() {
+    const streamers = getStreamers();
+    const container = document.querySelector('.streamers-container') || document.createElement('div');
+    container.className = 'streamers-container';
+    container.innerHTML = '';
+
+    streamers.forEach(async (username) => {
+        const streamerDiv = document.createElement('div');
+        streamerDiv.className = 'streamer-item';
+
+        const avatarImg = document.createElement('img');
+        avatarImg.className = 'streamer-avatar';
+        avatarImg.alt = `${username} avatar`;
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'streamer-name';
+        nameSpan.textContent = username;
+
+        streamerDiv.appendChild(avatarImg);
+        streamerDiv.appendChild(nameSpan);
+        container.appendChild(streamerDiv);
+
+        // Load avatar
+        const avatarUrl = await getAvatarUrl(username);
+        avatarImg.src = avatarUrl;
+    });
+
+    // Add to page if not already present
+    if (!document.querySelector('.streamers-container')) {
+        document.body.appendChild(container);
+    }
+}
