@@ -107,6 +107,8 @@ class WindowDragger {
 
     startDrag(e) {
         this.isDragging = true;
+        // Update interaction timestamp when dragging starts
+        windowZIndexManager.updateInteraction(this.windowElement);
         const rect = this.windowElement.getBoundingClientRect();
         const coords = this.getClientCoords(e);
         this.offsetX = coords.clientX - rect.left;
@@ -164,6 +166,45 @@ class CloseButtonHandler {
         });
     }
 }
+
+// Window Z-Index Manager
+class WindowZIndexManager {
+    constructor() {
+        this.windows = new Map(); // window element -> last interaction timestamp
+        this.baseZIndex = 1000;
+    }
+
+    registerWindow(windowElement) {
+        this.windows.set(windowElement, 0);
+        this.updateZIndices();
+    }
+
+    updateInteraction(windowElement) {
+        const now = Date.now();
+        this.windows.set(windowElement, now);
+        this.updateZIndices();
+    }
+
+    updateZIndices() {
+        // Sort windows by last interaction time (most recent first), but only consider visible windows
+        const visibleWindows = Array.from(this.windows.entries())
+            .filter(([windowElement]) => windowElement.style.display !== 'none')
+            .sort((a, b) => a[1] - b[1]);
+
+        // Assign z-index starting from baseZIndex, incrementing for each visible window
+        visibleWindows.forEach(([windowElement, timestamp], index) => {
+            windowElement.style.zIndex = this.baseZIndex + index;
+        });
+    }
+
+    unregisterWindow(windowElement) {
+        this.windows.delete(windowElement);
+        this.updateZIndices();
+    }
+}
+
+// Global Z-Index Manager instance
+const windowZIndexManager = new WindowZIndexManager();
 
 // Global resize variables
 let isResizing = false;
@@ -245,6 +286,9 @@ function startResize(e, windowElement) {
     isResizing = true;
     resizeDirection = direction;
     resizeWindow = windowElement;
+
+    // Update interaction timestamp when resizing starts
+    windowZIndexManager.updateInteraction(windowElement);
 
     const coords = e.touches && e.touches.length > 0 ?
         { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY } :
@@ -352,14 +396,28 @@ document.addEventListener('DOMContentLoaded', function () {
     const classIcon = document.getElementById('class-icon');
     const classWindow = document.getElementById('class-window');
 
+    // Register windows with z-index manager
+    windowZIndexManager.registerWindow(diaryWindow);
+    windowZIndexManager.registerWindow(classWindow);
+
     // Toggle functions
     function displayDiary() {
         diaryWindow.style.display = 'block';
+        // Update interaction when opening window
+        windowZIndexManager.updateInteraction(diaryWindow);
     }
 
     function displayClass() {
         classWindow.style.display = 'block';
+        // Update interaction when opening window
+        windowZIndexManager.updateInteraction(classWindow);
     }
+
+    // Add click event listeners to window content areas for interaction tracking
+    diaryWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(diaryWindow));
+    diaryWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(diaryWindow));
+    classWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(classWindow));
+    classWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(classWindow));
 
     // Instantiate icon draggers
     const diaryIconDragger = new IconDragger(diaryIcon, displayDiary);
