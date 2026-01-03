@@ -335,7 +335,7 @@ function moveEmoji(div) {
 
         // Get element dimensions for proper collision detection
         let width = 85;
-        let height = 65;
+        let height = 70;
 
         // Add extra hitbox for emojis because they wiggle
         if (div.className === 'game-emoji') {
