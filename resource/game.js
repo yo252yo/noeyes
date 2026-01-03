@@ -336,13 +336,13 @@ function moveEmoji(div) {
         y += dy;
 
         // Get element dimensions for proper collision detection
-        let width = div.offsetWidth || 50;
-        let height = div.offsetHeight || 50;
+        let width = 85;
+        let height = 65;
 
         // Add extra hitbox for emojis because they wiggle
         if (div.className === 'game-emoji') {
-            width += 10;
-            height += 10;
+            width = 55;
+            height = 50;
         }
 
         // Bounce off walls
