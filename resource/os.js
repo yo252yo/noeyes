@@ -163,6 +163,177 @@ class CloseButtonHandler {
     }
 }
 
+// Global resize variables
+let isResizing = false;
+let resizeDirection = '';
+let resizeWindow = null;
+let startX = 0;
+let startY = 0;
+let startWidth = 0;
+let startHeight = 0;
+let startLeft = 0;
+let startTop = 0;
+const RESIZE_LEEWAY = 10; // pixels of leeway for border detection
+
+function getResizeDirection(e, windowElement) {
+    const rect = windowElement.getBoundingClientRect();
+    const coords = e.touches && e.touches.length > 0 ?
+        { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY } :
+        { clientX: e.clientX, clientY: e.clientY };
+
+    const x = coords.clientX - rect.left;
+    const y = coords.clientY - rect.top;
+    const w = rect.width;
+    const h = rect.height;
+
+    let direction = '';
+
+    // Check corners first (they take priority)
+    if (x <= RESIZE_LEEWAY && y <= RESIZE_LEEWAY) {
+        direction = 'nw'; // northwest
+    } else if (x >= w - RESIZE_LEEWAY && y <= RESIZE_LEEWAY) {
+        direction = 'ne'; // northeast
+    } else if (x <= RESIZE_LEEWAY && y >= h - RESIZE_LEEWAY) {
+        direction = 'sw'; // southwest
+    } else if (x >= w - RESIZE_LEEWAY && y >= h - RESIZE_LEEWAY) {
+        direction = 'se'; // southeast
+    }
+    // Check edges
+    else if (x <= RESIZE_LEEWAY) {
+        direction = 'w'; // west (left)
+    } else if (x >= w - RESIZE_LEEWAY) {
+        direction = 'e'; // east (right)
+    } else if (y <= RESIZE_LEEWAY) {
+        direction = 'n'; // north (top)
+    } else if (y >= h - RESIZE_LEEWAY) {
+        direction = 's'; // south (bottom)
+    }
+
+    return direction;
+}
+
+function updateCursor(e, windowElement) {
+    if (isResizing) return;
+
+    const direction = getResizeDirection(e, windowElement);
+    let cursor = 'default';
+
+    switch (direction) {
+        case 'nw':
+        case 'se':
+            cursor = 'nw-resize';
+            break;
+        case 'ne':
+        case 'sw':
+            cursor = 'ne-resize';
+            break;
+        case 'n':
+        case 's':
+            cursor = 'ns-resize';
+            break;
+        case 'w':
+        case 'e':
+            cursor = 'ew-resize';
+            break;
+    }
+
+    // Reset cursor to default if not over a resize area
+    if (direction === '') {
+        cursor = 'default';
+    }
+
+    windowElement.style.cursor = cursor;
+}
+
+function startResize(e, windowElement) {
+    const direction = getResizeDirection(e, windowElement);
+    if (!direction) return;
+
+    isResizing = true;
+    resizeDirection = direction;
+    resizeWindow = windowElement;
+
+    const coords = e.touches && e.touches.length > 0 ?
+        { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY } :
+        { clientX: e.clientX, clientY: e.clientY };
+
+    startX = coords.clientX;
+    startY = coords.clientY;
+
+    const rect = windowElement.getBoundingClientRect();
+    startWidth = rect.width;
+    startHeight = rect.height;
+    startLeft = rect.left;
+    startTop = rect.top;
+
+    e.preventDefault();
+    document.addEventListener('mousemove', doResize);
+    document.addEventListener('touchmove', doResize);
+}
+
+function doResize(e) {
+    if (!isResizing || !resizeWindow) return;
+
+    const coords = e.touches && e.touches.length > 0 ?
+        { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY } :
+        { clientX: e.clientX, clientY: e.clientY };
+
+    const deltaX = coords.clientX - startX;
+    const deltaY = coords.clientY - startY;
+
+    let newWidth = startWidth;
+    let newHeight = startHeight;
+    let newLeft = startLeft;
+    let newTop = startTop;
+
+    const minWidth = 200;
+    const minHeight = 150;
+
+    // Handle horizontal resizing
+    if (resizeDirection.includes('w')) { // west/left
+        newWidth = startWidth - deltaX;
+        newLeft = startLeft + deltaX;
+        if (newWidth < minWidth) {
+            newWidth = minWidth;
+            newLeft = startLeft + (startWidth - minWidth);
+        }
+    } else if (resizeDirection.includes('e')) { // east/right
+        newWidth = startWidth + deltaX;
+        if (newWidth < minWidth) newWidth = minWidth;
+    }
+
+    // Handle vertical resizing
+    if (resizeDirection.includes('n')) { // north/top
+        newHeight = startHeight - deltaY;
+        newTop = startTop + deltaY;
+        if (newHeight < minHeight) {
+            newHeight = minHeight;
+            newTop = startTop + (startHeight - minHeight);
+        }
+    } else if (resizeDirection.includes('s')) { // south/bottom
+        newHeight = startHeight + deltaY;
+        if (newHeight < minHeight) newHeight = minHeight;
+    }
+
+    // Apply the changes
+    resizeWindow.style.width = newWidth + 'px';
+    resizeWindow.style.height = newHeight + 'px';
+    if (newLeft !== startLeft) resizeWindow.style.left = newLeft + 'px';
+    if (newTop !== startTop) resizeWindow.style.top = newTop + 'px';
+
+    e.preventDefault();
+}
+
+function endResize(e) {
+    if (isResizing) {
+        isResizing = false;
+        resizeDirection = '';
+        resizeWindow = null;
+        document.removeEventListener('mousemove', doResize);
+        document.removeEventListener('touchmove', doResize);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const diaryIcon = document.getElementById('diary-icon');
     const diaryWindow = document.getElementById('diary-window');
@@ -192,7 +363,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const diaryCloseHandler = new CloseButtonHandler(diaryCloseBtn, closeDiaryWindow);
     const classCloseHandler = new CloseButtonHandler(classCloseBtn, closeClassWindow);
 
-    // Window resizing (keeping existing logic)
+    // Window resizing
     diaryWindow.addEventListener('mousedown', function (e) { startResize(e, diaryWindow); });
     diaryWindow.addEventListener('touchstart', function (e) { startResize(e, diaryWindow); });
     diaryWindow.addEventListener('mousemove', function (e) { updateCursor(e, diaryWindow); });
