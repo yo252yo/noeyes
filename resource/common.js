@@ -94,6 +94,20 @@ function closePopup() {
     }
 }
 
+function getValue() {
+    const stored = localStorage.getItem('value');
+    return stored ? parseInt(stored, 10) : 0;
+}
+
+function setValue(value) {
+    localStorage.setItem('value', value.toString());
+}
+
+function incrementValue() {
+    const currentValue = getValue();
+    setValue(currentValue + 1);
+}
+
 function callItADay() {
     const currentDay = getDay();
     const maxAllowedDay = getMaxAllowedDay();
