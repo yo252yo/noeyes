@@ -95,6 +95,10 @@ function createEmojiDiv() {
     // Click handler
     div.addEventListener('click', handleTargetClick);
 
+    // Prevent drag and drop
+    div.addEventListener('dragstart', (e) => e.preventDefault());
+    div.addEventListener('mousedown', (e) => e.preventDefault());
+
     return div;
 }
 
@@ -145,6 +149,16 @@ async function createAvatarDiv() {
 
     // Click handler
     div.addEventListener('click', handleTargetClick);
+
+    // Prevent drag and drop
+    div.addEventListener('dragstart', (e) => e.preventDefault());
+    div.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        // Only handle left mouse button
+        if (e.button === 0) {
+            // Allow normal click handling
+        }
+    });
 
     return div;
 }
