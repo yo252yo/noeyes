@@ -15,15 +15,15 @@
     <script>
         // Diary entries dictionary
         const diaryEntries = {
-            "1": "Ok so they told us at orientation that we needed to keep a diary... I don't know if I'll really do that, that seems lame.",
-            "3": "Had my first real conversation with someone today. This whole 'no eyes' thing is still weird, but I'm getting used to it.",
-            "4": "The cafeteria food here is surprisingly good. I guess they put effort into making sure we eat well despite... you know.",
-            "5": "Started to notice patterns in how people move around. Everyone seems to have their routines down already.",
-            "6": "Today I tried to ask about what happens after this program. No one would give me a straight answer.",
-            "7": "Found a quiet spot in the library. Being able to read without eyes is actually kind of peaceful once you get used to it.",
-            "8": "Someone told me they're keeping track of days by counting meals. I think I'll stick to the official counter.",
-            "9": "Had a dream last night about seeing colors. Woke up feeling strange. Is this normal?",
-            "10": "Ten days in. The routine is becoming familiar, but I still have so many questions."
+            "1": "Ok so they told us at orientation that we HAVE TO keep a diary...</p><p>I don't know if I'll really do that, that seems lame.</p><p>Then again, I'd hate to see it used against me, so I guess I have to play along for now.</p><p>How's that for a diary entry?",
+            "2": "..PLACEHOLDER.... Had my first real conversation with someone today. This whole 'no eyes' thing is still weird, but I'm getting used to it.",
+            "4": "..PLACEHOLDER.... The cafeteria food here is surprisingly good. I guess they put effort into making sure we eat well despite... you know.",
+            "5": "..PLACEHOLDER.... Started to notice patterns in how people move around. Everyone seems to have their routines down already.",
+            "6": "..PLACEHOLDER.... Today I tried to ask about what happens after this program. No one would give me a straight answer.",
+            "7": "..PLACEHOLDER.... Found a quiet spot in the library. Being able to read without eyes is actually kind of peaceful once you get used to it.",
+            "8": "..PLACEHOLDER.... Someone told me they're keeping track of days by counting meals. I think I'll stick to the official counter.",
+            "9": "..PLACEHOLDER.... Had a dream last night about seeing colors. Woke up feeling strange. Is this normal?",
+            "10": "..PLACEHOLDER.... Ten days in. The routine is becoming familiar, but I still have so many questions."
         };
 
         function generateDiaryContent() {
@@ -46,10 +46,9 @@
 
             let html = '';
             availableEntries.forEach(entry => {
-                html += `<div style="margin-bottom: 20px;">
+                html += `<div class="diary-entry">
                     <b>Day ${entry.day}</b>
-                    <br />
-                    ${entry.content}
+                    <p>${entry.content}</p>
                 </div>`;
             });
 
@@ -60,7 +59,7 @@
         generateDiaryContent();
 
         // Regenerate diary content every 2 seconds to show day changes dynamically
-        setInterval(generateDiaryContent, 2000);
+        //setInterval(generateDiaryContent, 2000);
     </script>
 </body>
 

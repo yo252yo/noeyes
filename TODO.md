@@ -6,6 +6,10 @@ Nice to have:
 - Prettify everything
 
 
+
+should diary be paginated or big flow?
+
+
     <!-- <div id="chatters-list" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;">
     </div>
 
