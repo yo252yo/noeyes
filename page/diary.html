@@ -10,28 +10,57 @@
 </head>
 
 <body style="background-color: white; margin: 0; padding: 20px; font-family: Arial, sans-serif;">
-    <b>Day 1</b>
-    <br />
-    Ok so they told us at orientation that we needed to keep a diary... I don't know if I'll really do that, that seems
-    lame.
-
-    <div id="chatters-list" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;">
-    </div>
+    <div id="diary-content"></div>
 
     <script>
-        function updateChattersDisplay() {
-            const chatters = getChatters();
-            const chattersDiv = document.getElementById('chatters-list');
-            if (chatters.length > 0) {
-                chattersDiv.innerHTML = '<strong>Live Chatters:</strong><br>' + chatters.join(', ');
-            } else {
-                chattersDiv.innerHTML = '<em>No chatters yet...</em>';
+        // Diary entries dictionary
+        const diaryEntries = {
+            "1": "Ok so they told us at orientation that we needed to keep a diary... I don't know if I'll really do that, that seems lame.",
+            "3": "Had my first real conversation with someone today. This whole 'no eyes' thing is still weird, but I'm getting used to it.",
+            "4": "The cafeteria food here is surprisingly good. I guess they put effort into making sure we eat well despite... you know.",
+            "5": "Started to notice patterns in how people move around. Everyone seems to have their routines down already.",
+            "6": "Today I tried to ask about what happens after this program. No one would give me a straight answer.",
+            "7": "Found a quiet spot in the library. Being able to read without eyes is actually kind of peaceful once you get used to it.",
+            "8": "Someone told me they're keeping track of days by counting meals. I think I'll stick to the official counter.",
+            "9": "Had a dream last night about seeing colors. Woke up feeling strange. Is this normal?",
+            "10": "Ten days in. The routine is becoming familiar, but I still have so many questions."
+        };
+
+        function generateDiaryContent() {
+            const currentDay = getDay();
+            const contentDiv = document.getElementById('diary-content');
+
+            // Get all entries before or equal to current day
+            const availableEntries = [];
+            for (let day = 1; day <= currentDay; day++) {
+                if (diaryEntries[day.toString()]) {
+                    availableEntries.push({
+                        day: day,
+                        content: diaryEntries[day.toString()]
+                    });
+                }
             }
+
+            // Display entries in reverse chronological order (newest first)
+            availableEntries.reverse();
+
+            let html = '';
+            availableEntries.forEach(entry => {
+                html += `<div style="margin-bottom: 20px;">
+                    <b>Day ${entry.day}</b>
+                    <br />
+                    ${entry.content}
+                </div>`;
+            });
+
+            contentDiv.innerHTML = html;
         }
 
-        // Update chatters display immediately and then every 5 seconds
-        updateChattersDisplay();
-        setInterval(updateChattersDisplay, 5000);
+        // Generate diary content when page loads
+        generateDiaryContent();
+
+        // Regenerate diary content every 2 seconds to show day changes dynamically
+        setInterval(generateDiaryContent, 2000);
     </script>
 </body>
 

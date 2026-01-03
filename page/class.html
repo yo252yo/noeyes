@@ -14,19 +14,96 @@
     It's time for your first class!<br />
     Exciting, isn't it?<br />
     Click on the link right below to get you started!
-    <ul>
+    <div id="class-content"></div>
 
-        <li>
-            <a href="class.html">
-                <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px ">My First Class
-            </a>
-        </li>
-    </ul>
+    <script>
+        // Class entries dictionary - each day maps to HTML snippets for class items
+        const classEntries = {
+            "1": `<li>
+                <a href="class.html">
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">My First Class
+                </a>
+            </li>`,
+            "2": `<li>
+                <a href="class.html">
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Introduction to Streaming
+                </a>
+            </li>`,
+            "3": `<li>
+                <a href="class.html">
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">The Art of Chat
+                </a>
+            </li>`,
+            "4": `<li>
+                <a href="class.html">
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Privacy vs Public Life
+                </a>
+            </li>`,
+            "5": `<li>
+                <a href="class.html">
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Building Your Online Presence
+                </a>
+            </li>`,
+            "6": `<li>
+                <a href="class.html">
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Community Management
+                </a>
+            </li>`,
+            "7": `<li>
+                <a href="class.html">
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Monetization Strategies
+                </a>
+            </li>`,
+            "8": `<li>
+                <a href="class.html">
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Crisis Communication
+                </a>
+            </li>`,
+            "9": `<li>
+                <a href="class.html">
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Final Project Preparation
+                </a>
+            </li>`,
+            "10": `<li>
+                <a href="class.html">
+                    <img src="../resource/book_icon.png" style="width:20px; height:20px; margin-right:5px">Class Selection Ceremony
+                </a>
+            </li>`
+        };
 
-    <!-- As you know, after the climate collapse, humanity had to be divided in two strict classes, the Streamers and Chat.
-    Streamers get to experience all the joy of the Outside™ at the cost of being constantly in public. Chat has no
-    access to the Outside™ but enjoys complete privacy. At the end of this training, you will get to chose which class
-    you want to be in. -->
+        function generateClassContent() {
+            const currentDay = getDay();
+            const contentDiv = document.getElementById('class-content');
+
+            // Get all entries before or equal to current day
+            const availableEntries = [];
+            for (let day = 1; day <= currentDay; day++) {
+                if (classEntries[day.toString()]) {
+                    availableEntries.push({
+                        day: day,
+                        html: classEntries[day.toString()]
+                    });
+                }
+            }
+
+            // Display entries in reverse chronological order (newest first)
+            availableEntries.reverse();
+
+            let html = '<ul>';
+            availableEntries.forEach(entry => {
+                html += entry.html;
+            });
+            html += '</ul>';
+
+            contentDiv.innerHTML = html;
+        }
+
+        // Generate class content when page loads
+        generateClassContent();
+
+        // Regenerate class content every 2 seconds to show day changes dynamically
+        setInterval(generateClassContent, 2000);
+    </script>
 </body>
 
 </html>

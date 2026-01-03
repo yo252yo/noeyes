@@ -349,6 +349,9 @@ function endResize(e) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Initialize day display
+    updateDayDisplay();
+
     const diaryIcon = document.getElementById('diary-icon');
     const diaryWindow = document.getElementById('diary-window');
     const classIcon = document.getElementById('class-icon');
