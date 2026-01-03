@@ -1,4 +1,4 @@
-console.log('script');
+
 
 // Listen for postMessage from parent iframes
 window.addEventListener('message', (event) => {
