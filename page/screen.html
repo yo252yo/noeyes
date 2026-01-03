@@ -8,6 +8,18 @@
     <link rel="stylesheet" href="../style.css">
     <script src="../resource/common.js"></script>
     <script src="../resource/os.js"></script>
+    <script>
+        // Update value display every 300ms
+        setInterval(() => {
+            const valueElement = document.getElementById('value-text');
+            if (valueElement) {
+                const currentValue = getValue();
+                if (currentValue) {
+                    valueElement.textContent = `Value: ${currentValue}`;
+                }
+            }
+        }, 300);
+    </script>
 </head>
 
 <body style="background-color: #008080; margin: 0; padding: 0; height: 100vh; overflow:hidden;">
@@ -40,9 +52,15 @@
     <button id="start-button" onclick="callItADay()"><img src="../resource/start_icon.png" alt="Start Icon"> call it a
         day</button>
     <div id="day-display"
-        style="position: fixed; bottom: 0px; right: 0px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-weight: bold; padding: 4px 8px; font-family: 'MS Sans Serif', Tahoma, sans-serif; color: #000; background: #c0c0c0; border-top: 2px solid #ffffff; border-left: 2px solid #ffffff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; box-sizing: border-box;">
-        <div id="day-text" style="font-size: 12px;">Day 1</div>
-        <div id="time-text" style="font-size: 10px;">00:00:00</div>
+        style="position: fixed; bottom: 0px; right: 0px; display: flex; flex-direction: row; align-items: center; gap: 2px; font-weight: bold; padding: 4px 8px; font-family: 'MS Sans Serif', Tahoma, sans-serif; color: #000; background: #c0c0c0; border-top: 2px solid #ffffff; border-left: 2px solid #ffffff; border-right: 2px solid #404040; border-bottom: 2px solid #404040; box-sizing: border-box;">
+
+        <div style="margin-right: 10px;">
+            <div id="value-text" style="font-size: 12px;"></div>
+        </div>
+        <div style="padding-left: 10px; border-left: 2px solid #404040;">
+            <div id="day-text" style="font-size: 12px;">Day 1</div>
+            <div id="time-text" style="font-size: 10px;">00:00:00</div>
+        </div>
     </div>
 </body>
 
