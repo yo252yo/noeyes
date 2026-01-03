@@ -343,6 +343,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize day display
     updateDayDisplay();
 
+    // Initialize time display and start real-time updates
+    updateTimeDisplay();
+    setInterval(updateTimeDisplay, 1000);
+
     const diaryIcon = document.getElementById('diary-icon');
     const diaryWindow = document.getElementById('diary-window');
     const classIcon = document.getElementById('class-icon');

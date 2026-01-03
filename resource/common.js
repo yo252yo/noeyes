@@ -34,9 +34,20 @@ function incrementDay() {
 }
 
 function updateDayDisplay() {
-    const dayElement = document.getElementById('day-display');
+    const dayElement = document.getElementById('day-text');
     if (dayElement) {
         dayElement.textContent = `Day ${getDay()}`;
+    }
+}
+
+function updateTimeDisplay() {
+    const timeElement = document.getElementById('time-text');
+    if (timeElement) {
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+        timeElement.textContent = `${hours}:${minutes}:${seconds}`;
     }
 }
 
