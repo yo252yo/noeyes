@@ -190,23 +190,17 @@ function getResizeDirection(e, windowElement) {
 
     let direction = '';
 
-    // Check corners first (they take priority)
-    if (x <= RESIZE_LEEWAY && y <= RESIZE_LEEWAY) {
-        direction = 'nw'; // northwest
-    } else if (x >= w - RESIZE_LEEWAY && y <= RESIZE_LEEWAY) {
-        direction = 'ne'; // northeast
-    } else if (x <= RESIZE_LEEWAY && y >= h - RESIZE_LEEWAY) {
+    // Check corners first (they take priority) - exclude top corners
+    if (x <= RESIZE_LEEWAY && y >= h - RESIZE_LEEWAY) {
         direction = 'sw'; // southwest
     } else if (x >= w - RESIZE_LEEWAY && y >= h - RESIZE_LEEWAY) {
         direction = 'se'; // southeast
     }
-    // Check edges
+    // Check edges - exclude top edge
     else if (x <= RESIZE_LEEWAY) {
         direction = 'w'; // west (left)
     } else if (x >= w - RESIZE_LEEWAY) {
         direction = 'e'; // east (right)
-    } else if (y <= RESIZE_LEEWAY) {
-        direction = 'n'; // north (top)
     } else if (y >= h - RESIZE_LEEWAY) {
         direction = 's'; // south (bottom)
     }
@@ -221,15 +215,12 @@ function updateCursor(e, windowElement) {
     let cursor = 'default';
 
     switch (direction) {
-        case 'nw':
         case 'se':
             cursor = 'nw-resize';
             break;
-        case 'ne':
         case 'sw':
             cursor = 'ne-resize';
             break;
-        case 'n':
         case 's':
             cursor = 'ns-resize';
             break;

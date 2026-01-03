@@ -1,4 +1,4 @@
-make resizeable window not resizeable from the top edge
+
 
 Nice to have:
 - Audio
