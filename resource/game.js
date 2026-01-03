@@ -38,6 +38,7 @@ function spawnEmoji() {
     div.style.fontSize = '30px';
     div.style.cursor = 'pointer';
     div.style.userSelect = 'none';
+    div.style.animation = 'emojiBlink 1s ease-in-out infinite alternate';
 
     // Random starting position
     const startX = Math.random() * (window.innerWidth - 50);
@@ -54,7 +55,27 @@ function spawnEmoji() {
     div.dataset.dy = dy;
 
     // Click handler
-    div.addEventListener('click', () => {
+    div.addEventListener('click', (event) => {
+        // Create +1 Value feedback
+        const feedback = document.createElement('div');
+        feedback.textContent = '+1 Value';
+        feedback.style.position = 'absolute';
+        feedback.style.left = event.clientX + 'px';
+        feedback.style.top = event.clientY + 'px';
+        feedback.style.color = '#4CAF50';
+        feedback.style.fontSize = '16px';
+        feedback.style.fontWeight = 'bold';
+        feedback.style.pointerEvents = 'none';
+        feedback.style.animation = 'valueFeedback 1s ease-out forwards';
+        document.body.appendChild(feedback);
+
+        // Remove feedback after animation
+        setTimeout(() => {
+            if (feedback.parentNode) {
+                feedback.parentNode.removeChild(feedback);
+            }
+        }, 1000);
+
         div.remove();
         incrementValue();
         score = getValue();

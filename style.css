@@ -350,3 +350,30 @@ a:hover {
     font-size: 0.9em;
     color: #666;
 }
+
+/* Game animations */
+@keyframes emojiBlink {
+    0% {
+        transform: rotate(-20deg);
+    }
+
+    50% {
+        transform: rotate(20deg);
+    }
+
+    100% {
+        transform: rotate(-20deg);
+    }
+}
+
+@keyframes valueFeedback {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+}
