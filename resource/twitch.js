@@ -1,3 +1,11 @@
+// Streamer arrays
+const streamers = ['vedal987'];
+const suggested_streamers = ['vedal987', 'dougdoug', 'shindigs'];
+
+// Store streamers in localStorage on initialization
+setStreamers(streamers);
+
+
 // Avatar URLs for streamers - simple dictionary storage
 const streamerAvatars = {};
 
@@ -42,7 +50,7 @@ async function getAvatarUrl(username) {
 }
 
 function displayStreamers() {
-    const streamers = getStreamers();
+    const streamers = suggested_streamers;
     const container = document.querySelector('.streamers-container') || document.createElement('div');
     container.className = 'streamers-container';
     container.innerHTML = '';

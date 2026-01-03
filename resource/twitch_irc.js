@@ -1,9 +1,7 @@
-const streamers = ['vedal987', 'dougdoug', 'shindigs'];
+
+
 const chatters = new Set();
 const MAX_CHATTERS = 200;
-
-// Store streamers in localStorage on initialization
-setStreamers(streamers);
 
 // Expose chatters globally for access from iframes
 window.chatters = chatters;
@@ -16,7 +14,7 @@ ws.onopen = () => {
     //console.log('WS OPEN');
     ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
     ws.send(`NICK justinfan${Math.floor(Math.random() * 1e6)}`);
-    streamers.forEach(s => {
+    getStreamers().forEach(s => {
         //console.log('JOINING', s);
         ws.send(`JOIN #${s}`);
     });
