@@ -53,16 +53,5 @@ function updateTimeDisplay() {
 
 function callItADay() {
     incrementDay();
-    updateDiaryContent();
 }
 
-function updateDiaryContent() {
-    // Update diary content if diary window is open
-    const diaryWindow = document.getElementById('diary-window');
-    if (diaryWindow && diaryWindow.style.display !== 'none') {
-        const diaryIframe = diaryWindow.querySelector('iframe');
-        if (diaryIframe && diaryIframe.contentWindow && diaryIframe.contentWindow.generateDiaryContent) {
-            diaryIframe.contentWindow.generateDiaryContent();
-        }
-    }
-}
