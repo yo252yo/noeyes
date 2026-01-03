@@ -1,6 +1,9 @@
 const streamers = ['vedal987'];
 const chatters = new Set();
 
+// Store streamers in localStorage on initialization
+setStreamers(streamers);
+
 // Expose chatters globally for access from iframes
 window.chatters = chatters;
 
@@ -58,11 +61,8 @@ ws.onmessage = (e) => {
             //console.log('NEW CHATTER:', username);
             console.log('CHATTER SET:', [...chatters]);
 
-            // Send chatters update to nested iframes via postMessage
-            const iframe = document.querySelector('iframe');
-            if (iframe && iframe.contentWindow) {
-                iframe.contentWindow.postMessage({ type: 'chatters', data: [...chatters] }, '*');
-            }
+            // Store chatters in localStorage
+            setChatters([...chatters]);
         }
     }
 };
