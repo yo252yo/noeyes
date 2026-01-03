@@ -1,4 +1,4 @@
-const emoji = ['👨', '👩'];
+const emoji = ['👶', '👦', '👧', '👨', '👩', '🧑', '👴', '👵'];
 const WIN_SCORE = 5;
 let score = 0;
 let spawnedCount = 0;
