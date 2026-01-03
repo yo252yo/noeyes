@@ -114,8 +114,8 @@ async function createAvatarDiv() {
     const div = document.createElement('div');
     div.className = 'game-avatar';
     div.style.position = 'absolute';
-    div.style.width = '56px';
-    div.style.height = '56px';
+    div.style.width = '36px';
+    div.style.height = '36px';
     div.style.cursor = 'pointer';
     div.style.userSelect = 'none';
     div.style.zIndex = '100'; // High z-index to stay in front
@@ -334,8 +334,8 @@ function moveEmoji(div) {
         y += dy;
 
         // Get element dimensions for proper collision detection
-        let width = 85;
-        let height = 70;
+        let width = 65;
+        let height = 50;
 
         // Add extra hitbox for emojis because they wiggle
         if (div.className === 'game-emoji') {
