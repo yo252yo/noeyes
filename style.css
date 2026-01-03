@@ -229,3 +229,59 @@ a:hover {
     border: 1px inset #c0c0c0;
     height: calc(100% - 24px);
 }
+
+/* Popup styles */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.popup-content {
+    background-color: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    padding: 20px;
+    max-width: 300px;
+    text-align: center;
+    font-family: "MS Sans Serif", Tahoma, sans-serif;
+    font-size: 12px;
+}
+
+.popup-icon {
+    margin-bottom: 10px;
+}
+
+.popup-icon img {
+    width: 32px;
+    height: 32px;
+}
+
+.popup-message {
+    margin-bottom: 15px;
+    color: #000;
+}
+
+.popup-ok-btn {
+    padding: 4px 12px;
+    background-color: #c0c0c0;
+    border: 1px outset #c0c0c0;
+    font-family: "MS Sans Serif", Tahoma, sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.popup-ok-btn:hover {
+    background-color: #dfdfdf;
+}
+
+.popup-ok-btn:active {
+    border: 1px inset #c0c0c0;
+    background-color: #b0b0b0;
+}

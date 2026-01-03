@@ -23,6 +23,15 @@ function getDay() {
     return stored ? parseInt(stored, 10) : 1;
 }
 
+function getMaxAllowedDay() {
+    const stored = localStorage.getItem('max_allowed_day');
+    return stored ? parseInt(stored, 10) : 1;
+}
+
+function setMaxAllowedDay(day) {
+    localStorage.setItem('max_allowed_day', day.toString());
+}
+
 function setDay(day) {
     localStorage.setItem('current_day', day.toString());
     updateDayDisplay();
@@ -51,7 +60,48 @@ function updateTimeDisplay() {
     }
 }
 
-function callItADay() {
-    incrementDay();
+function showPopup(message, iconSrc, isError = false) {
+    // Create popup container if it doesn't exist
+    let popup = document.getElementById('day-popup');
+    if (!popup) {
+        popup = document.createElement('div');
+        popup.id = 'day-popup';
+        popup.className = 'popup';
+        popup.innerHTML = `
+            <div class="popup-content">
+                <div class="popup-icon">
+                    <img id="popup-icon-img" src="" alt="Icon">
+                </div>
+                <div class="popup-message" id="popup-message"></div>
+                <button class="popup-ok-btn" onclick="closePopup()">OK</button>
+            </div>
+        `;
+        document.body.appendChild(popup);
+    }
+
+    // Set content
+    document.getElementById('popup-icon-img').src = iconSrc;
+    document.getElementById('popup-message').textContent = message;
+
+    // Show popup
+    popup.style.display = 'flex';
 }
 
+function closePopup() {
+    const popup = document.getElementById('day-popup');
+    if (popup) {
+        popup.style.display = 'none';
+    }
+}
+
+function callItADay() {
+    const currentDay = getDay();
+    const maxAllowedDay = getMaxAllowedDay();
+
+    if (maxAllowedDay > currentDay) {
+        incrementDay();
+        showPopup('Welcome to a new day', '/resource/day_icon.png');
+    } else {
+        showPopup('You must complete all your classes for the day before you can log off', '/resource/error_icon.png', true);
+    }
+}
