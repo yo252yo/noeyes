@@ -6,13 +6,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu</title>
     <link rel="stylesheet" href="../style.css">
+    <style>
+        /* Menu-specific Windows 98 styling */
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" fill="%23008080"/><circle cx="16" cy="16" r="8" fill="%2300ffff" opacity="0.1"/></svg>') repeat;
+            font-family: "MS Sans Serif", Tahoma, sans-serif;
+        }
+
+        .menu-window {
+            width: 400px;
+            background-color: #c0c0c0;
+            border: 2px outset #c0c0c0;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-title-bar {
+            background: linear-gradient(to right, #000080, #1084d0);
+            color: white;
+            padding: 2px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: "MS Sans Serif", sans-serif;
+            font-size: 12px;
+            height: 20px;
+            box-sizing: border-box;
+        }
+
+        .menu-title {
+            flex-grow: 1;
+            font-weight: bold;
+        }
+
+        .menu-content {
+            background-color: white;
+            border: 1px inset #c0c0c0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .menu-content h1 {
+            font-family: "MS Sans Serif", sans-serif;
+            font-size: 24px;
+            color: #000080;
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 0px #c0c0c0;
+        }
+
+        .menu-start-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            font-family: "MS Sans Serif", sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+            background: #c0c0c0;
+            border-top: 2px solid #ffffff;
+            border-left: 2px solid #ffffff;
+            border-right: 2px solid #404040;
+            border-bottom: 2px solid #404040;
+            cursor: pointer;
+            margin-bottom: 20px;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-start-btn:hover {
+            background: #dfdfdf;
+        }
+
+        .menu-start-btn:active {
+            border-top: 2px solid #404040;
+            border-left: 2px solid #404040;
+            border-right: 2px solid #ffffff;
+            border-bottom: 2px solid #ffffff;
+            padding: 9px 15px 7px 17px;
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-credit {
+            font-family: "MS Sans Serif", sans-serif;
+            font-size: 12px;
+            color: #666;
+            margin-top: 20px;
+        }
+
+        .menu-credit a {
+            color: #0000ff;
+            text-decoration: underline;
+        }
+
+        .menu-credit a:hover {
+            color: #ff0000;
+        }
+    </style>
 </head>
 
 <body>
-    <div style="text-align: center; margin-top: 200px;">
-        <h1>I Have No Eyes And I Must Stream</h1>
-        <a href="computer.html">Start</a>
-        <p>A game by <a href="http://www.yo252yo.com" target="_blank">yo252yo</a></p>
+    <div class="menu-container">
+        <div class="menu-window">
+            <div class="menu-title-bar">
+                <div class="menu-title">I Have No Eyes And I Must Stream</div>
+            </div>
+            <div class="menu-content">
+                <h1>I Have No Eyes And I Must Stream</h1>
+                <a href="computer.html" class="menu-start-btn">Start Game</a>
+                <div class="menu-credit">
+                    A game by <a href="http://www.yo252yo.com" target="_blank">yo252yo</a>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 
