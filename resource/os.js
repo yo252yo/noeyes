@@ -69,6 +69,8 @@ class IconDragger {
     }
 
     init() {
+        if (!this.iconElement) return; // Prevent errors if element doesn't exist
+
         // Click and touch events
         this.iconElement.addEventListener('click', (e) => this.handleClick(e));
         this.iconElement.addEventListener('touchend', (e) => this.handleTouchEnd(e));
@@ -266,6 +268,12 @@ function startResize(e, windowElement) {
     startLeft = rect.left;
     startTop = rect.top;
 
+    // Disable pointer events on iframe during resize to allow proper event handling
+    const iframe = windowElement.querySelector('.window-content iframe');
+    if (iframe) {
+        iframe.style.pointerEvents = 'none';
+    }
+
     e.preventDefault();
     document.addEventListener('mousemove', doResize);
     document.addEventListener('touchmove', doResize);
@@ -326,6 +334,12 @@ function doResize(e) {
 
 function endResize(e) {
     if (isResizing) {
+        // Re-enable pointer events on iframe after resize
+        const iframe = resizeWindow.querySelector('.window-content iframe');
+        if (iframe) {
+            iframe.style.pointerEvents = '';
+        }
+
         isResizing = false;
         resizeDirection = '';
         resizeWindow = null;
