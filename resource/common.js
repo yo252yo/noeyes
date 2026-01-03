@@ -29,7 +29,8 @@ function getMaxAllowedDay() {
 }
 
 function setMaxAllowedDay(day) {
-    localStorage.setItem('max_allowed_day', day.toString());
+    let current = getMaxAllowedDay();
+    localStorage.setItem('max_allowed_day', Math.max(current, day).toString());
 }
 
 function setDay(day) {
