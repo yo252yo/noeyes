@@ -10,6 +10,7 @@ const borderColors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pin
 let score = 0;
 let spawnedCount = 0;
 let currentSpawned = 0;
+let activeTargets = new Set(); // Track active targets for avatar mode
 let gameActive = false;
 let nextButton = null;
 
@@ -50,6 +51,7 @@ async function spawnTarget() {
     let div;
     if (gameConfig.targets === 'avatar') {
         div = await createAvatarDiv();
+        activeTargets.add(div); // Track avatar for distance calculations
     } else {
         div = createEmojiDiv();
     }
@@ -112,6 +114,7 @@ async function createAvatarDiv() {
     div.style.height = '56px';
     div.style.cursor = 'pointer';
     div.style.userSelect = 'none';
+    div.style.zIndex = '100'; // High z-index to stay in front
     // Windows 98 style circular border with random color
     div.style.border = `3px inset ${randomColor}`;
     div.style.backgroundColor = randomColor;
@@ -147,6 +150,125 @@ async function createAvatarDiv() {
 }
 
 function handleTargetClick(event) {
+    if (gameConfig.targets === 'avatar') {
+        // Avatar mode: distance-based scoring
+        handleAvatarClick(this, event);
+    } else {
+        // Emoji mode: simple +1 scoring
+        handleEmojiClick(this, event);
+    }
+}
+
+function handleAvatarClick(clickedAvatar, event) {
+    // Remove clicked avatar from tracking
+    activeTargets.delete(clickedAvatar);
+
+    // Find closest remaining avatar
+    let closestAvatar = null;
+    let minDistance = Infinity;
+
+    const clickedX = parseFloat(clickedAvatar.style.left) + 28; // Center of 56px avatar
+    const clickedY = parseFloat(clickedAvatar.style.top) + 28;
+
+    for (const avatar of activeTargets) {
+        const avatarX = parseFloat(avatar.style.left) + 28;
+        const avatarY = parseFloat(avatar.style.top) + 28;
+        const distance = Math.sqrt((avatarX - clickedX) ** 2 + (avatarY - clickedY) ** 2);
+
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestAvatar = avatar;
+        }
+    }
+
+    // Remove closest avatar if found
+    if (closestAvatar) {
+        activeTargets.delete(closestAvatar);
+        closestAvatar.remove();
+        currentSpawned--;
+
+        // Calculate score: floor(100/distance), capped at 100
+        const valueGained = Math.min(100, Math.pow(Math.floor(200 / minDistance), 2));
+        for (let i = 0; i < valueGained; i++) {
+            incrementValue();
+        }
+
+        // Create value feedback
+        const feedback = document.createElement('div');
+        feedback.textContent = `+${valueGained} Value`;
+        feedback.style.position = 'absolute';
+        feedback.style.left = event.clientX + 'px';
+        feedback.style.top = event.clientY + 'px';
+        feedback.style.color = '#4CAF50';
+        feedback.style.fontSize = '16px';
+        feedback.style.fontWeight = 'bold';
+        feedback.style.pointerEvents = 'none';
+        feedback.style.animation = 'valueFeedback 1s ease-out forwards';
+        feedback.style.zIndex = '101';
+        feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+        feedback.style.padding = '2px 6px';
+        feedback.style.borderRadius = '4px';
+        feedback.style.textShadow = '0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white';
+        document.body.appendChild(feedback);
+
+        // Remove feedback after animation
+        setTimeout(() => {
+            if (feedback.parentNode) {
+                feedback.parentNode.removeChild(feedback);
+            }
+        }, 2000);
+
+        // Create COLLAB message for high scores (>5)
+        if (valueGained > 5) {
+            const collabMsg = document.createElement('div');
+            collabMsg.textContent = '✨COLLAB✨';
+            collabMsg.style.position = 'absolute';
+            // Position below the clicked avatar (opposite of value feedback)
+            const avatarRect = clickedAvatar.getBoundingClientRect();
+            collabMsg.style.left = (avatarRect.left + avatarRect.width / 2 - 40) + 'px'; // Center horizontally
+            collabMsg.style.top = (avatarRect.bottom + 10) + 'px'; // Below avatar
+            collabMsg.style.color = 'fuchsia'; // Traditional HTML fuchsia
+            collabMsg.style.fontSize = '14px';
+            collabMsg.style.fontWeight = 'bold';
+            collabMsg.style.pointerEvents = 'none';
+            collabMsg.style.zIndex = '102';
+            collabMsg.style.textAlign = 'center';
+            collabMsg.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+            collabMsg.style.padding = '2px 6px';
+            collabMsg.style.borderRadius = '4px';
+            collabMsg.style.textShadow = '0 0 5px fuchsia, 0 0 10px fuchsia, 0 0 15px fuchsia, 0 0 20px fuchsia';
+            // Animation: grow bigger while fading
+            collabMsg.style.animation = 'collabGrow 2s ease-out forwards';
+            document.body.appendChild(collabMsg);
+
+            // Remove after animation
+            setTimeout(() => {
+                if (collabMsg.parentNode) {
+                    collabMsg.parentNode.removeChild(collabMsg);
+                }
+            }, 2000);
+        }
+    }
+
+    // Remove clicked avatar
+    clickedAvatar.remove();
+    currentSpawned--;
+
+    // Respawn two new avatars
+    spawnTarget();
+    spawnTarget();
+    currentSpawned += 2;
+
+    // Update score
+    score = getValue();
+    updateScoreDisplay();
+
+    if (score >= gameConfig.winScore) {
+        showNextButton();
+    }
+}
+
+function handleEmojiClick(clickedEmoji, event) {
     // Create +1 Value feedback
     const feedback = document.createElement('div');
     feedback.textContent = '+1 Value';
@@ -157,7 +279,11 @@ function handleTargetClick(event) {
     feedback.style.fontSize = '16px';
     feedback.style.fontWeight = 'bold';
     feedback.style.pointerEvents = 'none';
-    feedback.style.animation = 'valueFeedback 1s ease-out forwards';
+    feedback.style.animation = 'valueFeedback 5s ease-out forwards';
+    feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+    feedback.style.padding = '2px 6px';
+    feedback.style.borderRadius = '4px';
+    feedback.style.textShadow = '0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white';
     document.body.appendChild(feedback);
 
     // Remove feedback after animation
@@ -165,24 +291,17 @@ function handleTargetClick(event) {
         if (feedback.parentNode) {
             feedback.parentNode.removeChild(feedback);
         }
-    }, 1000);
+    }, 4000);
 
-    this.remove();
+    clickedEmoji.remove();
     currentSpawned--;
     incrementValue();
     score = getValue();
     updateScoreDisplay();
 
-    // Spawn a new target to replace the clicked one
-    if (gameConfig.targets === 'avatar') {
-        // Avatar mode: maintain exactly maxConcurrent
-        spawnTarget();
-        currentSpawned++;
-    } else {
-        // Emoji mode: spawn replacement
-        spawnTarget();
-        spawnedCount++;
-    }
+    // Spawn replacement
+    spawnTarget();
+    spawnedCount++;
 
     if (score >= gameConfig.winScore) {
         showNextButton();
