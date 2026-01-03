@@ -23,7 +23,7 @@
 </head>
 
 <body style="background-color: #008080; margin: 0; padding: 0; height: 100vh; overflow:hidden;">
-    <div id="diary-icon" class="desktop-icon">
+    <div id="diary-icon" class="desktop-icon" style="left:25px;">
         <img src="../resource/diary_icon.png" alt="Diary Icon">
         <span>diary.txt</span>
     </div>
@@ -47,6 +47,19 @@
         </div>
         <div class="window-content">
             <iframe src="class.html"></iframe>
+        </div>
+    </div>
+    <div id="farm-icon" class="desktop-icon" style="left:140px;">
+        <img src="../resource/farm_icon.png" alt="Farm Icon">
+        <span>farm.exe</span>
+    </div>
+    <div id="farm-window" class="window" style="display: none; left:150px; top: 25px;">
+        <div class="window-title-bar">
+            <span class="window-title">farm.exe</span>
+            <button class="window-close-btn" onclick="closeFarmWindow()">×</button>
+        </div>
+        <div class="window-content">
+            <iframe src="farm.html"></iframe>
         </div>
     </div>
     <button id="start-button" onclick="callItADay()"><img src="../resource/start_icon.png" alt="Start Icon"> call it a

@@ -154,6 +154,8 @@ a:hover {
 .desktop-icon img {
     width: 32px;
     height: 32px;
+    display: block;
+    margin: 0 auto;
 }
 
 .desktop-icon span {
@@ -168,8 +170,8 @@ a:hover {
     position: absolute;
     top: 50px;
     left: 20px;
-    width: 400px;
-    height: 450px;
+    width: 350px;
+    height: 400px;
     max-width: 95vw;
     max-height: 95vh;
     background-color: #c0c0c0;

@@ -7,6 +7,18 @@ function closeClassWindow() {
     document.getElementById('class-window').style.display = 'none';
 }
 
+function closeFarmWindow() {
+    document.getElementById('farm-window').style.display = 'none';
+}
+
+function updateFarmIconVisibility() {
+    const farmIcon = document.getElementById('farm-icon');
+    if (farmIcon) {
+        const currentDay = getDay();
+        farmIcon.style.display = currentDay >= 3 ? 'block' : 'none';
+    }
+}
+
 // Shared Icon Dragger Class
 class IconDragger {
     constructor(iconElement, onClick) {
@@ -395,10 +407,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const diaryWindow = document.getElementById('diary-window');
     const classIcon = document.getElementById('class-icon');
     const classWindow = document.getElementById('class-window');
+    const farmIcon = document.getElementById('farm-icon');
+    const farmWindow = document.getElementById('farm-window');
 
     // Register windows with z-index manager
     windowZIndexManager.registerWindow(diaryWindow);
     windowZIndexManager.registerWindow(classWindow);
+    windowZIndexManager.registerWindow(farmWindow);
 
     // Toggle functions
     function displayDiary() {
@@ -413,25 +428,37 @@ document.addEventListener('DOMContentLoaded', function () {
         windowZIndexManager.updateInteraction(classWindow);
     }
 
+    function displayFarm() {
+        farmWindow.style.display = 'block';
+        // Update interaction when opening window
+        windowZIndexManager.updateInteraction(farmWindow);
+    }
+
     // Add click event listeners to window content areas for interaction tracking
     diaryWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(diaryWindow));
     diaryWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(diaryWindow));
     classWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(classWindow));
     classWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(classWindow));
+    farmWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(farmWindow));
+    farmWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(farmWindow));
 
     // Instantiate icon draggers
     const diaryIconDragger = new IconDragger(diaryIcon, displayDiary);
     const classIconDragger = new IconDragger(classIcon, displayClass);
+    const farmIconDragger = new IconDragger(farmIcon, displayFarm);
 
     // Instantiate window draggers
     const diaryWindowDragger = new WindowDragger(diaryWindow);
     const classWindowDragger = new WindowDragger(classWindow);
+    const farmWindowDragger = new WindowDragger(farmWindow);
 
     // Instantiate close button handlers
     const diaryCloseBtn = diaryWindow.querySelector('.window-close-btn');
     const classCloseBtn = classWindow.querySelector('.window-close-btn');
+    const farmCloseBtn = farmWindow.querySelector('.window-close-btn');
     const diaryCloseHandler = new CloseButtonHandler(diaryCloseBtn, closeDiaryWindow);
     const classCloseHandler = new CloseButtonHandler(classCloseBtn, closeClassWindow);
+    const farmCloseHandler = new CloseButtonHandler(farmCloseBtn, closeFarmWindow);
 
     // Window resizing
     diaryWindow.addEventListener('mousedown', function (e) { startResize(e, diaryWindow); });
@@ -442,7 +469,14 @@ document.addEventListener('DOMContentLoaded', function () {
     classWindow.addEventListener('touchstart', function (e) { startResize(e, classWindow); });
     classWindow.addEventListener('mousemove', function (e) { updateCursor(e, classWindow); });
 
+    farmWindow.addEventListener('mousedown', function (e) { startResize(e, farmWindow); });
+    farmWindow.addEventListener('touchstart', function (e) { startResize(e, farmWindow); });
+    farmWindow.addEventListener('mousemove', function (e) { updateCursor(e, farmWindow); });
+
     // Global resize events
     document.addEventListener('mouseup', endResize);
     document.addEventListener('touchend', endResize);
+
+    // Initialize farm icon visibility
+    updateFarmIconVisibility();
 });

@@ -47,6 +47,10 @@ function updateDayDisplay() {
     if (dayElement) {
         dayElement.textContent = `Day ${getDay()}`;
     }
+    // Also update farm icon visibility when day changes
+    if (typeof updateFarmIconVisibility === 'function') {
+        updateFarmIconVisibility();
+    }
 }
 
 function updateTimeDisplay() {
