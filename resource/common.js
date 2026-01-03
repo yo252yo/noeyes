@@ -103,9 +103,9 @@ function setValue(value) {
     localStorage.setItem('value', value.toString());
 }
 
-function incrementValue() {
+function incrementValue(amount = 1) {
     const currentValue = getValue();
-    setValue(currentValue + 1);
+    setValue(currentValue + amount);
 }
 
 function callItADay() {

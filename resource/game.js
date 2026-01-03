@@ -203,9 +203,7 @@ function handleAvatarClick(clickedAvatar, event) {
 
         // Calculate score: floor(100/distance), capped at 100
         const valueGained = Math.min(100, Math.pow(Math.floor(200 / minDistance), 2));
-        for (let i = 0; i < valueGained; i++) {
-            incrementValue();
-        }
+        incrementValue(valueGained);
 
         // Create value feedback
         const feedback = document.createElement('div');
