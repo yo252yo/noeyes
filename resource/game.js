@@ -1,3 +1,1 @@
-function callItADay() {
-    alert("WIP");
-}
+console.log("TODO");

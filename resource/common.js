@@ -17,3 +17,7 @@ function getStreamers() {
     const stored = localStorage.getItem('twitch_streamers');
     return stored ? JSON.parse(stored) : [];
 }
+
+function callItADay() {
+    alert("WIP");
+}
