@@ -13,6 +13,12 @@ Nice to have:
 * should diary be paginated or big flow? should it appear character by character?
 
 
+
+add corporate sponsor modifiers ???
+
+
+
+
     <!-- <div id="chatters-list" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;">
     </div>
 
