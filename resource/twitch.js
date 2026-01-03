@@ -1,5 +1,6 @@
 const streamers = ['vedal987'];
 const chatters = new Set();
+const MAX_CHATTERS = 200;
 
 // Store streamers in localStorage on initialization
 setStreamers(streamers);
@@ -57,6 +58,12 @@ ws.onmessage = (e) => {
         username = username.toLowerCase();
 
         if (!chatters.has(username)) {
+            // If we've reached the max limit, remove the oldest chatter
+            if (chatters.size >= MAX_CHATTERS) {
+                const firstChatter = chatters.values().next().value;
+                chatters.delete(firstChatter);
+            }
+
             chatters.add(username);
             //console.log('NEW CHATTER:', username);
             console.log('CHATTER SET:', [...chatters]);

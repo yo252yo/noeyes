@@ -6,7 +6,9 @@ Nice to have:
 - OS loading screen
 - Prettify everything
 
+ based on cognitive science disclaimer?
 
+ ideally add another lesson about before the fall explaining that they had class division based on money etc...
 
 * should diary be paginated or big flow? should it appear character by character?
 
