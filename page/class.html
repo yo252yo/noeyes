@@ -96,8 +96,8 @@
             let html = '<ul>';
             availableEntries.forEach(entry => {
                 let linkHtml = entry.html;
-                if (entry.day == currentDay) {
-                    linkHtml = linkHtml.replace('<a ', '<a class="current" ');
+                if (entry.day != currentDay) {
+                    linkHtml = linkHtml.replace('<a ', '<a class="old_link" ');
                 }
                 html += `<li>${linkHtml.replace('<li>', '').replace('</li>', '')}</li>`;
             });

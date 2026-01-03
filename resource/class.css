@@ -45,14 +45,14 @@ li:hover {
 
 a {
     text-decoration: none;
-    color: #800080;
+    color: #0066cc;
     font-weight: bold;
     display: flex;
     align-items: center;
 }
 
-.current {
-    color: #0066cc;
+.old_link {
+    color: #800080;
 }
 
 a:hover {
