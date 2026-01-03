@@ -77,6 +77,7 @@
 
         function generateClassContent() {
             const currentDay = getDay();
+            const maxDay = getMaxAllowedDay();
             const contentDiv = document.getElementById('class-content');
 
             // Get all entries before or equal to current day
@@ -96,7 +97,7 @@
             let html = '<ul>';
             availableEntries.forEach(entry => {
                 let linkHtml = entry.html;
-                if (entry.day != currentDay) {
+                if (entry.day != maxDay) {
                     linkHtml = linkHtml.replace('<a ', '<a class="old_link" ');
                 }
                 html += `<li>${linkHtml.replace('<li>', '').replace('</li>', '')}</li>`;
