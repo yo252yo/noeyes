@@ -5,8 +5,12 @@
 * purchase influencers and chat
 * spawn chat onme at a time like emoji
 
-* need to pause farm and hive when theyre not focused
+* proper +1 streamer
 
+
+* need to pause farm and hive when theyre not focused
+* protect chatters from spawning in the same place
+* update IRC when getting new streamers
 
 * STREAMER LIST RN IS HARDCODED
 * farm starts everyone in the corner maybe on firefox anyway
