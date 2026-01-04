@@ -2,7 +2,7 @@
 let gameConfig = window.gameConfig || {
     targets: 'emoji', // 'emoji', 'avatar', or 'username'
     winScore: 5,
-    maxConcurrent: 10 // null for unlimited (emoji mode), number for avatar mode
+    fixedTargetNb: 10 // null for unlimited (emoji mode), number for avatar mode
 };
 
 const emoji = ['👶', '👦', '👧', '👨', '👩', '🧑', '👴', '👵'];
@@ -54,6 +54,11 @@ function getLighterColor(color) {
     return colorMap[color] || '#ffffff';
 }
 
+// Helper function to check if we're in tutorial mode
+function isTutorial() {
+    return gameConfig.fixedTargetNb > 0;
+}
+
 function startGame() {
     if (gameActive) return;
     gameActive = true;
@@ -62,58 +67,60 @@ function startGame() {
 
     // Spawn targets based on config
     if (gameConfig.targets === 'avatar') {
-        // Avatar mode: spawn exactly maxConcurrent initially and maintain that count
-        for (let i = 0; i < gameConfig.maxConcurrent; i++) {
+        // Avatar mode: spawn exactly fixedTargetNb initially and maintain that count
+        for (let i = 0; i < gameConfig.fixedTargetNb; i++) {
             spawnTarget();
             currentSpawned++;
         }
 
-        // Start att consumption interval for avatars (-1 per second per avatar)
-        avatarAttConsumptionInterval = setInterval(() => {
-            if (currentSpawned > 0) {
-                // Find all avatar elements and show -1 Att feedback for each
-                const avatarElements = document.querySelectorAll('.game-avatar');
-                let totalAttConsumed = 0;
+        // Start att consumption interval for avatars (-1 per second per avatar) - disabled in tutorial mode
+        if (!isTutorial()) {
+            avatarAttConsumptionInterval = setInterval(() => {
+                if (currentSpawned > 0) {
+                    // Find all avatar elements and show -1 Att feedback for each
+                    const avatarElements = document.querySelectorAll('.game-avatar');
+                    let totalAttConsumed = 0;
 
-                avatarElements.forEach(avatarElement => {
-                    // Create -1 Att feedback for this avatar
-                    const rect = avatarElement.getBoundingClientRect();
-                    const feedback = document.createElement('div');
-                    feedback.textContent = '-1 Att';
-                    feedback.style.position = 'absolute';
-                    feedback.style.left = (rect.left + rect.width / 2 - 30) + 'px'; // Center horizontally
-                    feedback.style.top = (rect.top - 10) + 'px'; // Above the avatar
-                    feedback.style.color = '#2196F3'; // Blue color for Att
-                    feedback.style.fontSize = '12px';
-                    feedback.style.fontWeight = 'bold';
-                    feedback.style.pointerEvents = 'none';
-                    feedback.style.animation = 'valueFeedback 1s ease-out forwards';
-                    feedback.style.zIndex = '101';
-                    feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
-                    feedback.style.padding = '2px 6px';
-                    feedback.style.borderRadius = '4px';
-                    feedback.style.textShadow = '0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white';
-                    document.body.appendChild(feedback);
+                    avatarElements.forEach(avatarElement => {
+                        // Create -1 Att feedback for this avatar
+                        const rect = avatarElement.getBoundingClientRect();
+                        const feedback = document.createElement('div');
+                        feedback.textContent = '-1 Att';
+                        feedback.style.position = 'absolute';
+                        feedback.style.left = (rect.left + rect.width / 2 - 30) + 'px'; // Center horizontally
+                        feedback.style.top = (rect.top - 10) + 'px'; // Above the avatar
+                        feedback.style.color = '#2196F3'; // Blue color for Att
+                        feedback.style.fontSize = '12px';
+                        feedback.style.fontWeight = 'bold';
+                        feedback.style.pointerEvents = 'none';
+                        feedback.style.animation = 'valueFeedback 1s ease-out forwards';
+                        feedback.style.zIndex = '101';
+                        feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+                        feedback.style.padding = '2px 6px';
+                        feedback.style.borderRadius = '4px';
+                        feedback.style.textShadow = '0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white';
+                        document.body.appendChild(feedback);
 
-                    // Remove feedback after animation
-                    setTimeout(() => {
-                        if (feedback.parentNode) {
-                            feedback.parentNode.removeChild(feedback);
-                        }
-                    }, 1000);
+                        // Remove feedback after animation
+                        setTimeout(() => {
+                            if (feedback.parentNode) {
+                                feedback.parentNode.removeChild(feedback);
+                            }
+                        }, 1000);
 
-                    totalAttConsumed += 1;
-                });
+                        totalAttConsumed += 1;
+                    });
 
-                if (totalAttConsumed > 0) {
-                    incrementAtt(-totalAttConsumed); // Negative to consume Att
-                    updateAttDisplay(); // Update Att display
+                    if (totalAttConsumed > 0) {
+                        incrementAtt(-totalAttConsumed); // Negative to consume Att
+                        updateAttDisplay(); // Update Att display
+                    }
                 }
-            }
-        }, 1000);
+            }, 1000);
+        }
     } else if (gameConfig.targets === 'username') {
-        // Username mode: spawn exactly maxConcurrent initially and maintain that count
-        for (let i = 0; i < gameConfig.maxConcurrent; i++) {
+        // Username mode: spawn exactly fixedTargetNb initially and maintain that count
+        for (let i = 0; i < gameConfig.fixedTargetNb; i++) {
             spawnTarget();
             currentSpawned++;
         }
@@ -178,7 +185,7 @@ function startGame() {
 }
 
 function spawnTargets() {
-    const maxSpawn = gameConfig.maxConcurrent || 10; // Default to 10 if not set
+    const maxSpawn = gameConfig.fixedTargetNb || 10; // Default to 10 if not set
     const interval = setInterval(() => {
         if (spawnedCount >= maxSpawn) {
             return;
@@ -532,7 +539,7 @@ function getElementDimensions(div) {
     } else if (div.className === 'game-username') {
         // Usernames bounce off walls like other elements
         return {
-            width: parseFloat(div.style.width) + 25,
+            width: parseFloat(div.style.width) * 1.1 + 35,
             height: parseFloat(div.style.height) + 15
         };
     } else { // 'game-avatar'
@@ -584,9 +591,9 @@ function moveTarget(div) {
         let dx = parseFloat(div.dataset.dx);
         let dy = parseFloat(div.dataset.dy);
 
-        // For avatars, scale speed based on Att
+        // For avatars, scale speed based on Att (disabled in tutorial mode)
         let speedScale = 1;
-        if (div.className === 'game-avatar') {
+        if (div.className === 'game-avatar' && !isTutorial()) {
             const currentAtt = getAtt();
             speedScale = Math.min(currentAtt / 100, 1); // 0 if Att=0, 1 if Att>=100
         }
