@@ -1,3 +1,7 @@
+STREAMER LIST RN IS HARDCODED
+2_A should be limited to 2 on any day >2 ?
+
+
 add an infobulle "so far your value has been controlled by our tutorial, from now on youre on your own!"
 
 
