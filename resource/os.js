@@ -9,10 +9,12 @@ function closeClassWindow() {
 
 function closeFarmWindow() {
     document.getElementById('farm-window').style.display = 'none';
+    setFarmOpen(false);
 }
 
 function closeHiveWindow() {
     document.getElementById('hive-window').style.display = 'none';
+    setHiveOpen(false);
 }
 
 function updateFarmIconVisibility() {
@@ -364,8 +366,8 @@ function doResize(e) {
     let newLeft = startLeft;
     let newTop = startTop;
 
-    const minWidth = 200;
-    const minHeight = 200;
+    const minWidth = 250;
+    const minHeight = 250;
 
     // Handle horizontal resizing
     if (resizeDirection.includes('w')) { // west/left
@@ -456,12 +458,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function displayFarm() {
         farmWindow.style.display = 'block';
+        setFarmOpen(true);
         // Update interaction when opening window
         windowZIndexManager.updateInteraction(farmWindow);
     }
 
     function displayHive() {
         hiveWindow.style.display = 'block';
+        setHiveOpen(true);
         // Update interaction when opening window
         windowZIndexManager.updateInteraction(hiveWindow);
     }

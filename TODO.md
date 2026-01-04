@@ -5,8 +5,8 @@
 
 * proper +1 streamer
 
+* theres a bug where all chat disappears
 
-* need to pause farm and hive when theyre not focused
 * protect chatters from spawning in the same place
 * update IRC when getting new streamers
 

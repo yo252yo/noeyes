@@ -170,6 +170,24 @@ function incrementNbChatters(amount = 1) {
     setNbChatters(current + amount);
 }
 
+function getFarmOpen() {
+    const stored = localStorage.getItem('farm_open');
+    return stored ? stored === 'true' : false;
+}
+
+function setFarmOpen(isOpen) {
+    localStorage.setItem('farm_open', isOpen.toString());
+}
+
+function getHiveOpen() {
+    const stored = localStorage.getItem('hive_open');
+    return stored ? stored === 'true' : false;
+}
+
+function setHiveOpen(isOpen) {
+    localStorage.setItem('hive_open', isOpen.toString());
+}
+
 function callItADay() {
     const currentDay = getDay();
     const maxAllowedDay = getMaxAllowedDay();

@@ -94,7 +94,7 @@ function setupGameIntervals() {
     if (gameConfig.targets === 'avatar' && !isTutorial()) {
         // Att consumption for avatars
         gameIntervals.avatarAttConsumption = setInterval(() => {
-            if (activeTargets.length > 0) {
+            if (activeTargets.length > 0 && getFarmOpen()) {
                 activeTargets.forEach(avatarElement => {
                     const rect = avatarElement.getBoundingClientRect();
                     const feedback = document.createElement('div');
@@ -128,7 +128,7 @@ function setupGameIntervals() {
     } else if (gameConfig.targets === 'username') {
         // Att generation for usernames
         gameIntervals.usernameValueGeneration = setInterval(() => {
-            if (activeTargets.length > 0) {
+            if (activeTargets.length > 0 && getHiveOpen()) {
                 activeTargets.forEach(usernameElement => {
                     const rect = usernameElement.getBoundingClientRect();
                     const feedback = document.createElement('div');
