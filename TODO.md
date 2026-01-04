@@ -15,6 +15,14 @@ the click/touch reaction is a bit weird, sometimes it doesnt go through, idk if 
 can you try and overhaul that a little? dont forget that you have access to web search and deepseek for support, as well as the ability to run the website on :8000 (the webserver is already launched
 make sure to keep the game behaviour and logic only work on the polish
 
+* ok so for itch.io i have to bundle the app in a zip and send them, ive done that, they serve it on their side, and it says:
+
+Loading module from “https://html-classic.itch.zone/html/16038256/resource/twitch.js” was blocked because of a disallowed MIME type (“application/xml”).
+
+Loading module from “https://html-classic.itch.zone/html/16038256/resource/game.js” was blocked because of a disallowed MIME type (“application/xml”).
+
+try to look for options, feel free to use web search or deepseek, mb its as simple as specifying file type in the script html tags...
+
 
 
     <!-- <div id="chatters-list" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;">
