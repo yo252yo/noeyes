@@ -25,6 +25,13 @@
                 if (currentAtt > 0) {
                     attElement.textContent = `Att: ${currentAtt}`;
                     attElement.style.display = 'block';
+                    if (currentAtt < 20) {
+                        attElement.style.color = 'red';
+                    } else if (currentAtt <= 80) {
+                        attElement.style.color = 'yellow';
+                    } else {
+                        attElement.style.color = 'blue';
+                    }
                 } else {
                     attElement.style.display = 'none';
                 }
