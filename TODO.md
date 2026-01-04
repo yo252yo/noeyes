@@ -1,3 +1,7 @@
+Now is a good time to go over the whole codebase and refactor as needed, make sure the code is as clean, factored and maintainabled as can be :) thanks!
+
+* next button is broken on firefox
+
 * purchase influencers and chat
 
 * active streamer should be active target, currentSpawned doesnt make much sense as separate variable its the count of spawned things
