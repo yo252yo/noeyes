@@ -1,8 +1,6 @@
 * purchase influencers and chat proper flows and balance
 * allow removal of streamers to alleviate softlock
 
-* add a chat counter somewhere
-
 
 
 
