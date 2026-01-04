@@ -64,7 +64,7 @@ ws.onmessage = (e) => {
 
             chatters.add(username);
             //console.log('NEW CHATTER:', username);
-            console.log('CHATTER SET:', [...chatters]);
+            // console.log('CHATTER SET:', [...chatters]);
 
             // Store chatters in localStorage
             setChatters([...chatters]);
