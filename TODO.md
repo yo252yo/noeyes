@@ -1,4 +1,5 @@
 
+login page to initialize streamer list
 
 
 Nice to have:
