@@ -14,7 +14,7 @@
             <iframe src="screen.html" class="screen-iframe"></iframe>
             <div class="screen-header">
                 <div class="buttons">
-                    <div class="button red"></div>
+                    <div class="button red">X</div>
                     <div class="button yellow"></div>
                     <div class="button green"></div>
                 </div>
@@ -22,6 +22,12 @@
         </div>
         <div class="stand"></div>
     </div>
+    <script>
+        document.querySelector('.button.red').addEventListener('click', function () {
+            localStorage.clear();
+            window.location.reload();
+        });
+    </script>
 </body>
 
 </html>
