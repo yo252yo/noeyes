@@ -13,8 +13,12 @@ let currentSpawned = 0;
 let activeTargets = new Set(); // Track active targets for avatar mode
 let spawnedUsernames = new Set(); // Track spawned usernames for uniqueness
 let usernameValueInterval = null; // Interval for username value generation
+let textTargetManagerInterval = null; // Interval for text target collision manager
 let gameActive = false;
 let nextButton = null;
+
+// Threshold for text target collision detection (in pixels)
+const TEXT_TARGET_COLLISION_THRESHOLD = 40;
 
 function startGame() {
     if (gameActive) return;
@@ -82,6 +86,9 @@ function startGame() {
                 }
             }
         }, 1000);
+
+        // Start text target collision manager (runs every 500ms)
+        textTargetManagerInterval = setInterval(manageTextTargetCollisions, 500);
     } else {
         // Emoji mode: start continuous spawning
         spawnTargets();
@@ -564,11 +571,91 @@ function showNextButton() {
     }
 }
 
+// Manager function for text target collision detection (runs every 500ms)
+function manageTextTargetCollisions() {
+    if (gameConfig.targets !== 'username') return;
+
+    // Get all username targets
+    const usernameTargets = Array.from(document.querySelectorAll('.game-username'));
+    if (usernameTargets.length < 2) return;
+
+    // Sort by y position
+    usernameTargets.sort((a, b) => parseFloat(a.style.top) - parseFloat(b.style.top));
+
+    // Track targets to remove (avoid modifying DOM while iterating)
+    const targetsToRemove = new Set();
+
+    // For each target, check collisions with targets within y threshold range
+    for (let i = 0; i < usernameTargets.length; i++) {
+        const targetA = usernameTargets[i];
+        if (targetsToRemove.has(targetA)) continue;
+
+        const yA = parseFloat(targetA.style.top);
+        const xA = parseFloat(targetA.style.left);
+        const widthA = parseFloat(targetA.style.width);
+        const heightA = parseFloat(targetA.style.height);
+        const centerXA = xA + widthA / 2;
+        const centerYA = yA + heightA / 2;
+
+        // Only check targets within y threshold range (optimization)
+        for (let j = i + 1; j < usernameTargets.length; j++) {
+            const targetB = usernameTargets[j];
+            if (targetsToRemove.has(targetB)) continue;
+
+            const yB = parseFloat(targetB.style.top);
+            if (Math.abs(yB - yA) > TEXT_TARGET_COLLISION_THRESHOLD) {
+                // Since sorted by y, if y difference exceeds threshold, break
+                if (yB - yA > TEXT_TARGET_COLLISION_THRESHOLD) break;
+                continue;
+            }
+
+            const xB = parseFloat(targetB.style.left);
+            const widthB = parseFloat(targetB.style.width);
+            const heightB = parseFloat(targetB.style.height);
+
+            // Check for bounding box overlap
+            const overlap = (xA < xB + widthB) && (xA + widthA > xB) &&
+                (yA < yB + heightB) && (yA + heightA > yB);
+
+            if (overlap) {
+                // Mark both targets for removal
+                targetsToRemove.add(targetA);
+                targetsToRemove.add(targetB);
+                break; // Move to next targetA
+            }
+        }
+    }
+
+    // Remove collided targets and spawn replacements
+    targetsToRemove.forEach(target => {
+        // Remove from spawned usernames tracking
+        const username = target.textContent;
+        spawnedUsernames.delete(username);
+
+        // Remove from DOM
+        target.remove();
+
+        // Decrement count
+        currentSpawned--;
+    });
+
+    // Spawn one replacement for each pair removed
+    const replacementsNeeded = Math.floor(targetsToRemove.size / 2);
+    for (let i = 0; i < replacementsNeeded; i++) {
+        spawnTarget();
+        currentSpawned++;
+    }
+}
+
 // Cleanup function for when game ends
 function cleanupGame() {
     if (usernameValueInterval) {
         clearInterval(usernameValueInterval);
         usernameValueInterval = null;
+    }
+    if (textTargetManagerInterval) {
+        clearInterval(textTargetManagerInterval);
+        textTargetManagerInterval = null;
     }
     // Clear spawned usernames tracking
     spawnedUsernames.clear();
