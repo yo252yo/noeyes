@@ -17,14 +17,9 @@ const min_speed_username = 0.2;
 const max_speed_username = 1;
 
 let score = 0;
-let spawnedCount = 0;
-let currentSpawned = 0;
-let activeTargets = new Set(); // Track active targets for avatar mode
-let activeStreamers = new Set(); // Track active streamer names for avatar mode
+let activeTargets = []; // Unified tracking for all active targets
 let spawnedUsernames = new Set(); // Track spawned usernames for uniqueness
-let usernameValueInterval = null; // Interval for username value generation
-let textTargetManagerInterval = null; // Interval for text target collision manager
-let avatarAttConsumptionInterval = null; // Interval for avatar att consumption
+let gameIntervals = {}; // Centralized interval management
 let gameActive = false;
 let nextButton = null;
 
@@ -66,101 +61,48 @@ function startGame() {
     // Initialize score based on game mode
     score = gameConfig.targets === 'username' ? getAtt() : getValue();
 
-    // Spawn targets based on config
-    if (gameConfig.targets === 'avatar') {
-        // Avatar mode: spawn based on tutorial mode or streamer count
-        let targetCount;
-        if (isTutorial()) {
-            // Tutorial mode: use fixedTargetNb
-            targetCount = gameConfig.fixedTargetNb;
-        } else {
-            // Normal mode: use number of streamers, minimum 1
-            const streamers = getStreamers();
-            targetCount = Math.max(1, streamers.length);
+    // Calculate target count based on game mode
+    let targetCount;
+    if (isTutorial()) {
+        targetCount = gameConfig.fixedTargetNb;
+    } else {
+        switch (gameConfig.targets) {
+            case 'avatar':
+                targetCount = Math.max(1, getStreamers().length);
+                break;
+            case 'username':
+                targetCount = Math.max(1, getNbChatters());
+                break;
+            default:
+                targetCount = gameConfig.fixedTargetNb || 10;
         }
+    }
 
-        for (let i = 0; i < targetCount; i++) {
-            spawnTarget();
-            currentSpawned++;
-        }
+    // Spawn initial targets
+    for (let i = 0; i < targetCount; i++) {
+        spawnTarget();
+    }
 
-        // Start att consumption interval for avatars (-1 per second per avatar) - disabled in tutorial mode
-        if (!isTutorial()) {
-            avatarAttConsumptionInterval = setInterval(() => {
-                if (currentSpawned > 0) {
-                    // Find all avatar elements and show -1 Att feedback for each
-                    const avatarElements = document.querySelectorAll('.game-avatar');
-                    let totalAttConsumed = 0;
+    // Set up mode-specific intervals
+    setupGameIntervals();
 
-                    avatarElements.forEach(avatarElement => {
-                        // Create -1 Att feedback for this avatar
-                        const rect = avatarElement.getBoundingClientRect();
-                        const feedback = document.createElement('div');
-                        feedback.textContent = '-1 Att';
-                        feedback.style.position = 'absolute';
-                        feedback.style.left = (rect.left + rect.width / 2 - 30) + 'px'; // Center horizontally
-                        feedback.style.top = (rect.top - 10) + 'px'; // Above the avatar
-                        feedback.style.color = '#2196F3'; // Blue color for Att
-                        feedback.style.fontSize = '12px';
-                        feedback.style.fontWeight = 'bold';
-                        feedback.style.pointerEvents = 'none';
-                        feedback.style.animation = 'valueFeedback 1s ease-out forwards';
-                        feedback.style.zIndex = '101';
-                        feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
-                        feedback.style.padding = '2px 6px';
-                        feedback.style.borderRadius = '4px';
-                        feedback.style.textShadow = '0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white';
-                        document.body.appendChild(feedback);
+    // Update score display
+    updateScoreDisplay();
+}
 
-                        // Remove feedback after animation
-                        setTimeout(() => {
-                            if (feedback.parentNode) {
-                                feedback.parentNode.removeChild(feedback);
-                            }
-                        }, 1000);
-
-                        totalAttConsumed += 1;
-                    });
-
-                    if (totalAttConsumed > 0) {
-                        incrementAtt(-totalAttConsumed); // Negative to consume Att
-                        updateAttDisplay(); // Update Att display
-                    }
-                }
-            }, 1000);
-        }
-    } else if (gameConfig.targets === 'username') {
-        // Username mode: spawn based on tutorial mode or chatter count
-        let targetCount;
-        if (isTutorial()) {
-            // Tutorial mode: use fixedTargetNb
-            targetCount = gameConfig.fixedTargetNb;
-        } else {
-            // Normal mode: use number of chatters, minimum 1
-            const nbChatters = getNbChatters();
-            targetCount = Math.max(1, nbChatters);
-        }
-
-        for (let i = 0; i < targetCount; i++) {
-            spawnTarget();
-            currentSpawned++;
-        }
-        // Start att generation interval for usernames (+1 per second per username)
-        usernameValueInterval = setInterval(() => {
-            if (currentSpawned > 0) {
-                // Find all username elements and show +1 feedback for each
-                const usernameElements = document.querySelectorAll('.game-username');
-                let totalAttGained = 0;
-
-                usernameElements.forEach(usernameElement => {
-                    // Create +1 Att feedback for this username
-                    const rect = usernameElement.getBoundingClientRect();
+function setupGameIntervals() {
+    if (gameConfig.targets === 'avatar' && !isTutorial()) {
+        // Att consumption for avatars
+        gameIntervals.avatarAttConsumption = setInterval(() => {
+            if (activeTargets.length > 0) {
+                activeTargets.forEach(avatarElement => {
+                    const rect = avatarElement.getBoundingClientRect();
                     const feedback = document.createElement('div');
-                    feedback.textContent = '+1 Att';
+                    feedback.textContent = '-1 Att';
                     feedback.style.position = 'absolute';
-                    feedback.style.left = (rect.left + rect.width / 2 - 30) + 'px'; // Center horizontally
-                    feedback.style.top = (rect.top - 10) + 'px'; // Above the username
-                    feedback.style.color = '#2196F3'; // Blue color for Att
+                    feedback.style.left = (rect.left + rect.width / 2 - 30) + 'px';
+                    feedback.style.top = (rect.top - 10) + 'px';
+                    feedback.style.color = '#2196F3';
                     feedback.style.fontSize = '12px';
                     feedback.style.fontWeight = 'bold';
                     feedback.style.pointerEvents = 'none';
@@ -172,62 +114,80 @@ function startGame() {
                     feedback.style.textShadow = '0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white';
                     document.body.appendChild(feedback);
 
-                    // Remove feedback after animation
                     setTimeout(() => {
                         if (feedback.parentNode) {
                             feedback.parentNode.removeChild(feedback);
                         }
                     }, 1000);
-
-                    totalAttGained += 1;
                 });
 
-                if (totalAttGained > 0) {
-                    incrementAtt(totalAttGained);
-                    score = getAtt();
-                    updateScoreDisplay();
+                incrementAtt(-activeTargets.length);
+                updateAttDisplay();
+            }
+        }, 1000);
+    } else if (gameConfig.targets === 'username') {
+        // Att generation for usernames
+        gameIntervals.usernameValueGeneration = setInterval(() => {
+            if (activeTargets.length > 0) {
+                activeTargets.forEach(usernameElement => {
+                    const rect = usernameElement.getBoundingClientRect();
+                    const feedback = document.createElement('div');
+                    feedback.textContent = '+1 Att';
+                    feedback.style.position = 'absolute';
+                    feedback.style.left = (rect.left + rect.width / 2 - 30) + 'px';
+                    feedback.style.top = (rect.top - 10) + 'px';
+                    feedback.style.color = '#2196F3';
+                    feedback.style.fontSize = '12px';
+                    feedback.style.fontWeight = 'bold';
+                    feedback.style.pointerEvents = 'none';
+                    feedback.style.animation = 'valueFeedback 1s ease-out forwards';
+                    feedback.style.zIndex = '101';
+                    feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+                    feedback.style.padding = '2px 6px';
+                    feedback.style.borderRadius = '4px';
+                    feedback.style.textShadow = '0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white';
+                    document.body.appendChild(feedback);
 
-                    if (score >= gameConfig.winScore) {
-                        showNextButton();
-                    }
+                    setTimeout(() => {
+                        if (feedback.parentNode) {
+                            feedback.parentNode.removeChild(feedback);
+                        }
+                    }, 1000);
+                });
+
+                incrementAtt(activeTargets.length);
+                score = getAtt();
+                updateScoreDisplay();
+
+                if (score >= gameConfig.winScore) {
+                    showNextButton();
                 }
             }
         }, 1000);
 
-        // Start text target collision manager (runs every 500ms)
-        textTargetManagerInterval = setInterval(manageTextTargetCollisions, 500);
-    } else {
-        // Emoji mode: start continuous spawning
-        spawnTargets();
+        // Text target collision manager
+        gameIntervals.textTargetCollision = setInterval(manageTextTargetCollisions, 500);
+    } else if (gameConfig.targets === 'emoji') {
+        // Continuous spawning for emoji mode
+        const maxSpawn = gameConfig.fixedTargetNb || 10;
+        gameIntervals.emojiSpawning = setInterval(() => {
+            if (activeTargets.length >= maxSpawn) return;
+            spawnTarget();
+        }, 1000);
     }
-
-    // Update score display
-    updateScoreDisplay();
-}
-
-function spawnTargets() {
-    const maxSpawn = gameConfig.fixedTargetNb || 10; // Default to 10 if not set
-    const interval = setInterval(() => {
-        if (spawnedCount >= maxSpawn) {
-            return;
-        }
-
-        spawnTarget();
-        spawnedCount++;
-    }, 1000); // Spawn one every second
 }
 
 async function spawnTarget() {
     let div;
     if (gameConfig.targets === 'avatar') {
         div = await createAvatarDiv();
-        activeTargets.add(div); // Track avatar for distance calculations
     } else if (gameConfig.targets === 'username') {
         div = createUsernameDiv();
     } else {
         div = createEmojiDiv();
     }
 
+    activeTargets.push(div); // Add to unified tracking
     document.body.appendChild(div);
 
     // Start moving
@@ -281,7 +241,8 @@ async function createAvatarDiv() {
 
     if (storedStreamers.length > 0) {
         // Filter out streamers that are already active
-        const availableStreamers = storedStreamers.filter(s => !activeStreamers.has(s));
+        const activeStreamerNames = activeTargets.map(target => target.dataset.streamer);
+        const availableStreamers = storedStreamers.filter(s => !activeStreamerNames.includes(s));
 
         if (availableStreamers.length > 0) {
             // Use random streamer from available ones
@@ -294,9 +255,6 @@ async function createAvatarDiv() {
         // Fallback to hardcoded streamer
         streamer = 'vedal987';
     }
-
-    // Add to active streamers tracking
-    activeStreamers.add(streamer);
 
     const avatarUrl = await getAvatarUrl(streamer);
 
@@ -454,25 +412,31 @@ function createUsernameDiv() {
 
 // Click handler for emoji mode: simple +1 scoring
 function handleEmojiClick(clickedEmoji, event) {
+    // Remove from active targets
+    const index = activeTargets.indexOf(clickedEmoji);
+    if (index > -1) {
+        activeTargets.splice(index, 1);
+    }
+
     // Create +1 Value feedback
     createValueFeedback('+1 Value', event.clientX, event.clientY, 4000);
 
     clickedEmoji.remove();
-    currentSpawned--;
     incrementValue();
 
     updateScoreAfterClick();
 
     // Spawn replacement
     spawnTarget();
-    spawnedCount++;
 }
 
 // Click handler for avatar mode: distance-based scoring
 function handleAvatarClick(clickedAvatar, event) {
     // Remove clicked avatar from tracking
-    activeTargets.delete(clickedAvatar);
-    activeStreamers.delete(clickedAvatar.dataset.streamer);
+    const clickedIndex = activeTargets.indexOf(clickedAvatar);
+    if (clickedIndex > -1) {
+        activeTargets.splice(clickedIndex, 1);
+    }
 
     // Find closest remaining avatar
     let closestAvatar = null;
@@ -494,10 +458,11 @@ function handleAvatarClick(clickedAvatar, event) {
 
     // Remove closest avatar if found
     if (closestAvatar) {
-        activeTargets.delete(closestAvatar);
-        activeStreamers.delete(closestAvatar.dataset.streamer);
+        const closestIndex = activeTargets.indexOf(closestAvatar);
+        if (closestIndex > -1) {
+            activeTargets.splice(closestIndex, 1);
+        }
         closestAvatar.remove();
-        currentSpawned--;
 
         // Calculate score: floor(100/distance), capped at 100
         const valueGained = Math.min(100, Math.pow(Math.floor(200 / minDistance), 2));
@@ -540,17 +505,14 @@ function handleAvatarClick(clickedAvatar, event) {
 
     // Remove clicked avatar
     clickedAvatar.remove();
-    currentSpawned--;
 
     // Respawn avatars based on tutorial mode and streamer count
     const streamers = getStreamers();
     if (!isTutorial() && streamers.length < 2) {
         spawnTarget();
-        currentSpawned += 1;
     } else {
         spawnTarget();
         spawnTarget();
-        currentSpawned += 2;
     }
 
     updateScoreAfterClick();
@@ -797,15 +759,16 @@ function manageTextTargetCollisions() {
 
     // Remove collided targets and spawn replacements
     targetsToRemove.forEach(target => {
-        // Remove from spawned usernames tracking
+        // Remove from active targets and spawned usernames tracking
+        const targetIndex = activeTargets.indexOf(target);
+        if (targetIndex > -1) {
+            activeTargets.splice(targetIndex, 1);
+        }
         const username = target.textContent;
         spawnedUsernames.delete(username);
 
         // Remove from DOM
         target.remove();
-
-        // Decrement count
-        currentSpawned--;
 
         // Update nb_chatters if not in tutorial mode
         if (!isTutorial()) {
@@ -818,28 +781,30 @@ function manageTextTargetCollisions() {
         const replacementsNeeded = Math.floor(targetsToRemove.size / 2);
         for (let i = 0; i < replacementsNeeded; i++) {
             spawnTarget();
-            currentSpawned++;
         }
     }
 }
 
 // Cleanup function for when game ends
 function cleanupGame() {
-    if (usernameValueInterval) {
-        clearInterval(usernameValueInterval);
-        usernameValueInterval = null;
-    }
-    if (textTargetManagerInterval) {
-        clearInterval(textTargetManagerInterval);
-        textTargetManagerInterval = null;
-    }
-    if (avatarAttConsumptionInterval) {
-        clearInterval(avatarAttConsumptionInterval);
-        avatarAttConsumptionInterval = null;
-    }
-    // Clear tracking sets
+    // Clear all active intervals
+    Object.values(gameIntervals).forEach(interval => {
+        if (interval) {
+            clearInterval(interval);
+        }
+    });
+    gameIntervals = {};
+
+    // Clear all active targets from DOM
+    activeTargets.forEach(target => {
+        if (target.parentNode) {
+            target.parentNode.removeChild(target);
+        }
+    });
+
+    // Clear tracking data
+    activeTargets.length = 0;
     spawnedUsernames.clear();
-    activeStreamers.clear();
 }
 
 // Start game when page loads
