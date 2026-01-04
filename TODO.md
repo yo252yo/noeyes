@@ -11,6 +11,7 @@ let currentSpawned = 0;
 * add an infobulle "so far your value has been controlled by our tutorial, from now on youre on your own!"
 * sometimes clicks dont register i think mb because they conflict with drag?
 * add minimum window size of like 200x200
+* farm starts everyone in the corner maybe on firefox anyway
 
 
 

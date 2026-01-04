@@ -156,8 +156,8 @@ function callItADay() {
 
     if (maxAllowedDay > currentDay) {
         incrementDay();
-        showPopup('Welcome to a new day', '/resource/day_icon.png');
+        showPopup('Welcome to a new day', '/resource/icons/day.png');
     } else {
-        showPopup('You must complete all your classes for the day before you can log off', '/resource/error_icon.png', true);
+        showPopup('You must complete all your classes for the day before you can log off', '/resource/icons/error.png', true);
     }
 }
