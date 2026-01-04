@@ -117,7 +117,7 @@ async function spawnTarget() {
     document.body.appendChild(div);
 
     // Start moving
-    moveEmoji(div);
+    moveTarget(div);
 }
 
 function createEmojiDiv() {
@@ -304,29 +304,23 @@ function createUsernameDiv() {
     return div;
 }
 
-function handleUsernameClick(event) {
-    // Reverse direction on click (no scoring, no consumption)
-    let dx = parseFloat(this.dataset.dx);
-    let dy = parseFloat(this.dataset.dy);
+// Click handler for emoji mode: simple +1 scoring
+function handleEmojiClick(clickedEmoji, event) {
+    // Create +1 Value feedback
+    createValueFeedback('+1 Value', event.clientX, event.clientY, 4000);
 
-    // Reverse both directions
-    this.dataset.dx = -dx;
-    this.dataset.dy = -dy;
+    clickedEmoji.remove();
+    currentSpawned--;
+    incrementValue();
+
+    updateScoreAfterClick();
+
+    // Spawn replacement
+    spawnTarget();
+    spawnedCount++;
 }
 
-function handleTargetClick(event) {
-    if (gameConfig.targets === 'avatar') {
-        // Avatar mode: distance-based scoring
-        handleAvatarClick(this, event);
-    } else if (gameConfig.targets === 'username') {
-        // Username mode: handled by handleUsernameClick
-        handleUsernameClick.call(this, event);
-    } else {
-        // Emoji mode: simple +1 scoring
-        handleEmojiClick(this, event);
-    }
-}
-
+// Click handler for avatar mode: distance-based scoring
 function handleAvatarClick(clickedAvatar, event) {
     // Remove clicked avatar from tracking
     activeTargets.delete(clickedAvatar);
@@ -360,29 +354,7 @@ function handleAvatarClick(clickedAvatar, event) {
         incrementValue(valueGained);
 
         // Create value feedback
-        const feedback = document.createElement('div');
-        feedback.textContent = `+${valueGained} Value`;
-        feedback.style.position = 'absolute';
-        feedback.style.left = event.clientX + 'px';
-        feedback.style.top = event.clientY + 'px';
-        feedback.style.color = '#4CAF50';
-        feedback.style.fontSize = '16px';
-        feedback.style.fontWeight = 'bold';
-        feedback.style.pointerEvents = 'none';
-        feedback.style.animation = 'valueFeedback 1s ease-out forwards';
-        feedback.style.zIndex = '101';
-        feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
-        feedback.style.padding = '2px 6px';
-        feedback.style.borderRadius = '4px';
-        feedback.style.textShadow = '0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white';
-        document.body.appendChild(feedback);
-
-        // Remove feedback after animation
-        setTimeout(() => {
-            if (feedback.parentNode) {
-                feedback.parentNode.removeChild(feedback);
-            }
-        }, 2000);
+        createValueFeedback(`+${valueGained} Value`, event.clientX, event.clientY, 2000);
 
         // Create COLLAB message for high scores (>5)
         if (valueGained > 5) {
@@ -425,56 +397,87 @@ function handleAvatarClick(clickedAvatar, event) {
     spawnTarget();
     currentSpawned += 2;
 
-    // Update score
-    score = getValue();
-    updateScoreDisplay();
+    updateScoreAfterClick();
+}
 
-    if (score >= gameConfig.winScore) {
-        showNextButton();
+// Click handler for username mode: reverse direction (no scoring, no consumption)
+function handleUsernameClick(event) {
+    // Reverse direction on click (no scoring, no consumption)
+    let dx = parseFloat(this.dataset.dx);
+    let dy = parseFloat(this.dataset.dy);
+
+    // Reverse both directions
+    this.dataset.dx = -dx;
+    this.dataset.dy = -dy;
+}
+
+// Main click handler that routes to appropriate handler based on target type
+function handleTargetClick(event) {
+    if (gameConfig.targets === 'avatar') {
+        // Avatar mode: distance-based scoring
+        handleAvatarClick(this, event);
+    } else if (gameConfig.targets === 'username') {
+        // Username mode: reverse direction only
+        handleUsernameClick.call(this, event);
+    } else {
+        // Emoji mode: simple +1 scoring
+        handleEmojiClick(this, event);
     }
 }
 
-function handleEmojiClick(clickedEmoji, event) {
-    // Create +1 Value feedback
-    const feedback = document.createElement('div');
-    feedback.textContent = '+1 Value';
-    feedback.style.position = 'absolute';
-    feedback.style.left = event.clientX + 'px';
-    feedback.style.top = event.clientY + 'px';
-    feedback.style.color = '#4CAF50';
-    feedback.style.fontSize = '16px';
-    feedback.style.fontWeight = 'bold';
-    feedback.style.pointerEvents = 'none';
-    feedback.style.animation = 'valueFeedback 5s ease-out forwards';
-    feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
-    feedback.style.padding = '2px 6px';
-    feedback.style.borderRadius = '4px';
-    feedback.style.textShadow = '0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white';
-    document.body.appendChild(feedback);
-
-    // Remove feedback after animation
-    setTimeout(() => {
-        if (feedback.parentNode) {
-            feedback.parentNode.removeChild(feedback);
-        }
-    }, 4000);
-
-    clickedEmoji.remove();
-    currentSpawned--;
-    incrementValue();
-    score = getValue();
-    updateScoreDisplay();
-
-    // Spawn replacement
-    spawnTarget();
-    spawnedCount++;
-
-    if (score >= gameConfig.winScore) {
-        showNextButton();
+// Get element dimensions for collision detection based on target type
+function getElementDimensions(div) {
+    if (div.className === 'game-emoji') {
+        // Add extra hitbox for emojis because they wiggle
+        return { width: 55, height: 50 };
+    } else if (div.className === 'game-username') {
+        // Usernames bounce off walls like other elements
+        return {
+            width: parseFloat(div.style.width) + 20,
+            height: parseFloat(div.style.height) + 15
+        };
+    } else { // 'game-avatar'
+        return { width: 65, height: 50 };
     }
 }
 
-function moveEmoji(div) {
+// Detect wall collisions and return collision information
+function detectWallCollision(x, y, width, height) {
+    const collisions = {
+        left: x <= 0,
+        right: x >= window.innerWidth - width,
+        top: y <= 0,
+        bottom: y >= window.innerHeight - height
+    };
+
+    const hasCollision = collisions.left || collisions.right || collisions.top || collisions.bottom;
+
+    return { hasCollision, collisions };
+}
+
+// Handle wall collision response by updating position and velocity
+function handleWallCollision(div, x, y, dx, dy, width, height) {
+    let newX = x;
+    let newY = y;
+    let newDx = dx;
+    let newDy = dy;
+
+    const { collisions } = detectWallCollision(x, y, width, height);
+
+    // Bounce off walls
+    if (collisions.left || collisions.right) {
+        newDx = -newDx; // Reverse horizontal direction
+        newX = Math.max(0, Math.min(window.innerWidth - width, newX));
+    }
+    if (collisions.top || collisions.bottom) {
+        newDy = -newDy; // Reverse vertical direction
+        newY = Math.max(0, Math.min(window.innerHeight - height, newY));
+    }
+
+    return { x: newX, y: newY, dx: newDx, dy: newDy };
+}
+
+function moveTarget(div) {
     function animate() {
         if (!document.body.contains(div)) return; // Stop if removed
 
@@ -488,31 +491,15 @@ function moveEmoji(div) {
         x += dx;
         y += dy;
 
-        // Get element dimensions for proper collision detection
-        let width, height;
+        // Get element dimensions for collision detection
+        const { width, height } = getElementDimensions(div);
 
-        if (div.className === 'game-emoji') {
-            // Add extra hitbox for emojis because they wiggle
-            width = 55;
-            height = 50;
-        } else if (div.className === 'game-username') {
-            // Usernames bounce off walls like other elements
-            width = parseFloat(div.style.width) + 20;
-            height = parseFloat(div.style.height) + 15;
-        } else { // 'game-avatar'
-            width = 65;
-            height = 50;
-        }
-
-        // Bounce off walls
-        if (x <= 0 || x >= window.innerWidth - width) {
-            dx = -dx; // Reverse horizontal direction
-            x = Math.max(0, Math.min(window.innerWidth - width, x));
-        }
-        if (y <= 0 || y >= window.innerHeight - height) {
-            dy = -dy; // Reverse vertical direction
-            y = Math.max(0, Math.min(window.innerHeight - height, y));
-        }
+        // Handle wall collisions
+        const collisionResult = handleWallCollision(div, x, y, dx, dy, width, height);
+        x = collisionResult.x;
+        y = collisionResult.y;
+        dx = collisionResult.dx;
+        dy = collisionResult.dy;
 
         div.style.left = x + 'px';
         div.style.top = y + 'px';
@@ -524,6 +511,44 @@ function moveEmoji(div) {
 
     animate();
 }
+
+// Common function to create value feedback display
+function createValueFeedback(text, x, y, duration = 1000) {
+    const feedback = document.createElement('div');
+    feedback.textContent = text;
+    feedback.style.position = 'absolute';
+    feedback.style.left = x + 'px';
+    feedback.style.top = y + 'px';
+    feedback.style.color = '#4CAF50';
+    feedback.style.fontSize = '16px';
+    feedback.style.fontWeight = 'bold';
+    feedback.style.pointerEvents = 'none';
+    feedback.style.animation = 'valueFeedback 1s ease-out forwards';
+    feedback.style.zIndex = '101';
+    feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+    feedback.style.padding = '2px 6px';
+    feedback.style.borderRadius = '4px';
+    feedback.style.textShadow = '0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white';
+    document.body.appendChild(feedback);
+
+    // Remove feedback after animation
+    setTimeout(() => {
+        if (feedback.parentNode) {
+            feedback.parentNode.removeChild(feedback);
+        }
+    }, duration);
+}
+
+// Common function to handle score updates and win checking
+function updateScoreAfterClick() {
+    score = getValue();
+    updateScoreDisplay();
+
+    if (score >= gameConfig.winScore) {
+        showNextButton();
+    }
+}
+
 
 function updateScoreDisplay() {
     const scoreElement = document.getElementById('score-display');
