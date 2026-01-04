@@ -365,7 +365,7 @@ function doResize(e) {
     let newTop = startTop;
 
     const minWidth = 200;
-    const minHeight = 150;
+    const minHeight = 200;
 
     // Handle horizontal resizing
     if (resizeDirection.includes('w')) { // west/left
