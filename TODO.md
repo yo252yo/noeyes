@@ -9,7 +9,7 @@
 * vertical scroll messes with bounce. in general the boundaries are pretyt shit
 * i dont understand but when im hiding and reopening the iframed farm and hive, everything spawns in the top left corner, wtf
 * file:// protocol isnt supported =x
-* game.js has major polish problems.
+* game.js has major polish problems. See if you can fix it by migrating the game to pixi.min.js, could make it a fixed game space on top of the whole thing.
 the wall collision is very approximative, not to mention it doesnt deal well with vertical scrolling.
 the click/touch reaction is a bit weird, sometimes it doesnt go through, idk if its because the zindex isnt high enough or maybe its registered as a drag not a touch ? id rather be lenient and count drags as click rather than miss click, as long as we dont double count. ofc im saying click but it also includes touch for mobile screens.
 can you try and overhaul that a little? dont forget that you have access to web search and deepseek for support, as well as the ability to run the website on :8000 (the webserver is already launched
