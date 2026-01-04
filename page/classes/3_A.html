@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Attention Economy</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../../resource/class.css">
+    <script src="../../resource/common.js"></script>
+    <script src="../../resource/fake_users.js"></script>
+    <script>
+        window.gameConfig = {
+            targets: 'username',
+            winScore: 30,
+            maxConcurrent: 2
+        };
+        setValue(50);
+    </script>
+    <script src="../../resource/game.js"></script>
+</head>
+
+<body style="margin: 0; padding: 20px;">
+    <h1 class="welcome-text">The Attention Economy</h1>
+
+    <p><span class="highlight-text">Chatters</span> produce <span class="highlight-text">Value</span> by existing and
+        getting <span class="highlight-text">Attention</span>.</p>
+
+    <p>They produce 1 <span class="highlight-text">Value</span> every second they are alive, but they disappear when
+        they hit the edges.</p>
+
+    <div class="info-panel">
+        <p>Click on <span class="highlight-text">Chatters</span> to redirect their attention elsewhere.</p>
+        <p>Collect 30 Value to continue.</p>
+        <p>Can you manage their attention? (<span id="score-display">0/30</span>)</p>
+    </div>
+
+    <div style="text-align: center; display:none;" id="next-button">
+        <a href="../screen.html" class="next-button">
+            <img src="/resource/next_icon.png" alt="Continue" />
+            COMPLETE
+        </a>
+    </div>
+
+</body>
+
+</html>
