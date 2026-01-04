@@ -1,5 +1,5 @@
 // Streamer arrays
-const streamers = ['vedal987', 'dougdoug', 'shindigs'];
+const streamers = ['vedal987'];
 const suggested_streamers = ['vedal987', 'dougdoug', 'shindigs', 'probelive', 'ellie_minibot', 'tenma'];
 
 // Store streamers in localStorage on initialization
