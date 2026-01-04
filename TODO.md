@@ -1,13 +1,17 @@
+* influencer farm appears empty but mb its because displayStreamers is not defined
 
-* next button is broken on firefox
+* next button is broken on firefox and calendar icon
 
 * purchase influencers and chat
+* spawn chat onme at a time like emoji
 
 * need to pause farm and hive when theyre not focused
+
+
 * STREAMER LIST RN IS HARDCODED
 * farm starts everyone in the corner maybe on firefox anyway
 
-
+* file:// protocol isnt supported =x
 
     <!-- <div id="chatters-list" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;">
     </div>
