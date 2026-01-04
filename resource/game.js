@@ -390,6 +390,7 @@ function createUsernameDiv() {
     // Filter out already spawned usernames
     const availableChatters = chatters.filter(chatter => !spawnedUsernames.has(chatter));
 
+    console.log(chatters);
     if (availableChatters.length > 0) {
         // Use random available chatter
         username = availableChatters[Math.floor(Math.random() * availableChatters.length)];
@@ -444,10 +445,14 @@ function createUsernameDiv() {
     // Enhanced Windows 98 style text shadow/glow effect with random color tint
     div.style.textShadow = `1px 1px 0px #ffffff, -1px -1px 0px #808080, 0 0 3px ${randomTextColor}`;
 
-    div.textContent = username;
+    div.innerHTML = username;
 
     // Calculate size based on text length
-    const textWidth = username.length * 8 + 16; // Rough estimate
+    let textWidth = username.length * 8 + 16; // Rough estimate
+    if (username.startsWith('<i>')) {
+        textWidth -= 6 * 8;
+    }
+
     const width = Math.max(80, Math.min(150, textWidth));
     const height = 20; // Reduced height
 
