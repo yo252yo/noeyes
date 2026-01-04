@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Influencers</title>
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../../resource/class.css">
+    <script src="../../resource/common.js"></script>
+    <script>
+        function updateScoreDisplay() {
+            const value = getValue();
+            const scoreDisplay = document.getElementById('score-display');
+            scoreDisplay.textContent = value + '/200';
+
+            const nextButtonContainer = document.getElementById('next-button');
+            if (value >= 200) {
+                nextButtonContainer.style.display = 'block';
+            } else {
+                nextButtonContainer.style.display = 'none';
+            }
+        }
+
+        // Update on page load
+        document.addEventListener('DOMContentLoaded', updateScoreDisplay);
+
+        // Update periodically in case value changes from other sources
+        setInterval(updateScoreDisplay, 1000);
+    </script>
+</head>
+
+<body style="margin: 0; padding: 20px;">
+    <h1 class="welcome-text">It's up to you now!</h1>
+
+    <p>Use your farm and your hive to produce <span class="highlight-text">Value</span>!</p>
+
+    <div class="info-panel">
+        <p>Accumulate 200 <span class="highlight-text">Value</span> to validate this class. (<span
+                id="score-display">0/200</span>)
+        </p>
+        <p>How you do it is entirely up to <span class="highlight-text">YOU</span>!</p>
+    </div>
+
+    <div style="text-align: center; display:none;" id="next-button">
+        <a href="4_4.html" class="next-button">
+            <img src="/resource/next_icon.png" alt="Continue" />
+            END
+        </a>
+    </div>
+</body>
+
+</html>

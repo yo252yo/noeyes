@@ -44,7 +44,7 @@ function incrementDay() {
 function updateDayDisplay() {
     const dayElement = document.getElementById('day-text');
     if (dayElement) {
-        dayElement.textContent = `Day ${getDay()}`;
+        dayElement.textContent = `Day ${getDay()}/7`;
     }
     // Also update farm icon visibility when day changes
     if (typeof updateFarmIconVisibility === 'function') {
