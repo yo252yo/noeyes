@@ -50,6 +50,10 @@ function updateDayDisplay() {
     if (typeof updateFarmIconVisibility === 'function') {
         updateFarmIconVisibility();
     }
+    // Also update hive icon visibility when day changes
+    if (typeof updateHiveIconVisibility === 'function') {
+        updateHiveIconVisibility();
+    }
 }
 
 function updateTimeDisplay() {

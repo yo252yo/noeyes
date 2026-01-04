@@ -11,11 +11,23 @@ function closeFarmWindow() {
     document.getElementById('farm-window').style.display = 'none';
 }
 
+function closeHiveWindow() {
+    document.getElementById('hive-window').style.display = 'none';
+}
+
 function updateFarmIconVisibility() {
     const farmIcon = document.getElementById('farm-icon');
     if (farmIcon) {
         const currentDay = getDay();
         farmIcon.style.display = currentDay >= 3 ? 'block' : 'none';
+    }
+}
+
+function updateHiveIconVisibility() {
+    const hiveIcon = document.getElementById('hive-icon');
+    if (hiveIcon) {
+        const currentDay = getDay();
+        hiveIcon.style.display = currentDay >= 4 ? 'block' : 'none';
     }
 }
 
@@ -28,6 +40,8 @@ class IconDragger {
         this.offsetX = 0;
         this.offsetY = 0;
         this.dragStarted = false;
+        this.startX = 0;
+        this.startY = 0;
         this.init();
     }
 
@@ -42,6 +56,8 @@ class IconDragger {
         this.isDragging = true;
         this.dragStarted = false;
         const coords = this.getClientCoords(e);
+        this.startX = coords.clientX;
+        this.startY = coords.clientY;
         this.offsetX = coords.clientX - this.iconElement.offsetLeft;
         this.offsetY = coords.clientY - this.iconElement.offsetTop;
         this.iconElement.style.cursor = 'grabbing';
@@ -50,10 +66,17 @@ class IconDragger {
 
     moveDrag(e) {
         if (this.isDragging) {
-            this.dragStarted = true;
             const coords = this.getClientCoords(e);
-            this.iconElement.style.left = (coords.clientX - this.offsetX) + 'px';
-            this.iconElement.style.top = (coords.clientY - this.offsetY) + 'px';
+            const deltaX = coords.clientX - this.startX;
+            const deltaY = coords.clientY - this.startY;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            // Only start dragging if moved more than 5 pixels
+            if (distance > 5) {
+                this.dragStarted = true;
+                this.iconElement.style.left = (coords.clientX - this.offsetX) + 'px';
+                this.iconElement.style.top = (coords.clientY - this.offsetY) + 'px';
+            }
             e.preventDefault();
         }
     }
@@ -409,11 +432,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const classWindow = document.getElementById('class-window');
     const farmIcon = document.getElementById('farm-icon');
     const farmWindow = document.getElementById('farm-window');
+    const hiveIcon = document.getElementById('hive-icon');
+    const hiveWindow = document.getElementById('hive-window');
 
     // Register windows with z-index manager
     windowZIndexManager.registerWindow(diaryWindow);
     windowZIndexManager.registerWindow(classWindow);
     windowZIndexManager.registerWindow(farmWindow);
+    windowZIndexManager.registerWindow(hiveWindow);
 
     // Toggle functions
     function displayDiary() {
@@ -434,6 +460,12 @@ document.addEventListener('DOMContentLoaded', function () {
         windowZIndexManager.updateInteraction(farmWindow);
     }
 
+    function displayHive() {
+        hiveWindow.style.display = 'block';
+        // Update interaction when opening window
+        windowZIndexManager.updateInteraction(hiveWindow);
+    }
+
     // Add click event listeners to window content areas for interaction tracking
     diaryWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(diaryWindow));
     diaryWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(diaryWindow));
@@ -441,24 +473,30 @@ document.addEventListener('DOMContentLoaded', function () {
     classWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(classWindow));
     farmWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(farmWindow));
     farmWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(farmWindow));
+    hiveWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(hiveWindow));
+    hiveWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(hiveWindow));
 
     // Instantiate icon draggers
     const diaryIconDragger = new IconDragger(diaryIcon, displayDiary);
     const classIconDragger = new IconDragger(classIcon, displayClass);
     const farmIconDragger = new IconDragger(farmIcon, displayFarm);
+    const hiveIconDragger = new IconDragger(hiveIcon, displayHive);
 
     // Instantiate window draggers
     const diaryWindowDragger = new WindowDragger(diaryWindow);
     const classWindowDragger = new WindowDragger(classWindow);
     const farmWindowDragger = new WindowDragger(farmWindow);
+    const hiveWindowDragger = new WindowDragger(hiveWindow);
 
     // Instantiate close button handlers
     const diaryCloseBtn = diaryWindow.querySelector('.window-close-btn');
     const classCloseBtn = classWindow.querySelector('.window-close-btn');
     const farmCloseBtn = farmWindow.querySelector('.window-close-btn');
+    const hiveCloseBtn = hiveWindow.querySelector('.window-close-btn');
     const diaryCloseHandler = new CloseButtonHandler(diaryCloseBtn, closeDiaryWindow);
     const classCloseHandler = new CloseButtonHandler(classCloseBtn, closeClassWindow);
     const farmCloseHandler = new CloseButtonHandler(farmCloseBtn, closeFarmWindow);
+    const hiveCloseHandler = new CloseButtonHandler(hiveCloseBtn, closeHiveWindow);
 
     // Window resizing
     diaryWindow.addEventListener('mousedown', function (e) { startResize(e, diaryWindow); });
@@ -473,10 +511,16 @@ document.addEventListener('DOMContentLoaded', function () {
     farmWindow.addEventListener('touchstart', function (e) { startResize(e, farmWindow); });
     farmWindow.addEventListener('mousemove', function (e) { updateCursor(e, farmWindow); });
 
+    hiveWindow.addEventListener('mousedown', function (e) { startResize(e, hiveWindow); });
+    hiveWindow.addEventListener('touchstart', function (e) { startResize(e, hiveWindow); });
+    hiveWindow.addEventListener('mousemove', function (e) { updateCursor(e, hiveWindow); });
+
     // Global resize events
     document.addEventListener('mouseup', endResize);
     document.addEventListener('touchend', endResize);
 
     // Initialize farm icon visibility
     updateFarmIconVisibility();
+    // Initialize hive icon visibility
+    updateHiveIconVisibility();
 });

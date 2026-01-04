@@ -1,3 +1,5 @@
+add an infobulle "so far your value has been controlled by our tutorial, from now on youre on your own!"
+
 
 login page to initialize streamer list
 
