@@ -61,29 +61,7 @@ function startGame() {
     // Initialize score based on game mode
     score = gameConfig.targets === 'username' ? getAtt() : getValue();
 
-    // Calculate target count based on game mode
-    let targetCount;
-    if (isTutorial()) {
-        targetCount = gameConfig.fixedTargetNb;
-    } else {
-        switch (gameConfig.targets) {
-            case 'avatar':
-                targetCount = Math.max(1, getStreamers().length);
-                break;
-            case 'username':
-                targetCount = Math.max(1, getNbChatters());
-                break;
-            default:
-                targetCount = gameConfig.fixedTargetNb || 10;
-        }
-    }
-
-    // Spawn initial targets
-    for (let i = 0; i < targetCount; i++) {
-        spawnTarget();
-    }
-
-    // Set up mode-specific intervals
+    // Set up mode-specific intervals (handles all spawning logic)
     setupGameIntervals();
 
     // Update score display
@@ -91,10 +69,10 @@ function startGame() {
 }
 
 function setupGameIntervals() {
-    if (gameConfig.targets === 'avatar' && !isTutorial()) {
+    if (gameConfig.targets === 'avatar') {
         // Att consumption for avatars
         gameIntervals.avatarAttConsumption = setInterval(() => {
-            if (activeTargets.length > 0 && getFarmOpen()) {
+            if (!isTutorial() && activeTargets.length > 0 && getFarmOpen()) {
                 activeTargets.forEach(avatarElement => {
                     const rect = avatarElement.getBoundingClientRect();
                     const feedback = document.createElement('div');
@@ -125,10 +103,16 @@ function setupGameIntervals() {
                 updateAttDisplay();
             }
         }, 1000);
+
+        gameIntervals.avatarSpawning = setInterval(() => {
+            const maxSpawn = gameConfig.fixedTargetNb || Math.max(1, getStreamers().length);
+            if (activeTargets.length >= maxSpawn) return;
+            spawnTarget();
+        }, 1000);
     } else if (gameConfig.targets === 'username') {
         // Att generation for usernames
         gameIntervals.usernameValueGeneration = setInterval(() => {
-            if (activeTargets.length > 0 && getHiveOpen()) {
+            if (activeTargets.length > 0 && (isTutorial() || getHiveOpen())) {
                 activeTargets.forEach(usernameElement => {
                     const rect = usernameElement.getBoundingClientRect();
                     const feedback = document.createElement('div');
@@ -167,11 +151,18 @@ function setupGameIntervals() {
 
         // Text target collision manager
         gameIntervals.textTargetCollision = setInterval(manageTextTargetCollisions, 500);
+
+        // Continuous spawning for username mode
+        gameIntervals.usernameSpawning = setInterval(() => {
+            const maxSpawn = gameConfig.fixedTargetNb || Math.max(1, getNbChatters());
+            console.log(maxSpawn);
+            if (activeTargets.length >= maxSpawn) return;
+            spawnTarget();
+        }, 1000);
     } else if (gameConfig.targets === 'emoji') {
         // Continuous spawning for emoji mode
-        const maxSpawn = gameConfig.fixedTargetNb || 10;
         gameIntervals.emojiSpawning = setInterval(() => {
-            if (activeTargets.length >= maxSpawn) return;
+            if (activeTargets.length >= gameConfig.fixedTargetNb) return;
             spawnTarget();
         }, 1000);
     }
@@ -521,16 +512,6 @@ function handleAvatarClick(clickedAvatar, event) {
 
     // Remove clicked avatar
     clickedAvatar.remove();
-
-    // Respawn avatars based on tutorial mode and streamer count
-    const streamers = getStreamers();
-    if (!isTutorial() && streamers.length < 2) {
-        spawnTarget();
-    } else {
-        spawnTarget();
-        spawnTarget();
-    }
-
     updateScoreAfterClick();
 }
 
@@ -773,6 +754,16 @@ function manageTextTargetCollisions() {
         }
     }
 
+
+    // Update nb_chatters if not in tutorial mode
+    let nbToRemove = -1 * Math.ceil(targetsToRemove.size / 2);
+    console.log("size" + targetsToRemove.size + "nbtr" + nbToRemove);
+    if (isTutorial()) {
+        gameConfig.fixedTargetNb += nbToRemove;
+    } else {
+        incrementNbChatters(nbToRemove);
+    }
+
     // Remove collided targets and spawn replacements
     targetsToRemove.forEach(target => {
         // Remove from active targets and spawned usernames tracking
@@ -786,19 +777,8 @@ function manageTextTargetCollisions() {
         // Remove from DOM
         target.remove();
 
-        // Update nb_chatters if not in tutorial mode
-        if (!isTutorial()) {
-            incrementNbChatters(-1);
-        }
     });
 
-    // Spawn one replacement for each pair removed (only in tutorial mode)
-    if (isTutorial()) {
-        const replacementsNeeded = Math.floor(targetsToRemove.size / 2);
-        for (let i = 0; i < replacementsNeeded; i++) {
-            spawnTarget();
-        }
-    }
 }
 
 // Cleanup function for when game ends

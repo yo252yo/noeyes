@@ -1,17 +1,12 @@
-* next button is broken on firefox and calendar icon
-
-* purchase influencers and chat
-* spawn chat onme at a time like emoji
-
-* proper +1 streamer
-
-* theres a bug where all chat disappears
-
+* on itch only? next button is broken on firefox and calendar icon
+* purchase influencers and chat proper flows and balance
+* allow removal of streamers to alleviate softlock
 * protect chatters from spawning in the same place
 * update IRC when getting new streamers
-
+* add a chat counter somewhere
 * STREAMER LIST RN IS HARDCODED
 * farm starts everyone in the corner maybe on firefox anyway
+* vertical scroll messes with bounce. in general the boundaries are pretyt shit
 
 * file:// protocol isnt supported =x
 
