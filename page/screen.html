@@ -7,7 +7,7 @@
     <title>Screen</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <script type="module">
-        import { getValue, getAtt, getDay, callItADay } from '../resource/common.js';
+        import { getValue, getAtt, getDay, callItADay, closePopup } from '../resource/common.js';
         import { closeDiaryWindow, closeClassWindow, closeFarmWindow, closeHiveWindow } from '../resource/os.js';
 
         // Make functions available globally for onclick handlers
@@ -15,6 +15,7 @@
         window.closeClassWindow = closeClassWindow;
         window.closeFarmWindow = closeFarmWindow;
         window.closeHiveWindow = closeHiveWindow;
+        window.closePopup = closePopup;
         window.callItADay = callItADay;
 
         // Update value display every 300ms
