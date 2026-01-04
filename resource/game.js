@@ -7,6 +7,15 @@ let gameConfig = window.gameConfig || {
 
 const emoji = ['👶', '👦', '👧', '👨', '👩', '🧑', '👴', '👵'];
 const borderColors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'magenta', 'lime', 'maroon', 'navy', 'olive', 'teal', 'aqua', 'fuchsia'];
+
+// Speed configuration variables for easy tweaking
+const min_speed_emoji = 1;
+const max_speed_emoji = 3;
+const min_speed_avatar = 1;
+const max_speed_avatar = 3;
+const min_speed_username = 0.2;
+const max_speed_username = 1;
+
 let score = 0;
 let spawnedCount = 0;
 let currentSpawned = 0;
@@ -19,6 +28,30 @@ let nextButton = null;
 
 // Threshold for text target collision detection (in pixels)
 const TEXT_TARGET_COLLISION_THRESHOLD = 40;
+
+// Helper function to get a lighter shade of a color for gradients
+function getLighterColor(color) {
+    // Simple color lightening - for named colors, return a lighter version
+    const colorMap = {
+        'red': '#ff6666',
+        'blue': '#6666ff',
+        'green': '#66ff66',
+        'yellow': '#ffff66',
+        'purple': '#ff66ff',
+        'orange': '#ffaa66',
+        'pink': '#ff66aa',
+        'cyan': '#66ffff',
+        'magenta': '#ff66ff',
+        'lime': '#aaff66',
+        'maroon': '#aa6666',
+        'navy': '#6666aa',
+        'olive': '#aaaa66',
+        'teal': '#66aaaa',
+        'aqua': '#66ffff',
+        'fuchsia': '#ff66ff'
+    };
+    return colorMap[color] || '#ffffff';
+}
 
 function startGame() {
     if (gameActive) return;
@@ -150,7 +183,7 @@ function createEmojiDiv() {
     div.style.top = startY + 'px';
 
     // Random velocity components
-    const speed = 1 + Math.random() * 2; // Random speed between 1-4 pixels per frame
+    const speed = min_speed_emoji + Math.random() * (max_speed_emoji - min_speed_emoji);
     const angle = Math.random() * 2 * Math.PI;
     const dx = Math.cos(angle) * speed;
     const dy = Math.sin(angle) * speed;
@@ -205,7 +238,7 @@ async function createAvatarDiv() {
     div.style.top = startY + 'px';
 
     // Random velocity components
-    const speed = 1 + Math.random() * 2; // Random speed between 1-4 pixels per frame
+    const speed = min_speed_avatar + Math.random() * (max_speed_avatar - min_speed_avatar);
     const angle = Math.random() * 2 * Math.PI;
     const dx = Math.cos(angle) * speed;
     const dy = Math.sin(angle) * speed;
@@ -255,8 +288,13 @@ function createUsernameDiv() {
     // Track spawned username
     spawnedUsernames.add(username);
 
-    // Get random border color for Windows 98 style
-    const randomColor = borderColors[Math.floor(Math.random() * borderColors.length)];
+    // Get random colors for outrageous 90s/00s web design
+    const randomBgColor = borderColors[Math.floor(Math.random() * borderColors.length)];
+    // Get contrasting text/border color (different from background)
+    let randomTextColor = borderColors[Math.floor(Math.random() * borderColors.length)];
+    while (randomTextColor === randomBgColor) {
+        randomTextColor = borderColors[Math.floor(Math.random() * borderColors.length)];
+    }
 
     const div = document.createElement('div');
     div.className = 'game-username';
@@ -267,22 +305,30 @@ function createUsernameDiv() {
     div.style.fontFamily = '"MS Sans Serif", Tahoma, sans-serif';
     div.style.fontSize = '12px';
     div.style.fontWeight = 'bold';
-    div.style.color = '#000';
-    div.style.backgroundColor = '#c0c0c0';
-    div.style.border = `2px outset #c0c0c0`;
-    div.style.padding = '4px 8px';
+    div.style.color = randomTextColor;
+
+    // Outrageous 90s web design: random bright background with gradient
+    div.style.background = `linear-gradient(45deg, ${randomBgColor}, ${getLighterColor(randomBgColor)})`;
+    div.style.border = `4px outset ${randomTextColor}`;
+    div.style.borderRadius = '50px'; // Oval/pill shape for that web 1.0 feel
+    div.style.padding = '2px 8px'; // Smaller padding for compact size
     div.style.whiteSpace = 'nowrap';
     div.style.textAlign = 'center';
+    div.style.lineHeight = '1.2'; // Better line height for vertical centering
+    div.style.display = 'flex';
+    div.style.alignItems = 'center';
+    div.style.justifyContent = 'center';
+    div.style.boxShadow = `0 0 10px ${randomBgColor}, inset 0 0 10px rgba(255,255,255,0.3)`;
 
-    // Windows 98 style text shadow/glow effect
-    div.style.textShadow = '1px 1px 0px #ffffff, -1px -1px 0px #808080';
+    // Enhanced Windows 98 style text shadow/glow effect with random color tint
+    div.style.textShadow = `1px 1px 0px #ffffff, -1px -1px 0px #808080, 0 0 3px ${randomTextColor}`;
 
     div.textContent = username;
 
     // Calculate size based on text length
     const textWidth = username.length * 8 + 16; // Rough estimate
     const width = Math.max(80, Math.min(150, textWidth));
-    const height = 24;
+    const height = 20; // Reduced height
 
     div.style.width = width + 'px';
     div.style.height = height + 'px';
@@ -294,7 +340,7 @@ function createUsernameDiv() {
     div.style.top = startY + 'px';
 
     // Random velocity components (slower for usernames)
-    const speed = 0.5 + Math.random() * 1.5; // Random speed between 0.5-2 pixels per frame
+    const speed = min_speed_username + Math.random() * (max_speed_username - min_speed_username);
     const angle = Math.random() * 2 * Math.PI;
     const dx = Math.cos(angle) * speed;
     const dy = Math.sin(angle) * speed;
@@ -440,7 +486,7 @@ function getElementDimensions(div) {
     } else if (div.className === 'game-username') {
         // Usernames bounce off walls like other elements
         return {
-            width: parseFloat(div.style.width) + 20,
+            width: parseFloat(div.style.width) + 25,
             height: parseFloat(div.style.height) + 15
         };
     } else { // 'game-avatar'
