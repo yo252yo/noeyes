@@ -1,9 +1,10 @@
 // Streamer arrays
 const streamers = ['vedal987', 'dougdoug', 'shindigs'];
-const suggested_streamers = ['vedal987', 'dougdoug', 'shindigs'];
+const suggested_streamers = ['vedal987', 'dougdoug', 'shindigs', 'probelive', 'ellie_minibot', 'tenma'];
 
 // Store streamers in localStorage on initialization
 setStreamers(streamers);
+setSuggestedStreamers(suggested_streamers);
 
 
 // Avatar URLs for streamers - simple dictionary storage
@@ -47,57 +48,4 @@ async function getAvatarUrl(username) {
     // Fallback to default avatar
     streamerAvatars[username] = DEFAULT_AVATAR;
     return DEFAULT_AVATAR;
-}
-
-function displayStreamers() {
-    const allStreamers = suggested_streamers;
-    const userStreamers = getStreamers(); // Get user's current streamers from localStorage
-    const container = document.querySelector('.streamers-container') || document.createElement('div');
-    container.className = 'streamers-container';
-    container.innerHTML = '';
-
-    // Separate suggested and non-suggested streamers
-    const suggestedStreamers = [];
-    const regularStreamers = [];
-
-    allStreamers.forEach(username => {
-        if (userStreamers.includes(username)) {
-            suggestedStreamers.push(username);
-        } else {
-            regularStreamers.push(username);
-        }
-    });
-
-    // Function to create streamer element
-    const createStreamerElement = async (username, isSuggested) => {
-        const streamerDiv = document.createElement('div');
-        streamerDiv.className = 'streamer-item' + (isSuggested ? ' suggested' : '');
-
-        const avatarImg = document.createElement('img');
-        avatarImg.className = 'streamer-avatar';
-        avatarImg.alt = `${username} avatar`;
-
-        const nameSpan = document.createElement('span');
-        nameSpan.className = 'streamer-name';
-        nameSpan.textContent = username;
-
-        streamerDiv.appendChild(avatarImg);
-        streamerDiv.appendChild(nameSpan);
-        container.appendChild(streamerDiv);
-
-        // Load avatar
-        const avatarUrl = await getAvatarUrl(username);
-        avatarImg.src = avatarUrl;
-    };
-
-    // Display regular streamers first
-    regularStreamers.forEach(username => createStreamerElement(username, false));
-
-    // Then display suggested streamers (appear pushed and at bottom)
-    suggestedStreamers.forEach(username => createStreamerElement(username, true));
-
-    // Add to page if not already present
-    if (!document.querySelector('.streamers-container')) {
-        document.body.appendChild(container);
-    }
 }

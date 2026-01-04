@@ -16,6 +16,15 @@ function getStreamers() {
     return stored ? JSON.parse(stored) : [];
 }
 
+function setSuggestedStreamers(suggestedStreamers) {
+    localStorage.setItem('twitch_suggested_streamers', JSON.stringify(suggestedStreamers));
+}
+
+function getSuggestedStreamers() {
+    const stored = localStorage.getItem('twitch_suggested_streamers');
+    return stored ? JSON.parse(stored) : [];
+}
+
 function getDay() {
     const stored = localStorage.getItem('current_day');
     return stored ? parseInt(stored, 10) : 1;

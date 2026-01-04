@@ -336,7 +336,47 @@
     <div id="overlay" class="overlay" onclick="closeColorPicker()"></div>
 
     <script>
-        displayStreamers();
+        function buildStreamerList() {
+            const userStreamers = getStreamers(); // Get user's current streamers from localStorage
+            const container = document.querySelector('.streamers-container') || document.createElement('div');
+            container.className = 'streamers-container';
+            container.innerHTML = '';
+
+            // Get streamers from suggested list that are NOT in user's streamer list
+            const availableStreamers = getSuggestedStreamers().filter(username => !userStreamers.includes(username));
+
+            // Function to create streamer element
+            const createStreamerElement = async (username) => {
+                const streamerDiv = document.createElement('div');
+                streamerDiv.className = 'streamer-item';
+
+                const avatarImg = document.createElement('img');
+                avatarImg.className = 'streamer-avatar';
+                avatarImg.alt = `${username} avatar`;
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'streamer-name';
+                nameSpan.textContent = username;
+
+                streamerDiv.appendChild(avatarImg);
+                streamerDiv.appendChild(nameSpan);
+                container.appendChild(streamerDiv);
+
+                // Load avatar
+                const avatarUrl = await getAvatarUrl(username);
+                avatarImg.src = avatarUrl;
+            };
+
+            // Display available streamers
+            availableStreamers.forEach(username => createStreamerElement(username));
+
+            // Add to page if not already present
+            if (!document.querySelector('.streamers-container')) {
+                document.body.appendChild(container);
+            }
+        }
+
+        buildStreamerList();
 
         function openColorPicker() {
             document.getElementById('color-picker-popup').style.display = 'block';

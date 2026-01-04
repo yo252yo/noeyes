@@ -1,5 +1,3 @@
-* influencer farm appears empty but mb its because displayStreamers is not defined
-
 * next button is broken on firefox and calendar icon
 
 * purchase influencers and chat
@@ -54,4 +52,3 @@ another lesson about before the fall explaining that they had class division bas
 * add OS start
 * post on itch with screenshots and descriptions
 * mb adjust speed for phone screens
-
