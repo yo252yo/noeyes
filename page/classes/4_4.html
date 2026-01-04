@@ -8,25 +8,51 @@
     <link rel="stylesheet" href="../../resource/css/style.css">
     <link rel="stylesheet" href="../../resource/css/class.css">
     <script type="module">
-        import { setMaxAllowedDay } from '../../resource/common.js';
-        setMaxAllowedDay(5);
+        import { getValue } from '../../resource/common.js';
+
+        window.updateScoreDisplay = function () {
+            const value = getValue();
+            const scoreDisplay = document.getElementById('score-display');
+            scoreDisplay.textContent = value + '/500';
+
+            const nextButtonContainer = document.getElementById('next-button');
+            if (value >= 500) {
+                nextButtonContainer.style.display = 'block';
+            } else {
+                nextButtonContainer.style.display = 'none';
+            }
+        };
+
+        // Update on page load
+        document.addEventListener('DOMContentLoaded', window.updateScoreDisplay);
+
+        // Update periodically in case value changes from other sources
+        setInterval(window.updateScoreDisplay, 1000);
     </script>
 </head>
 
 <body style="margin: 0; padding: 20px;">
-    <h1 class="welcome-text">You're already a pro!</h1>
+    <h1 class="welcome-text">It's up to you now!</h1>
 
-    <p>You're well on your way to the big choice!</p>
+    <p>Use your farm and your hive to produce <span class="highlight-text">Value</span>!</p>
 
     <div class="info-panel">
-        Tomorrow, you will get to meet new <span class="highlight-text">Influencers</span> and expand your <span
-            class="highlight-text">Economy</span> even further!
+        <b>What kind of manager are you?</b>
+        <p>You can be try to be the fastest of the class, or take your own leisurely time.
+        </p>
+        <p>How you do it is entirely up to <span class="highlight-text">YOU</span>!</p>
     </div>
 
-    <div style="text-align: center;">
-        <a href="../class.html" class="next-button">
+    <div class="info-panel">
+        <p>Accumulate 500 <span class="highlight-text">Value</span> to validate this class. (<span
+                id="score-display">0/500</span>)
+        </p>
+    </div>
+
+    <div style="text-align: center; display:none;" id="next-button">
+        <a href="4_5.html" class="next-button">
             <img src="../../resource/icons/next.png" alt="Continue" />
-            END
+            NEXT
         </a>
     </div>
 </body>

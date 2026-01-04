@@ -1,10 +1,10 @@
 * purchase influencers and chat proper flows and balance
 * allow removal of streamers to alleviate softlock
 the second streamer should cost like 50 value cause we know we have that, the third should be much more.
-the price for day 5 should be more like 500
+
 mb chat can be priced in att? and then i dont have to kill streamers lol
 
-" you can go fast or take your time, how do you want to play?
+" 
 
 add farmbot feature
 
@@ -60,6 +60,7 @@ Don't forget to include the pixi library where you use it :)
 * add sound effect
 * add disclaimer/explanation about cognitive science
 * post on itch with screenshots and descriptions
+* achivevements for certification every day
 
 ==================
 
