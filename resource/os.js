@@ -2,20 +2,20 @@
 import { getDay, setFarmOpen, setHiveOpen, updateDayDisplay, updateTimeDisplay } from './common.js';
 
 export function closeDiaryWindow() {
-    document.getElementById('diary-window').style.display = 'none';
+    document.getElementById('diary-window').style.visibility = 'hidden';
 }
 
 export function closeClassWindow() {
-    document.getElementById('class-window').style.display = 'none';
+    document.getElementById('class-window').style.visibility = 'hidden';
 }
 
 export function closeFarmWindow() {
-    document.getElementById('farm-window').style.display = 'none';
+    document.getElementById('farm-window').style.visibility = 'hidden';
     setFarmOpen(false);
 }
 
 export function closeHiveWindow() {
-    document.getElementById('hive-window').style.display = 'none';
+    document.getElementById('hive-window').style.visibility = 'hidden';
     setHiveOpen(false);
 }
 
@@ -227,7 +227,7 @@ class WindowZIndexManager {
     updateZIndices() {
         // Sort windows by last interaction time (most recent first), but only consider visible windows
         const visibleWindows = Array.from(this.windows.entries())
-            .filter(([windowElement]) => windowElement.style.display !== 'none')
+            .filter(([windowElement]) => windowElement.style.visibility !== 'hidden')
             .sort((a, b) => a[1] - b[1]);
 
         // Assign z-index starting from baseZIndex, incrementing for each visible window
@@ -447,26 +447,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Toggle functions
     function displayDiary() {
-        diaryWindow.style.display = 'block';
+        diaryWindow.style.visibility = 'visible';
         // Update interaction when opening window
         windowZIndexManager.updateInteraction(diaryWindow);
     }
 
     function displayClass() {
-        classWindow.style.display = 'block';
+        classWindow.style.visibility = 'visible';
         // Update interaction when opening window
         windowZIndexManager.updateInteraction(classWindow);
     }
 
     function displayFarm() {
-        farmWindow.style.display = 'block';
+        farmWindow.style.visibility = 'visible';
         setFarmOpen(true);
         // Update interaction when opening window
         windowZIndexManager.updateInteraction(farmWindow);
     }
 
     function displayHive() {
-        hiveWindow.style.display = 'block';
+        hiveWindow.style.visibility = 'visible';
         setHiveOpen(true);
         // Update interaction when opening window
         windowZIndexManager.updateInteraction(hiveWindow);

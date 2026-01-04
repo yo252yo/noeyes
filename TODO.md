@@ -7,7 +7,7 @@
 * STREAMER LIST RN IS HARDCODED
 * farm starts everyone in the corner maybe on firefox anyway
 * vertical scroll messes with bounce. in general the boundaries are pretyt shit
-* i dont understand but when im hiding and reopening the iframed farm and hive, everything spawns in the top left corner, wtf
+* I think chat usernames can accidentally collide with the divs of the +1Att notifications, can you double check for sure, i saw some chat usernames just disappear
 
 
 
