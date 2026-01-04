@@ -23,6 +23,7 @@ let activeTargets = new Set(); // Track active targets for avatar mode
 let spawnedUsernames = new Set(); // Track spawned usernames for uniqueness
 let usernameValueInterval = null; // Interval for username value generation
 let textTargetManagerInterval = null; // Interval for text target collision manager
+let avatarAttConsumptionInterval = null; // Interval for avatar att consumption
 let gameActive = false;
 let nextButton = null;
 
@@ -56,7 +57,8 @@ function getLighterColor(color) {
 function startGame() {
     if (gameActive) return;
     gameActive = true;
-    score = getValue();
+    // Initialize score based on game mode
+    score = gameConfig.targets === 'username' ? getAtt() : getValue();
 
     // Spawn targets based on config
     if (gameConfig.targets === 'avatar') {
@@ -65,28 +67,23 @@ function startGame() {
             spawnTarget();
             currentSpawned++;
         }
-    } else if (gameConfig.targets === 'username') {
-        // Username mode: spawn exactly maxConcurrent initially and maintain that count
-        for (let i = 0; i < gameConfig.maxConcurrent; i++) {
-            spawnTarget();
-            currentSpawned++;
-        }
-        // Start value generation interval for usernames (+1 per second per username)
-        usernameValueInterval = setInterval(() => {
-            if (currentSpawned > 0) {
-                // Find all username elements and show +1 feedback for each
-                const usernameElements = document.querySelectorAll('.game-username');
-                let totalValueGained = 0;
 
-                usernameElements.forEach(usernameElement => {
-                    // Create +1 Value feedback for this username
-                    const rect = usernameElement.getBoundingClientRect();
+        // Start att consumption interval for avatars (-1 per second per avatar)
+        avatarAttConsumptionInterval = setInterval(() => {
+            if (currentSpawned > 0) {
+                // Find all avatar elements and show -1 Att feedback for each
+                const avatarElements = document.querySelectorAll('.game-avatar');
+                let totalAttConsumed = 0;
+
+                avatarElements.forEach(avatarElement => {
+                    // Create -1 Att feedback for this avatar
+                    const rect = avatarElement.getBoundingClientRect();
                     const feedback = document.createElement('div');
-                    feedback.textContent = '+1 Value';
+                    feedback.textContent = '-1 Att';
                     feedback.style.position = 'absolute';
                     feedback.style.left = (rect.left + rect.width / 2 - 30) + 'px'; // Center horizontally
-                    feedback.style.top = (rect.top - 10) + 'px'; // Above the username
-                    feedback.style.color = '#4CAF50';
+                    feedback.style.top = (rect.top - 10) + 'px'; // Above the avatar
+                    feedback.style.color = '#2196F3'; // Blue color for Att
                     feedback.style.fontSize = '12px';
                     feedback.style.fontWeight = 'bold';
                     feedback.style.pointerEvents = 'none';
@@ -105,12 +102,61 @@ function startGame() {
                         }
                     }, 1000);
 
-                    totalValueGained += 1;
+                    totalAttConsumed += 1;
                 });
 
-                if (totalValueGained > 0) {
-                    incrementValue(totalValueGained);
-                    score = getValue();
+                if (totalAttConsumed > 0) {
+                    incrementAtt(-totalAttConsumed); // Negative to consume Att
+                    updateAttDisplay(); // Update Att display
+                }
+            }
+        }, 1000);
+    } else if (gameConfig.targets === 'username') {
+        // Username mode: spawn exactly maxConcurrent initially and maintain that count
+        for (let i = 0; i < gameConfig.maxConcurrent; i++) {
+            spawnTarget();
+            currentSpawned++;
+        }
+        // Start att generation interval for usernames (+1 per second per username)
+        usernameValueInterval = setInterval(() => {
+            if (currentSpawned > 0) {
+                // Find all username elements and show +1 feedback for each
+                const usernameElements = document.querySelectorAll('.game-username');
+                let totalAttGained = 0;
+
+                usernameElements.forEach(usernameElement => {
+                    // Create +1 Att feedback for this username
+                    const rect = usernameElement.getBoundingClientRect();
+                    const feedback = document.createElement('div');
+                    feedback.textContent = '+1 Att';
+                    feedback.style.position = 'absolute';
+                    feedback.style.left = (rect.left + rect.width / 2 - 30) + 'px'; // Center horizontally
+                    feedback.style.top = (rect.top - 10) + 'px'; // Above the username
+                    feedback.style.color = '#2196F3'; // Blue color for Att
+                    feedback.style.fontSize = '12px';
+                    feedback.style.fontWeight = 'bold';
+                    feedback.style.pointerEvents = 'none';
+                    feedback.style.animation = 'valueFeedback 1s ease-out forwards';
+                    feedback.style.zIndex = '101';
+                    feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+                    feedback.style.padding = '2px 6px';
+                    feedback.style.borderRadius = '4px';
+                    feedback.style.textShadow = '0 0 5px white, 0 0 10px white, 0 0 15px white, 0 0 20px white';
+                    document.body.appendChild(feedback);
+
+                    // Remove feedback after animation
+                    setTimeout(() => {
+                        if (feedback.parentNode) {
+                            feedback.parentNode.removeChild(feedback);
+                        }
+                    }, 1000);
+
+                    totalAttGained += 1;
+                });
+
+                if (totalAttGained > 0) {
+                    incrementAtt(totalAttGained);
+                    score = getAtt();
                     updateScoreDisplay();
 
                     if (score >= gameConfig.winScore) {
@@ -538,11 +584,18 @@ function moveTarget(div) {
         let dx = parseFloat(div.dataset.dx);
         let dy = parseFloat(div.dataset.dy);
 
+        // For avatars, scale speed based on Att
+        let speedScale = 1;
+        if (div.className === 'game-avatar') {
+            const currentAtt = getAtt();
+            speedScale = Math.min(currentAtt / 100, 1); // 0 if Att=0, 1 if Att>=100
+        }
+
         let x = parseFloat(div.style.left);
         let y = parseFloat(div.style.top);
 
-        x += dx;
-        y += dy;
+        x += dx * speedScale;
+        y += dy * speedScale;
 
         // Get element dimensions for collision detection
         const { width, height } = getElementDimensions(div);
@@ -607,6 +660,19 @@ function updateScoreDisplay() {
     const scoreElement = document.getElementById('score-display');
     if (scoreElement) {
         scoreElement.textContent = `${score}/${gameConfig.winScore}`;
+    }
+}
+
+function updateAttDisplay() {
+    const attElement = document.getElementById('att-text');
+    if (attElement) {
+        const currentAtt = getAtt();
+        if (currentAtt > 0) {
+            attElement.textContent = `Att: ${currentAtt}`;
+            attElement.style.display = 'block';
+        } else {
+            attElement.style.display = 'none';
+        }
     }
 }
 
@@ -703,6 +769,10 @@ function cleanupGame() {
         clearInterval(textTargetManagerInterval);
         textTargetManagerInterval = null;
     }
+    if (avatarAttConsumptionInterval) {
+        clearInterval(avatarAttConsumptionInterval);
+        avatarAttConsumptionInterval = null;
+    }
     // Clear spawned usernames tracking
     spawnedUsernames.clear();
 }
@@ -713,8 +783,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.gameConfig) {
         gameConfig = { ...gameConfig, ...window.gameConfig };
     }
-    // Check if score is already winScore or more
-    score = getValue();
+    // Check if score is already winScore or more (based on game mode)
+    score = gameConfig.targets === 'username' ? getAtt() : getValue();
     if (score >= gameConfig.winScore) {
         showNextButton();
     }

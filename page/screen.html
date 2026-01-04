@@ -18,7 +18,18 @@
                     valueElement.textContent = `Value: ${currentValue}`;
                 }
             }
-        }, 300);
+
+            const attElement = document.getElementById('att-text');
+            if (attElement) {
+                const currentAtt = getAtt();
+                if (currentAtt > 0) {
+                    attElement.textContent = `Att: ${currentAtt}`;
+                    attElement.style.display = 'block';
+                } else {
+                    attElement.style.display = 'none';
+                }
+            }
+        }, 200);
     </script>
 </head>
 
@@ -69,6 +80,7 @@
 
         <div style="margin-right: 10px;">
             <div id="value-text" style="font-size: 12px;"></div>
+            <div id="att-text" style="font-size: 12px; display: none;"></div>
         </div>
         <div style="padding-left: 10px; border-left: 2px solid #404040;">
             <div id="day-text" style="font-size: 12px;">Day 1</div>

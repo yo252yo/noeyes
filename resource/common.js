@@ -1,5 +1,3 @@
-
-
 function setChatters(chatters) {
     localStorage.setItem('twitch_chatters', JSON.stringify(chatters));
 }
@@ -111,6 +109,21 @@ function setValue(value) {
 function incrementValue(amount = 1) {
     const currentValue = getValue();
     setValue(currentValue + amount);
+}
+
+function getAtt() {
+    const stored = localStorage.getItem('att');
+    return stored ? parseInt(stored, 10) : 0;
+}
+
+function setAtt(att) {
+    att = Math.max(att, 0);
+    localStorage.setItem('att', att.toString());
+}
+
+function incrementAtt(amount = 1) {
+    const currentAtt = getAtt();
+    setAtt(currentAtt + amount);
 }
 
 function callItADay() {

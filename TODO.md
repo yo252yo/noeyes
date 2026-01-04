@@ -1,6 +1,8 @@
 
 login page to initialize streamer list
 
+mb adjust speed for phone screens
+
 
 Nice to have:
 - Audio
