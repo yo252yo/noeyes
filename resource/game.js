@@ -5,6 +5,21 @@ let gameConfig = window.gameConfig || {
     fixedTargetNb: 10 // null for unlimited (emoji mode), number for avatar mode
 };
 
+import {
+    getAtt,
+    getChatters,
+    getFarmOpen,
+    getHiveOpen,
+    getNbChatters,
+    getStreamers,
+    getValue,
+    incrementAtt,
+    incrementNbChatters,
+    incrementValue
+} from './common.js';
+import { generateMultiple, generateTwitchUsername } from './fake_users.js';
+import { getAvatarUrl } from './twitch.js';
+
 const emoji = ['👶', '👦', '👧', '👨', '👩', '🧑', '👴', '👵'];
 const borderColors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'magenta', 'lime', 'maroon', 'navy', 'olive', 'teal', 'aqua', 'fuchsia'];
 
@@ -167,7 +182,7 @@ function setupGameIntervals() {
     }
 }
 
-async function spawnTarget() {
+export async function spawnTarget() {
     let div;
     if (gameConfig.targets === 'avatar') {
         div = await createAvatarDiv();
@@ -184,7 +199,7 @@ async function spawnTarget() {
     moveTarget(div);
 }
 
-async function spawnSpecificStreamerAvatar(username) {
+export async function spawnSpecificStreamerAvatar(username) {
     const div = await createAvatarDiv(username);
     activeTargets.push(div); // Add to unified tracking
     document.body.appendChild(div);

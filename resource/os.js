@@ -1,23 +1,25 @@
 
-function closeDiaryWindow() {
+import { getDay, setFarmOpen, setHiveOpen, updateDayDisplay, updateTimeDisplay } from './common.js';
+
+export function closeDiaryWindow() {
     document.getElementById('diary-window').style.display = 'none';
 }
 
-function closeClassWindow() {
+export function closeClassWindow() {
     document.getElementById('class-window').style.display = 'none';
 }
 
-function closeFarmWindow() {
+export function closeFarmWindow() {
     document.getElementById('farm-window').style.display = 'none';
     setFarmOpen(false);
 }
 
-function closeHiveWindow() {
+export function closeHiveWindow() {
     document.getElementById('hive-window').style.display = 'none';
     setHiveOpen(false);
 }
 
-function updateFarmIconVisibility() {
+export function updateFarmIconVisibility() {
     const farmIcon = document.getElementById('farm-icon');
     if (farmIcon) {
         const currentDay = getDay();
@@ -25,7 +27,7 @@ function updateFarmIconVisibility() {
     }
 }
 
-function updateHiveIconVisibility() {
+export function updateHiveIconVisibility() {
     const hiveIcon = document.getElementById('hive-icon');
     if (hiveIcon) {
         const currentDay = getDay();

@@ -6,15 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Diary</title>
     <link rel="stylesheet" href="../resource/css/style.css">
-    <script src="../resource/common.js"></script>
-</head>
+    <script type="module">
+        import { getDay } from '../resource/common.js';
 
-<body style="background-color: white; margin: 0; padding: 20px; font-family: Arial, sans-serif;">
-    <div id="diary-content"></div>
+        // Make functions available globally
+        window.getDay = getDay;
 
-    <script>
         // Diary entries dictionary
-        const diaryEntries = {
+        window.diaryEntries = {
             "1": "Ok so they told us at orientation that we HAVE TO keep a diary...</p><p>I don't know if I'll really do that, that seems lame.</p><p>Then again, I'd hate to see it used against me, so I guess I have to play along for now.</p><p>How's that for a diary entry?",
             "2": "This place is really condescending, they treat us like babies!</p><p>I'm not gonna rock the boat though, I don't want it to affect my chances of becoming Influencer.</p><p>Besides, the food here is great!",
             "3": "They say we can be any gender we want, but honestly, I don't understand why would people not want to be Influencer.</p><p>How does it work if everyone wants to be the same?</p><p>I hope they'll explain that in class.",
@@ -26,17 +25,17 @@
             "10": "..PLACEHOLDER.... Ten days in. The routine is becoming familiar, but I still have so many questions."
         };
 
-        function generateDiaryContent() {
+        window.generateDiaryContent = function () {
             const currentDay = getDay();
             const contentDiv = document.getElementById('diary-content');
 
             // Get all entries before or equal to current day
             const availableEntries = [];
             for (let day = 1; day <= currentDay; day++) {
-                if (diaryEntries[day.toString()]) {
+                if (window.diaryEntries[day.toString()]) {
                     availableEntries.push({
                         day: day,
-                        content: diaryEntries[day.toString()]
+                        content: window.diaryEntries[day.toString()]
                     });
                 }
             }
@@ -53,14 +52,21 @@
             });
 
             contentDiv.innerHTML = html;
-        }
+        };
 
-        // Generate diary content when page loads
-        generateDiaryContent();
-
-        // Regenerate diary content every 2 seconds to show day changes dynamically
-        setInterval(generateDiaryContent, 2000);
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            window.generateDiaryContent();
+            // Regenerate diary content every 2 seconds to show day changes dynamically
+            setInterval(window.generateDiaryContent, 2000);
+        });
     </script>
+</head>
+
+<body style="background-color: white; margin: 0; padding: 20px; font-family: Arial, sans-serif;">
+    <div id="diary-content"></div>
+
+
 </body>
 
 </html>

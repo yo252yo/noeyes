@@ -2,6 +2,8 @@
 const streamers = ['vedal987'];
 const suggested_streamers = ['vedal987', 'dougdoug', 'shindigs', 'probelive', 'ellie_minibot', 'tenma'];
 
+import { getStreamers, getSuggestedStreamers, setStreamers, setSuggestedStreamers } from './common.js';
+
 // Store streamers in localStorage on initialization
 if (getStreamers().length === 0) {
     setStreamers(streamers);
@@ -18,7 +20,7 @@ const streamerAvatars = {};
 // Fallback avatar
 const DEFAULT_AVATAR = '/resource/avatars/default.png';
 
-async function getAvatarUrl(username) {
+export async function getAvatarUrl(username) {
     // Check if we already have this avatar cached
     if (streamerAvatars[username]) {
         return streamerAvatars[username];

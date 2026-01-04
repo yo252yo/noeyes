@@ -32,12 +32,12 @@ function pick(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function generateTwitchUsername() {
+export function generateTwitchUsername() {
     const pattern = pick(patterns);
     return pattern(chunks);
 }
 
-function generateMultiple(count = 10) {
+export function generateMultiple(count = 10) {
     const usernames = [];
     for (let i = 0; i < count; i++) {
         usernames.push(generateTwitchUsername());

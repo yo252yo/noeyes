@@ -7,23 +7,21 @@
     <title>Class</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <link rel="stylesheet" href="../resource/css/class.css">
-    <script src="../resource/common.js"></script>
-</head>
+    <script type="module">
+        import { getDay, getMaxAllowedDay } from '../resource/common.js';
 
-<body style="margin: 0; padding: 5px 20px 20px 20px;">
-    <h1>Welcome Larva!</h1>
-    <div id="tip-content"></div>
-    <div id="class-content"></div>
+        // Make functions available globally
+        window.getDay = getDay;
+        window.getMaxAllowedDay = getMaxAllowedDay;
 
-    <script>
         // Tips dictionary - each day maps to a tip message
-        const tips = {
+        window.tips = {
             "1": "It's time for your first class!<br />Exciting, isn't it?<br />Click on the link right below to get you started!",
             "4": "How is it going?<br />Now that you know the two genders, you'll be an expert on the Economy in no time!"
         };
 
         // Class entries dictionary - each day maps to HTML snippets for class items
-        const classEntries = {
+        window.classEntries = {
             "1": `<li>
                 <a href="classes/1_1.html">
                     <img src="../resource/icons/book.png" style="width:20px; height:20px; margin-right:5px">My First Class
@@ -76,7 +74,7 @@
             </li>`
         };
 
-        function generateClassContent() {
+        window.generateClassContent = function () {
             const currentDay = getDay();
             const maxDay = getMaxAllowedDay();
             const contentDiv = document.getElementById('class-content');
@@ -84,10 +82,10 @@
             // Get all entries before or equal to current day
             const availableEntries = [];
             for (let day = 1; day <= currentDay; day++) {
-                if (classEntries[day.toString()]) {
+                if (window.classEntries[day.toString()]) {
                     availableEntries.push({
                         day: day,
-                        html: classEntries[day.toString()]
+                        html: window.classEntries[day.toString()]
                     });
                 }
             }
@@ -109,20 +107,29 @@
 
             // Generate tip content
             const tipDiv = document.getElementById('tip-content');
-            const currentTip = tips[currentDay.toString()];
+            const currentTip = window.tips[currentDay.toString()];
             if (currentTip) {
                 tipDiv.innerHTML = `<div class="help-bubble">${currentTip}</div>`;
             } else {
                 tipDiv.innerHTML = '';
             }
-        }
+        };
 
-        // Generate class content when page loads
-        generateClassContent();
-
-        // Regenerate class content every 2 seconds to show day changes dynamically
-        setInterval(generateClassContent, 2000);
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            window.generateClassContent();
+            // Regenerate class content every 2 seconds to show day changes dynamically
+            setInterval(window.generateClassContent, 2000);
+        });
     </script>
+</head>
+
+<body style="margin: 0; padding: 5px 20px 20px 20px;">
+    <h1>Welcome Larva!</h1>
+    <div id="tip-content"></div>
+    <div id="class-content"></div>
+
+
 </body>
 
 </html>

@@ -7,9 +7,10 @@
     <title>The Influencers</title>
     <link rel="stylesheet" href="../../resource/css/style.css">
     <link rel="stylesheet" href="../../resource/css/class.css">
-    <script src="../../resource/common.js"></script>
-    <script>
-        function updateScoreDisplay() {
+    <script type="module">
+        import { getValue } from '../../resource/common.js';
+
+        window.updateScoreDisplay = function () {
             const value = getValue();
             const scoreDisplay = document.getElementById('score-display');
             scoreDisplay.textContent = value + '/200';
@@ -20,13 +21,13 @@
             } else {
                 nextButtonContainer.style.display = 'none';
             }
-        }
+        };
 
         // Update on page load
-        document.addEventListener('DOMContentLoaded', updateScoreDisplay);
+        document.addEventListener('DOMContentLoaded', window.updateScoreDisplay);
 
         // Update periodically in case value changes from other sources
-        setInterval(updateScoreDisplay, 1000);
+        setInterval(window.updateScoreDisplay, 1000);
     </script>
 </head>
 

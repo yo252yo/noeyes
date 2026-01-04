@@ -1,6 +1,8 @@
 
 
-const chatters = new Set();
+import { getStreamers, setChatters } from './common.js';
+
+export const chatters = new Set();
 const MAX_CHATTERS = 200;
 
 // Expose chatters globally for access from iframes

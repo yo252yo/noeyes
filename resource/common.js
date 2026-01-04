@@ -1,31 +1,32 @@
-function setChatters(chatters) {
+// Common utility functions for localStorage management
+export function setChatters(chatters) {
     localStorage.setItem('twitch_chatters', JSON.stringify(chatters));
 }
 
-function getChatters() {
+export function getChatters() {
     const stored = localStorage.getItem('twitch_chatters');
     return stored ? JSON.parse(stored) : [];
 }
 
-function setStreamers(streamers) {
+export function setStreamers(streamers) {
     localStorage.setItem('twitch_streamers', JSON.stringify(streamers));
 }
 
-function getStreamers() {
+export function getStreamers() {
     const stored = localStorage.getItem('twitch_streamers');
     return stored ? JSON.parse(stored) : [];
 }
 
-function setSuggestedStreamers(suggestedStreamers) {
+export function setSuggestedStreamers(suggestedStreamers) {
     localStorage.setItem('twitch_suggested_streamers', JSON.stringify(suggestedStreamers));
 }
 
-function getSuggestedStreamers() {
+export function getSuggestedStreamers() {
     const stored = localStorage.getItem('twitch_suggested_streamers');
     return stored ? JSON.parse(stored) : [];
 }
 
-function addSuggestedStreamer(username) {
+export function addSuggestedStreamer(username) {
     const current = getSuggestedStreamers();
     if (!current.includes(username)) {
         current.push(username);
@@ -33,7 +34,7 @@ function addSuggestedStreamer(username) {
     }
 }
 
-function addStreamer(username) {
+export function addStreamer(username) {
     const current = getStreamers();
     if (!current.includes(username)) {
         current.push(username);
@@ -41,32 +42,32 @@ function addStreamer(username) {
     }
 }
 
-function getDay() {
+export function getDay() {
     const stored = localStorage.getItem('current_day');
     return stored ? parseInt(stored, 10) : 1;
 }
 
-function getMaxAllowedDay() {
+export function getMaxAllowedDay() {
     const stored = localStorage.getItem('max_allowed_day');
     return stored ? parseInt(stored, 10) : 1;
 }
 
-function setMaxAllowedDay(day) {
+export function setMaxAllowedDay(day) {
     let current = getMaxAllowedDay();
     localStorage.setItem('max_allowed_day', Math.max(current, day).toString());
 }
 
-function setDay(day) {
+export function setDay(day) {
     localStorage.setItem('current_day', day.toString());
     updateDayDisplay();
 }
 
-function incrementDay() {
+export function incrementDay() {
     const currentDay = getDay();
     setDay(currentDay + 1);
 }
 
-function updateDayDisplay() {
+export function updateDayDisplay() {
     const dayElement = document.getElementById('day-text');
     if (dayElement) {
         dayElement.textContent = `Day ${getDay()}/7`;
@@ -81,7 +82,7 @@ function updateDayDisplay() {
     }
 }
 
-function updateTimeDisplay() {
+export function updateTimeDisplay() {
     const timeElement = document.getElementById('time-text');
     if (timeElement) {
         const now = new Date();
@@ -92,7 +93,7 @@ function updateTimeDisplay() {
     }
 }
 
-function showPopup(message, iconSrc, isError = false) {
+export function showPopup(message, iconSrc, isError = false) {
     // Create popup container if it doesn't exist
     let popup = document.getElementById('day-popup');
     if (!popup) {
@@ -119,76 +120,76 @@ function showPopup(message, iconSrc, isError = false) {
     popup.style.display = 'flex';
 }
 
-function closePopup() {
+export function closePopup() {
     const popup = document.getElementById('day-popup');
     if (popup) {
         popup.style.display = 'none';
     }
 }
 
-function getValue() {
+export function getValue() {
     const stored = localStorage.getItem('value');
     return stored ? parseInt(stored, 10) : 0;
 }
 
-function setValue(value) {
+export function setValue(value) {
     localStorage.setItem('value', value.toString());
 }
 
-function incrementValue(amount = 1) {
+export function incrementValue(amount = 1) {
     const currentValue = getValue();
     setValue(currentValue + amount);
 }
 
-function getAtt() {
+export function getAtt() {
     const stored = localStorage.getItem('att');
     return stored ? parseInt(stored, 10) : 0;
 }
 
-function setAtt(att) {
+export function setAtt(att) {
     att = Math.max(att, 0);
     localStorage.setItem('att', att.toString());
 }
 
-function incrementAtt(amount = 1) {
+export function incrementAtt(amount = 1) {
     const currentAtt = getAtt();
     setAtt(currentAtt + amount);
 }
 
-function getNbChatters() {
+export function getNbChatters() {
     const stored = localStorage.getItem('nb_chatters');
     return stored ? parseInt(stored, 10) : 1;
 }
 
-function setNbChatters(nb) {
+export function setNbChatters(nb) {
     nb = Math.max(1, nb); // Minimum 1
     localStorage.setItem('nb_chatters', nb.toString());
 }
 
-function incrementNbChatters(amount = 1) {
+export function incrementNbChatters(amount = 1) {
     const current = getNbChatters();
     setNbChatters(current + amount);
 }
 
-function getFarmOpen() {
+export function getFarmOpen() {
     const stored = localStorage.getItem('farm_open');
     return stored ? stored === 'true' : false;
 }
 
-function setFarmOpen(isOpen) {
+export function setFarmOpen(isOpen) {
     localStorage.setItem('farm_open', isOpen.toString());
 }
 
-function getHiveOpen() {
+export function getHiveOpen() {
     const stored = localStorage.getItem('hive_open');
     return stored ? stored === 'true' : false;
 }
 
-function setHiveOpen(isOpen) {
+export function setHiveOpen(isOpen) {
     localStorage.setItem('hive_open', isOpen.toString());
 }
 
-function callItADay() {
+export function callItADay() {
     const currentDay = getDay();
     const maxAllowedDay = getMaxAllowedDay();
 
