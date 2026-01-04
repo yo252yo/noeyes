@@ -1,5 +1,5 @@
 
-import { getDay, setFarmOpen, setHiveOpen, updateDayDisplay, updateTimeDisplay } from './common.js';
+import { setFarmOpen, setHiveOpen, updateDayDisplay, updateFarmIconVisibility, updateHiveIconVisibility, updateTimeDisplay } from './common.js';
 
 export function closeDiaryWindow() {
     document.getElementById('diary-window').style.visibility = 'hidden';
@@ -17,22 +17,6 @@ export function closeFarmWindow() {
 export function closeHiveWindow() {
     document.getElementById('hive-window').style.visibility = 'hidden';
     setHiveOpen(false);
-}
-
-export function updateFarmIconVisibility() {
-    const farmIcon = document.getElementById('farm-icon');
-    if (farmIcon) {
-        const currentDay = getDay();
-        farmIcon.style.display = currentDay >= 3 ? 'block' : 'none';
-    }
-}
-
-export function updateHiveIconVisibility() {
-    const hiveIcon = document.getElementById('hive-icon');
-    if (hiveIcon) {
-        const currentDay = getDay();
-        hiveIcon.style.display = currentDay >= 4 ? 'block' : 'none';
-    }
 }
 
 // Shared Icon Dragger Class

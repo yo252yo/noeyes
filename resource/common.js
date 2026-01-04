@@ -67,19 +67,31 @@ export function incrementDay() {
     setDay(currentDay + 1);
 }
 
+export function updateFarmIconVisibility() {
+    const farmIcon = document.getElementById('farm-icon');
+    if (farmIcon) {
+        const currentDay = getDay();
+        farmIcon.style.display = currentDay >= 3 ? 'block' : 'none';
+    }
+}
+
+export function updateHiveIconVisibility() {
+    const hiveIcon = document.getElementById('hive-icon');
+    if (hiveIcon) {
+        const currentDay = getDay();
+        hiveIcon.style.display = currentDay >= 4 ? 'block' : 'none';
+    }
+}
+
 export function updateDayDisplay() {
     const dayElement = document.getElementById('day-text');
     if (dayElement) {
         dayElement.textContent = `Day ${getDay()}/7`;
     }
-    // Also update farm icon visibility when day changes
-    if (typeof updateFarmIconVisibility === 'function') {
-        updateFarmIconVisibility();
-    }
-    // Also update hive icon visibility when day changes
-    if (typeof updateHiveIconVisibility === 'function') {
-        updateHiveIconVisibility();
-    }
+    // Update farm icon visibility when day changes
+    updateFarmIconVisibility();
+    // Update hive icon visibility when day changes
+    updateHiveIconVisibility();
 }
 
 export function updateTimeDisplay() {
