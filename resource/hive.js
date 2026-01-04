@@ -17,15 +17,16 @@ window.gameConfig = {
 // Function to calculate next chat price
 window.getNextChatPrice = function (currentChats) {
     const prices = {
-        1: 10,
-        2: 25,
-        3: 50,
-        4: 100,
-        5: 200,
-        6: 500,
-        7: 1000,
-        8: 5000,
-        9: 10000
+        1: 5,
+        2: 20,
+        3: 40,
+        4: 60,
+        5: 100,
+        6: 200,
+        7: 500,
+        8: 1000,
+        9: 5000,
+        10: 10000
     };
     if (currentChats in prices) {
         return prices[currentChats];

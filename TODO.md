@@ -6,7 +6,7 @@ mb chat can be priced in att? and then i dont have to kill streamers lol
 
 " 
 
-add farmbot feature
+
 
 
 
@@ -49,18 +49,19 @@ Don't forget to include the pixi library where you use it :)
     
 
 
-
 * I think chat usernames can accidentally collide with the divs of the +1Att notifications, can you double check for sure, i saw some chat usernames just disappear
 * vertical scroll messes with bounce. in general the boundaries are pretyt shit
 * sometimes clicks dont register i think mb because they conflict with drag? (lets pray for pixi solution)
 ==================
 
+* prevent select for the whole game
 * add login page (streamer choice) to initialize streamer list, right now its hardcoded
 * add bgm
 * add sound effect
 * add disclaimer/explanation about cognitive science
 * post on itch with screenshots and descriptions
 * achivevements for certification every day
+* add farmbot feature
 
 ==================
 
