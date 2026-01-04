@@ -133,6 +133,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            gap: 10px;
         }
 
         .color-picker-btn {
@@ -257,6 +258,7 @@
 <body>
     <div class="hive-header">
         <h1 class="welcome-text">Your <span class="highlight-text">Chat</span> hive</h1>
+        <button class="popup-btn" onclick="spawnExtraChatter()" title="Spawn one extra chatter">+1 Chatter</button>
         <button class="color-picker-btn" onclick="openColorPicker()" title="Change background color">🎨</button>
     </div>
 
@@ -307,6 +309,13 @@
             localStorage.setItem('hiveBackgroundColor', color);
 
             closeColorPicker();
+        }
+
+        function spawnExtraChatter() {
+            // Increment the chatter count
+            incrementNbChatters(1);
+            // Spawn one additional target
+            spawnTarget();
         }
 
         // Load saved background color on page load
