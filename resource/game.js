@@ -155,7 +155,6 @@ function setupGameIntervals() {
         // Continuous spawning for username mode
         gameIntervals.usernameSpawning = setInterval(() => {
             const maxSpawn = gameConfig.fixedTargetNb || Math.max(1, getNbChatters());
-            console.log(maxSpawn);
             if (activeTargets.length >= maxSpawn) return;
             spawnTarget();
         }, 1000);
@@ -757,7 +756,6 @@ function manageTextTargetCollisions() {
 
     // Update nb_chatters if not in tutorial mode
     let nbToRemove = -1 * Math.ceil(targetsToRemove.size / 2);
-    console.log("size" + targetsToRemove.size + "nbtr" + nbToRemove);
     if (isTutorial()) {
         gameConfig.fixedTargetNb += nbToRemove;
     } else {
