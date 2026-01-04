@@ -335,11 +335,12 @@
 
     <div id="overlay" class="overlay" onclick="closeColorPicker()"></div>
 
+    <div class="streamers-container"></div>
+
     <script>
         function buildStreamerList() {
             const userStreamers = getStreamers(); // Get user's current streamers from localStorage
-            const container = document.querySelector('.streamers-container') || document.createElement('div');
-            container.className = 'streamers-container';
+            const container = document.querySelector('.streamers-container');
             container.innerHTML = '';
 
             // Get streamers from suggested list that are NOT in user's streamer list
@@ -369,11 +370,6 @@
 
             // Display available streamers
             availableStreamers.forEach(username => createStreamerElement(username));
-
-            // Add to page if not already present
-            if (!document.querySelector('.streamers-container')) {
-                document.body.appendChild(container);
-            }
         }
 
         buildStreamerList();
