@@ -12,7 +12,7 @@
         // Update value display every 300ms
         setInterval(() => {
             const valueElement = document.getElementById('value-text');
-            if (valueElement) {
+            if (valueElement || getDay() > 2) {
                 const currentValue = getValue();
                 if (currentValue) {
                     valueElement.textContent = `Value: ${currentValue}`;
@@ -22,7 +22,7 @@
             const attElement = document.getElementById('att-text');
             if (attElement) {
                 const currentAtt = getAtt();
-                if (currentAtt > 0) {
+                if (currentAtt > 0 || getDay() > 3) {
                     attElement.textContent = `Att: ${currentAtt}`;
                     attElement.style.display = 'block';
                     if (currentAtt < 20) {
