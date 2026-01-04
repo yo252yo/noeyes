@@ -772,7 +772,7 @@ function manageTextTargetCollisions() {
 
         // Update nb_chatters if not in tutorial mode
         if (!isTutorial()) {
-            decrementNbChatters(1);
+            incrementNbChatters(-1);
         }
     });
 

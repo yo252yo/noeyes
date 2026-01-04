@@ -145,11 +145,6 @@ function incrementNbChatters(amount = 1) {
     setNbChatters(current + amount);
 }
 
-function decrementNbChatters(amount = 1) {
-    const current = getNbChatters();
-    setNbChatters(current - amount);
-}
-
 function callItADay() {
     const currentDay = getDay();
     const maxAllowedDay = getMaxAllowedDay();
