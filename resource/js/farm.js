@@ -1,6 +1,6 @@
-import { addStreamer, addSuggestedStreamer, getStreamers, getSuggestedStreamers } from '../resource/common.js';
-import { spawnSpecificStreamerAvatar } from '../resource/game.js';
-import { getAvatarUrl } from '../resource/twitch.js';
+import { addStreamer, addSuggestedStreamer, getStreamers, getSuggestedStreamers } from '../common.js';
+import { spawnSpecificStreamerAvatar } from '../game.js';
+import { getAvatarUrl } from '../twitch.js';
 
 // Make functions available globally
 window.getStreamers = getStreamers;
