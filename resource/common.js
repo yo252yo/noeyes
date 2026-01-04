@@ -25,6 +25,14 @@ function getSuggestedStreamers() {
     return stored ? JSON.parse(stored) : [];
 }
 
+function addSuggestedStreamer(username) {
+    const current = getSuggestedStreamers();
+    if (!current.includes(username)) {
+        current.push(username);
+        setSuggestedStreamers(current);
+    }
+}
+
 function getDay() {
     const stored = localStorage.getItem('current_day');
     return stored ? parseInt(stored, 10) : 1;

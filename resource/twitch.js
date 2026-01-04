@@ -4,7 +4,9 @@ const suggested_streamers = ['vedal987', 'dougdoug', 'shindigs', 'probelive', 'e
 
 // Store streamers in localStorage on initialization
 setStreamers(streamers);
-setSuggestedStreamers(suggested_streamers);
+if (getSuggestedStreamers().length === 0) {
+    setSuggestedStreamers(suggested_streamers);
+}
 
 
 // Avatar URLs for streamers - simple dictionary storage

@@ -335,6 +335,11 @@
 
     <div id="overlay" class="overlay" onclick="closeColorPicker()"></div>
 
+    <div class="add-streamer-container">
+        <input type="text" id="add-streamer-input" class="win98-input" placeholder="Enter streamer username">
+        <button id="add-streamer-btn" class="popup-btn">ADD</button>
+    </div>
+
     <div class="streamers-container"></div>
 
     <script>
@@ -343,8 +348,8 @@
             const container = document.querySelector('.streamers-container');
             container.innerHTML = '';
 
-            // Get streamers from suggested list that are NOT in user's streamer list
-            const availableStreamers = getSuggestedStreamers().filter(username => !userStreamers.includes(username));
+            // Get streamers from suggested list that are NOT in user's streamer list, reversed so newest appears first
+            const availableStreamers = getSuggestedStreamers().slice().reverse().filter(username => !userStreamers.includes(username));
 
             // Function to create streamer element
             const createStreamerElement = async (username) => {
@@ -373,6 +378,17 @@
         }
 
         buildStreamerList();
+
+        // Add streamer functionality
+        document.getElementById('add-streamer-btn').addEventListener('click', function () {
+            const input = document.getElementById('add-streamer-input');
+            const username = input.value.trim();
+            if (username) {
+                addSuggestedStreamer(username);
+                buildStreamerList();
+                input.value = '';
+            }
+        });
 
         function openColorPicker() {
             document.getElementById('color-picker-popup').style.display = 'block';
