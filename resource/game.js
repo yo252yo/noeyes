@@ -20,6 +20,7 @@ let score = 0;
 let spawnedCount = 0;
 let currentSpawned = 0;
 let activeTargets = new Set(); // Track active targets for avatar mode
+let activeStreamers = new Set(); // Track active streamer names for avatar mode
 let spawnedUsernames = new Set(); // Track spawned usernames for uniqueness
 let usernameValueInterval = null; // Interval for username value generation
 let textTargetManagerInterval = null; // Interval for text target collision manager
@@ -67,8 +68,18 @@ function startGame() {
 
     // Spawn targets based on config
     if (gameConfig.targets === 'avatar') {
-        // Avatar mode: spawn exactly fixedTargetNb initially and maintain that count
-        for (let i = 0; i < gameConfig.fixedTargetNb; i++) {
+        // Avatar mode: spawn based on tutorial mode or streamer count
+        let targetCount;
+        if (isTutorial()) {
+            // Tutorial mode: use fixedTargetNb
+            targetCount = gameConfig.fixedTargetNb;
+        } else {
+            // Normal mode: use number of streamers, minimum 1
+            const streamers = getStreamers();
+            targetCount = Math.max(1, streamers.length);
+        }
+
+        for (let i = 0; i < targetCount; i++) {
             spawnTarget();
             currentSpawned++;
         }
@@ -119,8 +130,18 @@ function startGame() {
             }, 1000);
         }
     } else if (gameConfig.targets === 'username') {
-        // Username mode: spawn exactly fixedTargetNb initially and maintain that count
-        for (let i = 0; i < gameConfig.fixedTargetNb; i++) {
+        // Username mode: spawn based on tutorial mode or chatter count
+        let targetCount;
+        if (isTutorial()) {
+            // Tutorial mode: use fixedTargetNb
+            targetCount = gameConfig.fixedTargetNb;
+        } else {
+            // Normal mode: use number of chatters, minimum 1
+            const nbChatters = getNbChatters();
+            targetCount = Math.max(1, nbChatters);
+        }
+
+        for (let i = 0; i < targetCount; i++) {
             spawnTarget();
             currentSpawned++;
         }
@@ -254,16 +275,37 @@ function createEmojiDiv() {
 }
 
 async function createAvatarDiv() {
-    // Get random streamer
-    const streamers = ['vedal987']; // From twitch.js
-    const randomStreamer = streamers[Math.floor(Math.random() * streamers.length)];
-    const avatarUrl = await getAvatarUrl(randomStreamer);
+    // Get streamer - prefer unused streamers, fallback to any available
+    let streamer;
+    const storedStreamers = getStreamers();
+
+    if (storedStreamers.length > 0) {
+        // Filter out streamers that are already active
+        const availableStreamers = storedStreamers.filter(s => !activeStreamers.has(s));
+
+        if (availableStreamers.length > 0) {
+            // Use random streamer from available ones
+            streamer = availableStreamers[Math.floor(Math.random() * availableStreamers.length)];
+        } else {
+            // All streamers are already active, use any random one
+            streamer = storedStreamers[Math.floor(Math.random() * storedStreamers.length)];
+        }
+    } else {
+        // Fallback to hardcoded streamer
+        streamer = 'vedal987';
+    }
+
+    // Add to active streamers tracking
+    activeStreamers.add(streamer);
+
+    const avatarUrl = await getAvatarUrl(streamer);
 
     // Get random border color
     const randomColor = borderColors[Math.floor(Math.random() * borderColors.length)];
 
     const div = document.createElement('div');
     div.className = 'game-avatar';
+    div.dataset.streamer = streamer; // Store streamer name for reference
     div.style.position = 'absolute';
     div.style.width = '36px';
     div.style.height = '36px';
@@ -430,6 +472,7 @@ function handleEmojiClick(clickedEmoji, event) {
 function handleAvatarClick(clickedAvatar, event) {
     // Remove clicked avatar from tracking
     activeTargets.delete(clickedAvatar);
+    activeStreamers.delete(clickedAvatar.dataset.streamer);
 
     // Find closest remaining avatar
     let closestAvatar = null;
@@ -452,6 +495,7 @@ function handleAvatarClick(clickedAvatar, event) {
     // Remove closest avatar if found
     if (closestAvatar) {
         activeTargets.delete(closestAvatar);
+        activeStreamers.delete(closestAvatar.dataset.streamer);
         closestAvatar.remove();
         currentSpawned--;
 
@@ -498,10 +542,16 @@ function handleAvatarClick(clickedAvatar, event) {
     clickedAvatar.remove();
     currentSpawned--;
 
-    // Respawn two new avatars
-    spawnTarget();
-    spawnTarget();
-    currentSpawned += 2;
+    // Respawn avatars based on tutorial mode and streamer count
+    const streamers = getStreamers();
+    if (!isTutorial() && streamers.length < 2) {
+        spawnTarget();
+        currentSpawned += 1;
+    } else {
+        spawnTarget();
+        spawnTarget();
+        currentSpawned += 2;
+    }
 
     updateScoreAfterClick();
 }
@@ -756,13 +806,20 @@ function manageTextTargetCollisions() {
 
         // Decrement count
         currentSpawned--;
+
+        // Update nb_chatters if not in tutorial mode
+        if (!isTutorial()) {
+            decrementNbChatters(1);
+        }
     });
 
-    // Spawn one replacement for each pair removed
-    const replacementsNeeded = Math.floor(targetsToRemove.size / 2);
-    for (let i = 0; i < replacementsNeeded; i++) {
-        spawnTarget();
-        currentSpawned++;
+    // Spawn one replacement for each pair removed (only in tutorial mode)
+    if (isTutorial()) {
+        const replacementsNeeded = Math.floor(targetsToRemove.size / 2);
+        for (let i = 0; i < replacementsNeeded; i++) {
+            spawnTarget();
+            currentSpawned++;
+        }
     }
 }
 
@@ -780,8 +837,9 @@ function cleanupGame() {
         clearInterval(avatarAttConsumptionInterval);
         avatarAttConsumptionInterval = null;
     }
-    // Clear spawned usernames tracking
+    // Clear tracking sets
     spawnedUsernames.clear();
+    activeStreamers.clear();
 }
 
 // Start game when page loads

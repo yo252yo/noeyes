@@ -1,30 +1,16 @@
-STREAMER LIST RN IS HARDCODED
-2_A should be limited to 2 on any day >2 ?
+* purchase influencers and chat
 
+* active streamer should be active target, currentSpawned doesnt make much sense as separate variable its the count of spawned things
+let spawnedCount = 0;
+let currentSpawned = 0;
+< tf is all of this
 
-add an infobulle "so far your value has been controlled by our tutorial, from now on youre on your own!"
-
-
-login page to initialize streamer list
-
-mb adjust speed for phone screens
-
-
-Nice to have:
-- Audio
-- OS loading screen
-- Prettify everything
-
- based on cognitive science disclaimer?
-
- ideally add another lesson about before the fall explaining that they had class division based on money etc...
-
-* should diary be paginated or big flow? should it appear character by character?
-
-
-
-add corporate sponsor modifiers ???
-
+* need to pause farm and hive when theyre not focused
+* STREAMER LIST RN IS HARDCODED
+* 2_A should be limited to 2 on any day >2 ?
+* add an infobulle "so far your value has been controlled by our tutorial, from now on youre on your own!"
+* sometimes clicks dont register i think mb because they conflict with drag?
+* add minimum window size of like 200x200
 
 
 
@@ -48,7 +34,20 @@ add corporate sponsor modifiers ???
     </script> -->
 
 
-    <!-- As you know, after the climate collapse, humanity had to be divided in two strict classes, the Streamers and Chat.
-    Streamers get to experience all the joy of the Outside™ at the cost of being constantly in public. Chat has no
-    access to the Outside™ but enjoys complete privacy. At the end of this training, you will get to chose which class
-    you want to be in. -->
+
+==================
+should diary be paginated or big flow? should it appear character by character?
+corporate sponsor modifiers ???
+another lesson about before the fall explaining that they had class division based on money etc...
+==================
+
+    
+    
+* add login page (streamer choice) to initialize streamer list
+* add bgm
+* add sound effect
+* add disclaimer/explanation about cognitive science
+* add OS start
+* post on itch with screenshots and descriptions
+* mb adjust speed for phone screens
+

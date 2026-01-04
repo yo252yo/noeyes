@@ -130,6 +130,26 @@ function incrementAtt(amount = 1) {
     setAtt(currentAtt + amount);
 }
 
+function getNbChatters() {
+    const stored = localStorage.getItem('nb_chatters');
+    return stored ? parseInt(stored, 10) : 1;
+}
+
+function setNbChatters(nb) {
+    nb = Math.max(1, nb); // Minimum 1
+    localStorage.setItem('nb_chatters', nb.toString());
+}
+
+function incrementNbChatters(amount = 1) {
+    const current = getNbChatters();
+    setNbChatters(current + amount);
+}
+
+function decrementNbChatters(amount = 1) {
+    const current = getNbChatters();
+    setNbChatters(current - amount);
+}
+
 function callItADay() {
     const currentDay = getDay();
     const maxAllowedDay = getMaxAllowedDay();
