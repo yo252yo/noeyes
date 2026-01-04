@@ -390,7 +390,6 @@ function createUsernameDiv() {
     // Filter out already spawned usernames
     const availableChatters = chatters.filter(chatter => !spawnedUsernames.has(chatter));
 
-    console.log(chatters);
     if (availableChatters.length > 0) {
         // Use random available chatter
         username = availableChatters[Math.floor(Math.random() * availableChatters.length)];

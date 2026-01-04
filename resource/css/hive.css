@@ -234,3 +234,46 @@ body {
 .info-panel p {
     margin: 8px 0;
 }
+
+.hive-stats-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    gap: 20px;
+}
+
+.stats-table {
+    width: 300px;
+    border: 4px outset #c0c0c0;
+    background: white;
+    font-family: "MS Sans Serif", sans-serif;
+    font-size: 14px;
+    color: white;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.stats-table td {
+    background: blue;
+    padding: 8px 12px;
+    border: 2px inset #c0c0c0;
+}
+
+.stats-table td:first-child {
+    font-weight: bold;
+    text-align: left;
+}
+
+.stats-table td:last-child {
+    text-align: right;
+}
+
+.buy-column {
+    display: flex;
+    align-items: center;
+}
+
+#buy-chat-btn {
+    font-size: 16px;
+    padding: 10px 20px;
+}
