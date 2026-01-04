@@ -70,6 +70,55 @@ function isTutorial() {
     return gameConfig.fixedTargetNb > 0;
 }
 
+// Helper function to calculate distance between two points
+function calculateDistance(x1, y1, x2, y2) {
+    return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+}
+
+// Helper function to find best spawn position far from existing targets
+function findBestSpawnPosition(targetWidth, targetHeight, candidates = 3) {
+    // Generate candidate positions
+    const candidatePositions = [];
+    for (let i = 0; i < candidates; i++) {
+        const x = Math.random() * (window.innerWidth - targetWidth);
+        const y = Math.random() * (window.innerHeight - targetHeight);
+        candidatePositions.push({ x, y });
+    }
+
+    // If no active targets, return random candidate
+    if (activeTargets.length === 0) {
+        return candidatePositions[Math.floor(Math.random() * candidatePositions.length)];
+    }
+
+    // Evaluate each candidate by finding minimum distance to existing targets
+    let bestPosition = candidatePositions[0];
+    let bestMinDistance = 0;
+
+    for (const candidate of candidatePositions) {
+        let minDistance = Infinity;
+
+        // Calculate distance to center of each existing target
+        for (const existingTarget of activeTargets) {
+            const existingX = parseFloat(existingTarget.style.left) + parseFloat(existingTarget.style.width) / 2;
+            const existingY = parseFloat(existingTarget.style.top) + parseFloat(existingTarget.style.height) / 2;
+
+            const candidateCenterX = candidate.x + targetWidth / 2;
+            const candidateCenterY = candidate.y + targetHeight / 2;
+
+            const distance = calculateDistance(candidateCenterX, candidateCenterY, existingX, existingY);
+            minDistance = Math.min(minDistance, distance);
+        }
+
+        // Keep track of the candidate with the highest minimum distance
+        if (minDistance > bestMinDistance) {
+            bestMinDistance = minDistance;
+            bestPosition = candidate;
+        }
+    }
+
+    return bestPosition;
+}
+
 function startGame() {
     if (gameActive) return;
     gameActive = true;
@@ -226,11 +275,10 @@ function createEmojiDiv() {
     div.style.alignItems = 'center';
     div.style.justifyContent = 'center';
 
-    // Random starting position (account for 30px size)
-    const startX = Math.random() * (window.innerWidth - 30);
-    const startY = Math.random() * (window.innerHeight - 30);
-    div.style.left = startX + 'px';
-    div.style.top = startY + 'px';
+    // Find best starting position far from existing targets
+    const spawnPosition = findBestSpawnPosition(30, 30);
+    div.style.left = spawnPosition.x + 'px';
+    div.style.top = spawnPosition.y + 'px';
 
     // Random velocity components
     const speed = min_speed_emoji + Math.random() * (max_speed_emoji - min_speed_emoji);
@@ -305,11 +353,10 @@ async function createAvatarDiv(specificUsername = null) {
     img.style.borderRadius = '50%';
     div.appendChild(img);
 
-    // Random starting position (account for 56px size)
-    const startX = Math.random() * (window.innerWidth - 56);
-    const startY = Math.random() * (window.innerHeight - 56);
-    div.style.left = startX + 'px';
-    div.style.top = startY + 'px';
+    // Find best starting position far from existing targets
+    const spawnPosition = findBestSpawnPosition(56, 56);
+    div.style.left = spawnPosition.x + 'px';
+    div.style.top = spawnPosition.y + 'px';
 
     // Random velocity components
     const speed = min_speed_avatar + Math.random() * (max_speed_avatar - min_speed_avatar);
@@ -407,11 +454,10 @@ function createUsernameDiv() {
     div.style.width = width + 'px';
     div.style.height = height + 'px';
 
-    // Random starting position (account for calculated size)
-    const startX = Math.random() * (window.innerWidth - width);
-    const startY = Math.random() * (window.innerHeight - height);
-    div.style.left = startX + 'px';
-    div.style.top = startY + 'px';
+    // Find best starting position far from existing targets
+    const spawnPosition = findBestSpawnPosition(width, height);
+    div.style.left = spawnPosition.x + 'px';
+    div.style.top = spawnPosition.y + 'px';
 
     // Random velocity components (slower for usernames)
     const speed = min_speed_username + Math.random() * (max_speed_username - min_speed_username);

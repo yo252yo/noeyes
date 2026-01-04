@@ -1,8 +1,6 @@
-* on itch only? next button is broken on firefox and calendar icon. and i had concurrency issues
 * purchase influencers and chat proper flows and balance
 * allow removal of streamers to alleviate softlock
-* protect chatters from spawning in the same place
-* update IRC when getting new streamers
+
 * add a chat counter somewhere
 * STREAMER LIST RN IS HARDCODED
 * farm starts everyone in the corner maybe on firefox anyway
@@ -39,19 +37,24 @@ another lesson about before the fall explaining that they had class division bas
 file:// protocol isnt supported =x
 ==================
 
+* game.js has major polish problems. See if you can fix it by migrating the game to pixi.min.js (its in resource/pixi.min.js use this local copy of the famous library), could make it a fixed game space on top of the whole page.
+right now the wall collision is very approximative, not to mention it doesnt deal well with vertical scrolling.
+the click/touch reaction is a bit weird, sometimes it doesnt go through, idk if its because the zindex isnt high enough or maybe its registered as a drag not a touch ? id rather be lenient and count drags as click rather than miss click, as long as we dont double count. ofc im saying click but it also includes touch for mobile screens.
+can you try and overhaul that a little? dont forget that you have access to web search and deepseek for support, as well as the ability to run the website on :8000 (the webserver is already launched). you have access to logs dont give me a buggy mess ok
+make sure to keep the game behaviour and logic, it should be easy to understand tbh
     
+==================
     
-* sometimes clicks dont register i think mb because they conflict with drag?
+* sometimes clicks dont register i think mb because they conflict with drag? (lets pray for pixi solution)
 * add login page (streamer choice) to initialize streamer list
 * add bgm
 * add sound effect
 * add disclaimer/explanation about cognitive science
-* add OS start
 * post on itch with screenshots and descriptions
-* mb adjust speed for phone screens
 
-* game.js has major polish problems. See if you can fix it by migrating the game to pixi.min.js, could make it a fixed game space on top of the whole thing.
-the wall collision is very approximative, not to mention it doesnt deal well with vertical scrolling.
-the click/touch reaction is a bit weird, sometimes it doesnt go through, idk if its because the zindex isnt high enough or maybe its registered as a drag not a touch ? id rather be lenient and count drags as click rather than miss click, as long as we dont double count. ofc im saying click but it also includes touch for mobile screens.
-can you try and overhaul that a little? dont forget that you have access to web search and deepseek for support, as well as the ability to run the website on :8000 (the webserver is already launched
-make sure to keep the game behaviour and logic only work on the polish
+==================
+
+* mb adjust speed for phone screens
+* add OS start
+* update IRC when getting new streamers
+
