@@ -33,6 +33,14 @@ function addSuggestedStreamer(username) {
     }
 }
 
+function addStreamer(username) {
+    const current = getStreamers();
+    if (!current.includes(username)) {
+        current.push(username);
+        setStreamers(current);
+    }
+}
+
 function getDay() {
     const stored = localStorage.getItem('current_day');
     return stored ? parseInt(stored, 10) : 1;

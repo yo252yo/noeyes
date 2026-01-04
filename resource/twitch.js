@@ -3,7 +3,10 @@ const streamers = ['vedal987', 'dougdoug', 'shindigs'];
 const suggested_streamers = ['vedal987', 'dougdoug', 'shindigs', 'probelive', 'ellie_minibot', 'tenma'];
 
 // Store streamers in localStorage on initialization
-setStreamers(streamers);
+if (getStreamers().length === 0) {
+    setStreamers(streamers);
+}
+
 if (getSuggestedStreamers().length === 0) {
     setSuggestedStreamers(suggested_streamers);
 }

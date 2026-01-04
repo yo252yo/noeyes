@@ -194,6 +194,17 @@ async function spawnTarget() {
     moveTarget(div);
 }
 
+async function spawnSpecificStreamerAvatar(username) {
+    const div = await createAvatarDiv(username);
+    activeTargets.push(div); // Add to unified tracking
+    document.body.appendChild(div);
+
+    // Start moving
+    moveTarget(div);
+}
+
+
+
 function createEmojiDiv() {
     const randomEmoji = emoji[Math.floor(Math.random() * emoji.length)];
     const div = document.createElement('div');
@@ -234,26 +245,31 @@ function createEmojiDiv() {
     return div;
 }
 
-async function createAvatarDiv() {
-    // Get streamer - prefer unused streamers, fallback to any available
+async function createAvatarDiv(specificUsername = null) {
+    // Get streamer - use specific one if provided, otherwise prefer unused streamers, fallback to any available
     let streamer;
-    const storedStreamers = getStreamers();
 
-    if (storedStreamers.length > 0) {
-        // Filter out streamers that are already active
-        const activeStreamerNames = activeTargets.map(target => target.dataset.streamer);
-        const availableStreamers = storedStreamers.filter(s => !activeStreamerNames.includes(s));
-
-        if (availableStreamers.length > 0) {
-            // Use random streamer from available ones
-            streamer = availableStreamers[Math.floor(Math.random() * availableStreamers.length)];
-        } else {
-            // All streamers are already active, use any random one
-            streamer = storedStreamers[Math.floor(Math.random() * storedStreamers.length)];
-        }
+    if (specificUsername) {
+        streamer = specificUsername;
     } else {
-        // Fallback to hardcoded streamer
-        streamer = 'vedal987';
+        const storedStreamers = getStreamers();
+
+        if (storedStreamers.length > 0) {
+            // Filter out streamers that are already active
+            const activeStreamerNames = activeTargets.map(target => target.dataset.streamer);
+            const availableStreamers = storedStreamers.filter(s => !activeStreamerNames.includes(s));
+
+            if (availableStreamers.length > 0) {
+                // Use random streamer from available ones
+                streamer = availableStreamers[Math.floor(Math.random() * availableStreamers.length)];
+            } else {
+                // All streamers are already active, use any random one
+                streamer = storedStreamers[Math.floor(Math.random() * storedStreamers.length)];
+            }
+        } else {
+            // Fallback to hardcoded streamer
+            streamer = 'vedal987';
+        }
     }
 
     const avatarUrl = await getAvatarUrl(streamer);

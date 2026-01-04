@@ -368,6 +368,13 @@
                 streamerDiv.appendChild(nameSpan);
                 container.appendChild(streamerDiv);
 
+                // Add click event listener to add streamer to main list
+                streamerDiv.addEventListener('click', function () {
+                    addStreamer(username);
+                    spawnSpecificStreamerAvatar(username);
+                    buildStreamerList();
+                });
+
                 // Load avatar
                 const avatarUrl = await getAvatarUrl(username);
                 avatarImg.src = avatarUrl;
