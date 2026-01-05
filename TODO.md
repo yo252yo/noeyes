@@ -39,6 +39,7 @@ dont come back to me until it's in working condition, observe your own web brows
 * i got the same color for hive and farm by default
 * add disclaimer/explanation about cognitive science
 * achivevements for certification every day
+* farm should display the current number of influencers
 
 
 ================== LONG TERM
