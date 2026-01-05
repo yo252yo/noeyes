@@ -288,27 +288,6 @@ a:hover {
     background-color: #b0b0b0;
 }
 
-/* Choice page buttons */
-.choice-btn {
-    padding: 20px 40px;
-    font-size: 24px;
-    border: 1px outset #c0c0c0;
-    background: #c0c0c0;
-    font-family: "MS Sans Serif", Tahoma, sans-serif;
-    cursor: pointer;
-    width: 200px;
-    z-index: 100;
-    position: relative;
-}
-
-.choice-btn:hover {
-    background-color: #dfdfdf;
-}
-
-.choice-btn:active {
-    border: 1px inset #c0c0c0;
-    background-color: #b0b0b0;
-}
 
 /* Help bubble styles - Windows 98 style */
 .help-bubble {
@@ -357,8 +336,7 @@ a:hover {
 
 .diary-entry b {
     font-size: 1.1em;
-    margin-bottom: 5px;
-    display: block;
+    display: inline;
 }
 
 .diary-entry p {
@@ -555,4 +533,54 @@ a:hover {
         transform: translateY(-3px) rotate(180deg) scale(1.2);
         opacity: 1;
     }
+}
+
+
+.next-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #c0c0c0;
+    border: 2px outset #c0c0c0;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: "MS Sans Serif", sans-serif;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.1s ease;
+    margin-top: 20px;
+    animation: pulsate 2s ease-in-out infinite;
+}
+
+@keyframes pulsate {
+
+    0%,
+    100% {
+        transform: scale(1);
+        background-color: #c0c0c0;
+    }
+
+    50% {
+        transform: scale(1.05);
+        background-color: #d4d4a0;
+    }
+}
+
+.next-button:hover {
+    background-color: #dfdfdf;
+    border: 2px inset #c0c0c0;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.next-button:active {
+    border: 2px inset #c0c0c0;
+    padding: 9px 15px 7px 17px;
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.next-button img {
+    width: 24px;
+    height: 24px;
 }

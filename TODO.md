@@ -22,19 +22,28 @@ dont come back to me until it's in working condition, observe your own web brows
 * vertical scroll messes with bounce. in general the boundaries are pretyt shit
 * sometimes clicks dont register i think mb because they conflict with drag? (lets pray for pixi solution)
 
-================== v0
 
-* i think the js files are duplicated between resource and resource/js
-* accentuate the ratio chat to streamer, make sure to mention a couple of times in the game that there sould be a lot more chat than streamers 
-* put the word smile in bold in the diary
-* prevent select for the whole game
-* remove X cross and mb add an option in menu to reset the game
-* post on itch with screenshots and descriptions
+==================
 
-* add bgm
-* add sound effect
+
+
+
+ok sometimes the avatar stops moving and its -1Att appears in a random location im confused
+
+
+
+can you maybe rework the wall collistion? sometimes things go through the walls, especially the usernames, id love for the collision to be more precise, and to not make the parent have extra scrollbars
+
+
+
+add the sfx for games
+play_value_sfx on colab and emoji 
+play_click_sfx on click on username
+play_problem_sfx on overlap of usernames (with '💣interaction💣' notification)
+
 
 ================== v1
+* accentuate chat/streamer ratio, in particular make influencers consume more att and make chat smaller and cheaper
 * new game engine
 * add farmbot feature (class and feature day 6)
 * add login page (streamer choice) to initialize streamer list, right now its hardcoded
@@ -52,3 +61,4 @@ dont come back to me until it's in working condition, observe your own web brows
 * neurosama narration
 * iterate on title screen
 * rewrite ending.html blurb
+* better BGM ???

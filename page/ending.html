@@ -7,16 +7,21 @@
     <title>The End</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <script type="module">
-        import { setDay, setMaxAllowedDay } from '../resource/common.js';
+        import { setDay, setMaxAllowedDay, play_notif_sfx } from '../resource/js/common.js';
 
         // Make functions available globally for onclick handlers
         window.setDay = setDay;
         window.setMaxAllowedDay = setMaxAllowedDay;
+        window.play_notif_sfx = play_notif_sfx;
 
         function backToDay7() {
             setDay(7);
             setMaxAllowedDay(7);
-            window.location.href = 'screen.html';
+
+            // Hide loading bar and redirect after a short delay for SFX
+            setTimeout(() => {
+                window.location.href = 'screen.html';
+            }, 500);
         }
 
         // Make the function globally available
@@ -25,7 +30,7 @@
 </head>
 
 <body
-    style="background: linear-gradient(180deg, #008080 0%, #004040 100%); margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column; overflow: hidden;">
+    style="background: linear-gradient(180deg, #008080 0%, #004040 100%); margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column; overflow: auto;">
     <div style="text-align: center; padding: 40px; max-width: 800px;">
         <h1
             style="font-family: 'MS Sans Serif', Tahoma, sans-serif; color: #fff; font-size: 36px; margin-bottom: 40px; line-height: 1.2;">
@@ -37,18 +42,25 @@
             style="margin: 60px 0; font-family: 'MS Sans Serif', Tahoma, sans-serif; font-size: 18px; color: #fff; min-height: 100px;">
             Thank you for playing.<br>
             <span style="font-size: 14px; opacity: 0.7;">
-            This is very much still a work in progess :) 3 days is a short time for a solo dev.<br />
-            I really want to make this project as good as it can be so please do leave comments and feedback so I can improve!<br />
-            If you like the game and want to help make it look better than I could, do reach out to me!<br />
-            <a href="https://www.yo252yo.com" target="_blank" style="font-weight:bold;">My website</a> has all my socials and my <a href="mailto:yo252yo@gmail.com" target="_blank" style="font-weight:bold;">email</a>.
-            
+                This is very much still a work in progess :) 3 days is a short time for a solo dev. The itch description
+                lists the known issues and works in progress.<br /><br />
+                I really want to make this project as good as it can be so please do leave <b>comments and feedback</b>
+                so I can improve!<br />
+                If you like the game and want to help make it look better than I could, <b>do reach out to me!</b><br />
+                <a href="https://www.yo252yo.com" target="_blank"
+                    style="font-weight:bold; color: #ffff00 !important; display: inline !important;">My website</a> has
+                all my
+                socials and my <a href="mailto:yo252yo@gmail.com" target="_blank"
+                    style="font-weight:bold; color: #ffff00 !important; display: inline !important;">email</a>.
+
             </span>
         </div>
 
         <div style="margin-top: 40px;">
-            <button onclick="backToDay7()" class="choice-btn" style="font-size: 16px; padding: 12px 24px;">
+            <a href="#" onclick="backToDay7(); return false;" class="next-button">
+                <img src="../resource/icons/next.png" alt="Back" />
                 Back to Day 7
-            </button>
+            </a>
         </div>
 
     </div>

@@ -16,7 +16,10 @@ import {
     getValue,
     incrementAtt,
     incrementNbChatters,
-    incrementValue
+    incrementValue,
+    play_click_sfx,
+    play_problem_sfx,
+    play_value_sfx
 } from './common.js';
 import { generateMultiple, generateTwitchUsername } from './fake_users.js';
 import { getAvatarUrl } from './twitch.js';
@@ -179,6 +182,9 @@ class EmojiTarget extends Target {
     }
 
     handleClick(event) {
+        // Play value sound
+        play_value_sfx();
+
         // Remove from active targets
         const index = activeTargets.indexOf(this);
         if (index > -1) {
@@ -568,6 +574,9 @@ class UsernameTarget extends Target {
     }
 
     handleClick(event) {
+        // Play ding sound
+        play_click_sfx();
+
         // Reverse direction
         this.dx = -this.dx;
         this.dy = -this.dy;
@@ -908,6 +917,40 @@ function manageTextTargetCollisions() {
                 boundsA.y < boundsB.y + boundsB.height && boundsA.y + boundsA.height > boundsB.y;
 
             if (overlap) {
+                // Play interaction sound
+                play_problem_sfx();
+
+                // Create interaction message (black with 💣 emoji)
+                const interactionMsg = document.createElement('div');
+                interactionMsg.textContent = '💣interaction💣';
+                interactionMsg.style.position = 'absolute';
+                // Position at midpoint between the two colliding targets
+                const midX = (boundsA.x + boundsA.width / 2 + boundsB.x + boundsB.width / 2) / 2;
+                const midY = (boundsA.y + boundsA.height / 2 + boundsB.y + boundsB.height / 2) / 2;
+                interactionMsg.style.left = (midX - 50) + 'px'; // Center the text
+                interactionMsg.style.top = (midY - 10) + 'px';
+                interactionMsg.style.color = 'black';
+                interactionMsg.style.fontSize = '14px';
+                interactionMsg.style.fontWeight = 'bold';
+                interactionMsg.style.pointerEvents = 'none';
+                interactionMsg.style.zIndex = '102';
+                interactionMsg.style.textAlign = 'center';
+                interactionMsg.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+                interactionMsg.style.padding = '2px 6px';
+                interactionMsg.style.borderRadius = '4px';
+                interactionMsg.style.textShadow = '0 0 5px black, 0 0 10px black, 0 0 15px black, 0 0 20px black';
+                // Animation: grow bigger while fading
+                interactionMsg.style.animation = 'collabGrow 2s ease-out forwards';
+                document.body.appendChild(interactionMsg);
+
+                // Remove after animation
+                setTimeout(() => {
+                    if (interactionMsg.parentNode) {
+                        interactionMsg.parentNode.removeChild(interactionMsg);
+                    }
+                }, 2000);
+
+                // Mark both targets for removal
                 targetsToRemove.add(targetA);
                 targetsToRemove.add(targetB);
                 break;

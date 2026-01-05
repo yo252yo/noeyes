@@ -1,6 +1,6 @@
-import { addStreamer, addSuggestedStreamer, getStreamers, getSuggestedStreamers, getValue } from '../common.js';
-import { spawnSpecificStreamerAvatar } from '../game.js';
-import { getAvatarUrl } from '../twitch.js';
+import { addStreamer, addSuggestedStreamer, getResourcePath, getStreamers, getSuggestedStreamers, getValue } from './common.js';
+import { spawnSpecificStreamerAvatar } from './game.js';
+import { getAvatarUrl } from './twitch.js';
 
 // Price calculation function
 function getStreamerPrice(currentCount) {
@@ -139,7 +139,7 @@ async function createStreamerCell(username) {
 
     // Add click event listener to avatar only to add streamer to main list
     avatarImg.addEventListener('click', async function () {
-        const { incrementValue } = await import('../common.js');
+        const { incrementValue, play_chime_sfx } = await import('./common.js');
         const currentValue = getValue();
         const currentStreamers = getStreamers().length;
         const price = getStreamerPrice(currentStreamers);
@@ -147,6 +147,7 @@ async function createStreamerCell(username) {
         if (currentValue >= price) {
             addStreamer(username);
             incrementValue(-price);
+            play_chime_sfx();
             if (window.spawnSpecificStreamerAvatar) {
                 window.spawnSpecificStreamerAvatar(username);
             }
@@ -162,7 +163,7 @@ async function createStreamerCell(username) {
 
     // Use default avatar if it fails to load (404 or other error)
     avatarImg.addEventListener('error', function () {
-        avatarImg.src = '../resource/avatars/default.png';
+        avatarImg.src = getResourcePath('resource/avatars/default.png');
     });
 
     return cell;

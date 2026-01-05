@@ -7,15 +7,23 @@
     <title>The End</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <link rel="stylesheet" href="../resource/css/class.css">
+    <script type="module">
+        import { play_problem_sfx } from '../resource/js/common.js';
+
+        // Play problem SFX when ending loads
+        document.addEventListener('DOMContentLoaded', function () {
+            play_problem_sfx();
+        });
+    </script>
 </head>
 
 <body
-    style="background: linear-gradient(180deg, #008080 0%, #004040 100%); margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column; overflow: hidden;">
+    style="background: linear-gradient(180deg, #008080 0%, #004040 100%); margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column; overflow: auto;">
     <div style="text-align: center; padding: 40px; max-width: 800px;">
         <div class="highlight-text" style="font-size: 24px; margin-bottom: 20px;">Ending I</div>
         <h1
             style="font-family: 'MS Sans Serif', Tahoma, sans-serif; color: #fff; font-size: 36px; margin-bottom: 40px; line-height: 1.2;">
-            S(t/c)reaming for machine eyes
+            S[t/c]reaming for machinic eyes
         </h1>
 
         <div style="margin-top: 40px;">
