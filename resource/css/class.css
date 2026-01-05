@@ -1,6 +1,7 @@
 body {
     background: linear-gradient(to bottom, #e0f0ff 0%, #ffffff 100%);
     font-family: "MS Sans Serif", sans-serif;
+    font-size: small;
 }
 
 h1 {
@@ -75,6 +76,7 @@ a:hover {
     font-size: 14px;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
     position: relative;
+    font-size: smaller;
 }
 
 .info-panel::before {
