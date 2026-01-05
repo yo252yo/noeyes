@@ -1,4 +1,5 @@
 
+accentuate the ratio chat to streamer, make sure to mention a couple of times in the game that there sould be a lot more chat than streamers 
 actually i can do a roundup with chatgpt for style etc... i think everything is there but its messy
 * have grok do a typo and orthograph/grammar check
 * put the word smile in bold in the diary  
