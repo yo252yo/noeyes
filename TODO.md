@@ -27,11 +27,14 @@ dont come back to me until it's in working condition, observe your own web brows
 * i think the js files are duplicated between resource and resource/js
 * accentuate the ratio chat to streamer, make sure to mention a couple of times in the game that there sould be a lot more chat than streamers 
 * put the word smile in bold in the diary
-* prevent select for the whole game
 * post on itch with screenshots and descriptions
 
 * add bgm
 * add sound effect
+
+
+* ending flow needs to be scrollable
+* spawn the diary a bit more to the right
 
 ================== v1
 * new game engine

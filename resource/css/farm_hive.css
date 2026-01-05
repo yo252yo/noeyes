@@ -6,6 +6,10 @@ body {
     font-family: "MS Sans Serif", Tahoma, sans-serif;
     color: white;
     overflow: auto;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .welcome-text {
@@ -260,6 +264,10 @@ body {
     font-family: "MS Sans Serif", Tahoma, sans-serif;
     color: white;
     overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .welcome-text {
