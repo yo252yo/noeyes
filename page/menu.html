@@ -7,12 +7,9 @@
     <title>Menu</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <script type="module">
-        import { changeSFXVolume, getSFXVolume, play_startup_sfx, changeMusicVolume, getMusicVolume } from '../resource/js/common.js';
-        window.changeSFXVolume = changeSFXVolume;
-        window.getSFXVolume = getSFXVolume;
+        import { play_startup_sfx, play_test_sfx } from '../resource/js/common.js';
         window.play_startup_sfx = play_startup_sfx;
-        window.changeMusicVolume = changeMusicVolume;
-        window.getMusicVolume = getMusicVolume;
+        window.play_test_sfx = play_test_sfx;
     </script>
     <style>
         /* Menu-specific Windows 98 styling */
@@ -22,7 +19,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" fill="%23008080"/><circle cx="16" cy="16" r="8" fill="%2300ffff" opacity="0.1"/></svg>') repeat;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" fill="%23008080" /><circle cx="16" cy="16" r="8" fill="%2300ffff" opacity="0.1" /></svg>') repeat;
             font-family: "MS Sans Serif", Tahoma, sans-serif;
         }
 
@@ -226,41 +223,54 @@
     </div>
 
     <script>
-        // Wait for module to load, then initialize volumes
+        // Volume changing functions
+        function changeMusicVolume(value) {
+            const volume = value / 100;
+            window.top.MUSIC_AUDIO.volume = volume;
+            localStorage.setItem("music_volume", volume.toString());
+        }
+
+        function getMusicVolume() {
+            return window.top.MUSIC_AUDIO.volume;
+        }
+
+        function changeSFXVolume(value) {
+            const volume = value / 100;
+            localStorage.setItem('sfx_volume', volume.toString());
+            // Play test sound to verify volume
+            window.play_test_sfx();
+        }
+
+        function getSFXVolume() {
+            return parseFloat(localStorage.getItem('sfx_volume') || '0.7');
+        }
+
+        // Initialize volumes when page loads
         function initializeVolumes() {
-            if (window.getMusicVolume && window.getSFXVolume) {
-                // Music volume control functionality
-                const volumeSlider = document.getElementById('volume-slider');
-                if (volumeSlider) {
-                    volumeSlider.addEventListener('input', function () {
-                        window.changeMusicVolume(volumeSlider.value);
-                    });
+            // Music volume control functionality
+            const volumeSlider = document.getElementById('volume-slider');
+            if (volumeSlider) {
+                volumeSlider.addEventListener('input', function () {
+                    changeMusicVolume(volumeSlider.value);
+                });
 
-                    // Set initial music volume from parent
-                    try {
-                        volumeSlider.value = Math.floor(100 * window.getMusicVolume());
-                    } catch {
-                        volumeSlider.value = 60; // fallback default
-                    }
+                // Set initial music volume
+                try {
+                    volumeSlider.value = Math.floor(100 * getMusicVolume());
+                } catch {
+                    volumeSlider.value = 60; // fallback default
                 }
+            }
 
-                // SFX volume control functionality
-                const sfxSlider = document.getElementById('sfx-slider');
-                if (sfxSlider) {
-                    sfxSlider.addEventListener('input', function () {
-                        window.changeSFXVolume(sfxSlider.value);
-                    });
+            // SFX volume control functionality
+            const sfxSlider = document.getElementById('sfx-slider');
+            if (sfxSlider) {
+                sfxSlider.addEventListener('input', function () {
+                    changeSFXVolume(sfxSlider.value);
+                });
 
-                    // Set initial SFX volume
-                    try {
-                        sfxSlider.value = Math.floor(100 * window.getSFXVolume());
-                    } catch {
-                        sfxSlider.value = 70; // fallback default
-                    }
-                }
-            } else {
-                // Retry after a short delay if functions aren't loaded yet
-                setTimeout(initializeVolumes, 100);
+                // Set initial SFX volume
+                sfxSlider.value = Math.floor(100 * getSFXVolume());
             }
         }
 

@@ -6,27 +6,7 @@ const SFX_FILES = {
     startup: 'resource/SFX/windows_98_startup.mp3'
 };
 
-// Audio helper functions - delegate to top-level window
-export function getSFXVolume() {
-    if (window.top && window.top.getSFXVolume) {
-        return window.top.getSFXVolume();
-    }
-    return 0.7; // fallback
-}
-
-export function getMusicVolume() {
-    if (window.top && window.top.MUSIC_AUDIO) {
-        return window.top.MUSIC_AUDIO.volume;
-    }
-    return 0.6; // fallback
-}
-
-export function changeMusicVolume(value) {
-    if (window.top && window.top.changeMusicVolume) {
-        window.top.changeMusicVolume(value);
-    }
-}
-
+// SFX helper functions - delegate to top-level window
 export function playSFX(soundFile) {
     if (window.top && window.top.playSFX) {
         window.top.playSFX(soundFile);
@@ -39,14 +19,6 @@ export function play_test_sfx() {
 
 export function play_startup_sfx() {
     playSFX(SFX_FILES.startup);
-}
-
-export function changeSFXVolume(value) {
-    if (window.top && window.top.changeSFXVolume) {
-        window.top.changeSFXVolume(value);
-        // Play test sound when volume changes
-        play_test_sfx();
-    }
 }
 
 // Ending sequences configuration

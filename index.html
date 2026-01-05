@@ -9,7 +9,15 @@
     <script>
         var MUSIC_AUDIO = new Audio();
         MUSIC_AUDIO.loop = "loop";
-        MUSIC_AUDIO.volume = localStorage.getItem("music_volume") || 0.6;
+
+        // Initialize music volume from localStorage or set default
+        const savedMusicVolume = localStorage.getItem("music_volume");
+        if (savedMusicVolume) {
+            MUSIC_AUDIO.volume = parseFloat(savedMusicVolume);
+        } else {
+            MUSIC_AUDIO.volume = 0.8; // default
+            localStorage.setItem("music_volume", "0.8");
+        }
 
         MUSIC_AUDIO.src = "resource/Soft and Furious - Bae - 02 Game On.mp3";
 
@@ -20,44 +28,16 @@
         }
         startMusic();
 
-        function changeMusicVolume(value) {
-            MUSIC_AUDIO.volume = value / 100;
-            localStorage.setItem("music_volume", MUSIC_AUDIO.volume);
-        }
-
-        // SFX functionality at parent level
-        var SFX_AUDIO = null;
-
-        function getSFXVolume() {
-            const stored = localStorage.getItem('sfx_volume');
-            return stored ? parseFloat(stored) : 0.7;
-        }
-
-        function setSFXVolume(volume) {
-            volume = Math.max(0, Math.min(1, volume));
-            localStorage.setItem('sfx_volume', volume.toString());
-        }
-
         function playSFX(soundFile) {
-            // Stop any currently playing SFX
-            if (SFX_AUDIO) {
-                SFX_AUDIO.pause();
-                SFX_AUDIO.currentTime = 0;
-            }
-
-            // Create new audio element
-            SFX_AUDIO = new Audio(soundFile);
-            SFX_AUDIO.volume = getSFXVolume();
+            // Create new audio element each time and set volume from localStorage
+            const audio = new Audio(soundFile);
+            const sfxVolume = localStorage.getItem('sfx_volume');
+            audio.volume = sfxVolume ? parseFloat(sfxVolume) : 0.7; // default to 0.7 if not set
 
             // Play the sound
-            SFX_AUDIO.play().catch(function (error) {
+            audio.play().catch(function (error) {
                 console.warn('SFX playback failed:', error);
             });
-        }
-
-        function changeSFXVolume(value) {
-            const volume = value / 100;
-            setSFXVolume(volume);
         }
     </script>
     <script type="module">
