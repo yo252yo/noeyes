@@ -2,7 +2,7 @@
 
 // Ending sequences configuration
 const ENDING_DAYS = {
-    influencer: [9, 24, 68, 126, 202],
+    influencer: [9, 24, 31, 35, 38, 47, 52, 55, 58, 62, 65, 66, 67, 69, 71, 72, 73],
     chat: [9, 32, 641, 642]
 };
 

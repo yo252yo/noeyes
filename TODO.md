@@ -1,5 +1,7 @@
 
-* write diary
+actually i can do a roundup with chatgpt for style etc... i think everything is there but its messy
+* have grok do a typo and orthograph/grammar check
+* put the word smile in bold in the diary  
 * write ending.html blurb
 * i got the same color for hive and farm by default
 * prevent select for the whole game
@@ -40,3 +42,4 @@ Don't forget to include the pixi library where you use it :)
 * add OS start
 * update IRC when getting new streamers
 
+* neurosama narration
