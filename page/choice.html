@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Path</title>
+    <link rel="stylesheet" href="../resource/css/style.css">
+    <script type="module">
+        import { setDay, setMaxAllowedDay, setFinalChoice } from '../resource/common.js';
+
+        // Make functions available globally for onclick handlers
+        window.setDay = setDay;
+        window.setMaxAllowedDay = setMaxAllowedDay;
+        window.setFinalChoice = setFinalChoice;
+
+        function makeChoice(choice) {
+            // Record the choice using common.js function
+            setFinalChoice(choice);
+
+            // Set day and max day to 9
+            setMaxAllowedDay(9);
+            setDay(9);
+
+            // Redirect back to screen.html
+            window.location.href = 'screen.html';
+        }
+
+        // Make the choice function globally available
+        window.makeChoice = makeChoice;
+    </script>
+</head>
+
+<body
+    style="background-color: #008080; margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <div style="text-align: center; padding: 40px;">
+        <h1
+            style="font-family: 'MS Sans Serif', Tahoma, sans-serif; color: #000; margin-bottom: 40px; font-size: 24px;">
+            Choose Your <span class="highlight-text">Gender™</span></h1>
+
+        <div class="buttons" style="justify-content: center;">
+            <button onclick="makeChoice('influencer')" class="choice-btn">
+                <span class="highlight-text">Influencer</span>
+            </button>
+
+            <button onclick="makeChoice('chat')" class="choice-btn">
+                <span class="highlight-text">Chat</span>
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -5,6 +5,7 @@
 * add login page (streamer choice) to initialize streamer list, right now its hardcoded
 * add bgm
 * add sound effect
+* remove X cross and mb add an option in menu to reset the game
 * add disclaimer/explanation about cognitive science
 * post on itch with screenshots and descriptions
 * achivevements for certification every day

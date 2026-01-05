@@ -201,9 +201,23 @@ export function setHiveOpen(isOpen) {
     localStorage.setItem('hive_open', isOpen.toString());
 }
 
+export function getFinalChoice() {
+    return localStorage.getItem('final_choice');
+}
+
+export function setFinalChoice(choice) {
+    localStorage.setItem('final_choice', choice);
+}
+
 export function callItADay() {
     const currentDay = getDay();
     const maxAllowedDay = getMaxAllowedDay();
+
+    if (currentDay === 7) {
+        // Special case: redirect to choice page
+        window.location.href = 'choice.html';
+        return;
+    }
 
     if (maxAllowedDay > currentDay) {
         incrementDay();
