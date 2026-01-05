@@ -1,26 +1,50 @@
 // Common utility functions for localStorage management
 
+// Helper function to get correct path from any iframe depth
+export function getResourcePath(resourcePath) {
+    const currentPath = window.location.pathname;
+
+    // For local development - use relative paths based on known structure
+    // Root: index.html, resource/
+    // page/*.html: 1 level deep, need ../
+    // page/classes/*.html: 2 levels deep, need ../../
+
+    if (currentPath.includes('/page/classes/')) {
+        // 2 levels deep: page/classes/*.html
+        return '../../' + resourcePath;
+    } else if (currentPath.includes('/page/')) {
+        // 1 level deep: page/*.html
+        return '../' + resourcePath;
+    } else {
+        // Root level: no prefix needed
+        return resourcePath;
+    }
+}
+
 // SFX function mappings - common.js knows which files to play
 const SFX_FILES = {
-    value: 'resource/SFX/windows_98_tada.mp3',
-    startup: 'resource/SFX/windows_98_startup.mp3',
-    click: 'resource/SFX/windows_98_click.mp3',
-    notify: 'resource/SFX/windows_98_notify.mp3',
-    error: 'resource/SFX/windows_98_chord_1.mp3',
-    new_day: 'resource/SFX/windows_98_ring.mp3',
-    ding: 'resource/SFX/windows_98_ding.mp3',
-    chime: 'resource/SFX/windows_98_chimes.mp3',
-    problem: 'resource/SFX/windows_98_error.mp3'
+    value: getResourcePath('resource/SFX/windows_98_tada.mp3'),
+    startup: getResourcePath('resource/SFX/windows_98_startup.mp3'),
+    click: getResourcePath('resource/SFX/windows_98_click.mp3'),
+    notify: getResourcePath('resource/SFX/windows_98_notify.mp3'),
+    error: getResourcePath('resource/SFX/windows_98_chord_1.mp3'),
+    new_day: getResourcePath('resource/SFX/windows_98_ring.mp3'),
+    ding: getResourcePath('resource/SFX/windows_98_ding.mp3'),
+    chime: getResourcePath('resource/SFX/windows_98_chimes.mp3'),
+    problem: getResourcePath('resource/SFX/windows_98_error.mp3')
 };
 
-// SFX helper functions - communicate with top-level window via postMessage
+// SFX helper functions - create and play audio elements directly
 export function playSFX(soundFile) {
-    if (window.top) {
-        window.top.postMessage({
-            type: 'playSFX',
-            soundFile: soundFile
-        }, '*');
-    }
+    // Create new audio element each time and set volume from localStorage
+    const audio = new Audio(soundFile);
+    const sfxVolume = localStorage.getItem('sfx_volume');
+    audio.volume = sfxVolume ? parseFloat(sfxVolume) : 0.7; // default to 0.7 if not set
+
+    // Play the sound
+    audio.play().catch(function (error) {
+        console.warn('SFX playback failed:', error);
+    });
 }
 
 export function play_value_sfx() {
@@ -59,11 +83,151 @@ export function play_chime_sfx() {
     playSFX(SFX_FILES.chime);
 }
 
+// Windows 98 style loading bar functions
+function createLoadingBar() {
+    // Check if loading bar already exists
+    if (document.getElementById('navigation-loading-bar')) {
+        return document.getElementById('navigation-loading-bar');
+    }
+
+    // Create the loading bar container
+    const loadingContainer = document.createElement('div');
+    loadingContainer.id = 'navigation-loading-bar';
+    loadingContainer.style.cssText = `
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        width: 150px;
+        height: 16px;
+        background-color: #c0c0c0;
+        border: 2px inset #c0c0c0;
+        padding: 2px;
+        z-index: 10000;
+        display: none;
+        opacity: 0.5;
+    `;
+
+    // Create the progress bar background
+    const progressBg = document.createElement('div');
+    progressBg.style.cssText = `
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        border: 1px inset #c0c0c0;
+        position: relative;
+    `;
+
+    // Create the progress fill
+    const progressFill = document.createElement('div');
+    progressFill.id = 'loading-progress-fill';
+    progressFill.style.cssText = `
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+        transition: width 0.1s ease;
+    `;
+
+    // Create the text label
+    const labelText = document.createElement('div');
+    labelText.id = 'loading-label-text';
+    labelText.style.cssText = `
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        font-family: "MS Sans Serif", Tahoma, sans-serif;
+        font-size: 11px;
+        color: black;
+        text-shadow: 1px 1px 0px white;
+        pointer-events: none;
+    `;
+    labelText.textContent = 'Loading...';
+
+    progressBg.appendChild(progressFill);
+    progressBg.appendChild(labelText);
+    loadingContainer.appendChild(progressBg);
+    document.body.appendChild(loadingContainer);
+
+    return loadingContainer;
+}
+
+function showLoadingBar(duration) {
+    const loadingBar = createLoadingBar();
+    const progressFill = document.getElementById('loading-progress-fill');
+    const labelText = document.getElementById('loading-label-text');
+
+    loadingBar.style.display = 'block';
+    labelText.textContent = 'Navigating...';
+
+    // Animate the progress bar
+    let startTime = Date.now();
+    let animationFrame;
+
+    function updateProgress() {
+        let elapsed = Date.now() - startTime;
+        let progress = Math.min(elapsed / duration, 1);
+
+        progressFill.style.width = (progress * 100) + '%';
+
+        if (progress < 1) {
+            animationFrame = requestAnimationFrame(updateProgress);
+        } else {
+            // Ensure it reaches 100%
+            progressFill.style.width = '100%';
+        }
+    }
+
+    updateProgress();
+
+    return {
+        hide: () => {
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
+            }
+            loadingBar.style.display = 'none';
+            progressFill.style.width = '0%';
+        }
+    };
+}
+
 // Automatically set up click listeners for next-button elements
 export function setupNextButtonListeners() {
     const nextButtons = document.querySelectorAll('.next-button');
     nextButtons.forEach(button => {
-        button.addEventListener('click', play_ding_sfx);
+        button.addEventListener('click', function (event) {
+            // Prevent default navigation
+            event.preventDefault();
+
+            // Play the sound and show loading bar
+            const audio = new Audio(getResourcePath('resource/SFX/windows_98_ding.mp3'));
+            const sfxVolume = localStorage.getItem('sfx_volume');
+            audio.volume = sfxVolume ? parseFloat(sfxVolume) : 0.7;
+
+            // Show loading bar for up to 500ms
+            const loadingBar = showLoadingBar(500);
+
+            // Navigate after sound plays or after a short delay
+            audio.play().then(() => {
+                // Wait for sound to finish, but don't wait longer than 500ms
+                setTimeout(() => {
+                    loadingBar.hide();
+                    const href = this.getAttribute('href') || this.closest('a')?.getAttribute('href');
+                    if (href) {
+                        window.location.href = href;
+                    }
+                }, Math.min(audio.duration * 1000, 500));
+            }).catch(() => {
+                // If sound fails to play, hide loading bar and navigate immediately
+                loadingBar.hide();
+                const href = this.getAttribute('href') || this.closest('a')?.getAttribute('href');
+                if (href) {
+                    window.location.href = href;
+                }
+            });
+        });
     });
 }
 
@@ -315,10 +479,9 @@ function callItADay_ending(currentDay) {
         const nextDay = endingDays[currentIndex + 1];
         setDay(nextDay);
         setMaxAllowedDay(nextDay);
-        showPopup('Welcome to a new day', '../resource/icons/day.png');
+        showPopup('Welcome to a new day', getResourcePath('resource/icons/day.png'));
         play_new_day_sfx();
     } else if (currentIndex === endingDays.length - 1) {
-        play_problem_sfx();
         // Last day reached, redirect to appropriate ending page
         window.location.href = `ending_${finalChoice}.html`;
     }
@@ -331,7 +494,6 @@ export function callItADay() {
     if (currentDay === 7) {
         // Special case: redirect to choice page
         window.location.href = 'choice.html';
-        play_new_day_sfx();
         return;
     }
 
@@ -344,10 +506,10 @@ export function callItADay() {
     // Normal day progression
     if (maxAllowedDay > currentDay) {
         incrementDay();
-        showPopup('Welcome to a new day', '../resource/icons/day.png');
+        showPopup('Welcome to a new day', getResourcePath('resource/icons/day.png'));
         play_new_day_sfx();
     } else {
-        showPopup('You must complete all your classes for the day before you can log off', '../resource/icons/error.png', true);
+        showPopup('You must complete all your classes for the day before you can log off', getResourcePath('resource/icons/error.png'), true);
         play_error_sfx();
     }
 }

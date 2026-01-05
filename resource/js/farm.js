@@ -1,4 +1,4 @@
-import { addStreamer, addSuggestedStreamer, getStreamers, getSuggestedStreamers, getValue } from './common.js';
+import { addStreamer, addSuggestedStreamer, getResourcePath, getStreamers, getSuggestedStreamers, getValue } from './common.js';
 import { spawnSpecificStreamerAvatar } from './game.js';
 import { getAvatarUrl } from './twitch.js';
 
@@ -163,7 +163,7 @@ async function createStreamerCell(username) {
 
     // Use default avatar if it fails to load (404 or other error)
     avatarImg.addEventListener('error', function () {
-        avatarImg.src = '../resource/avatars/default.png';
+        avatarImg.src = getResourcePath('resource/avatars/default.png');
     });
 
     return cell;

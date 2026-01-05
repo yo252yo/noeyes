@@ -39,13 +39,6 @@
                 console.warn('SFX playback failed:', error);
             });
         }
-
-        // Listen for SFX messages from child iframes
-        window.addEventListener('message', function (event) {
-            if (event.data && event.data.type === 'playSFX') {
-                playSFX(event.data.soundFile);
-            }
-        });
     </script>
     <script type="module">
         import './resource/js/common.js';

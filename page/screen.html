@@ -7,8 +7,13 @@
     <title>Screen</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <script type="module">
-        import { getValue, getAtt, getDay, callItADay, closePopup, getStreamers, getNbChatters } from '../resource/js/common.js';
+        import { getValue, getAtt, getDay, callItADay, closePopup, getStreamers, getNbChatters, play_startup_sfx } from '../resource/js/common.js';
         import { closeDiaryWindow, closeClassWindow, closeFarmWindow, closeHiveWindow } from '../resource/js/os.js';
+
+        // Play startup SFX when screen loads
+        document.addEventListener('DOMContentLoaded', function () {
+            play_startup_sfx();
+        });
 
         // Make functions available globally for onclick handlers
         window.closeDiaryWindow = closeDiaryWindow;

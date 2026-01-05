@@ -7,7 +7,14 @@
     <title>The End</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <link rel="stylesheet" href="../resource/css/class.css">
-    <script type="module" src="../../resource/js/common.js"></script>
+    <script type="module">
+        import { play_problem_sfx } from '../../resource/js/common.js';
+
+        // Play problem SFX when ending loads
+        document.addEventListener('DOMContentLoaded', function () {
+            play_problem_sfx();
+        });
+    </script>
 </head>
 
 <body

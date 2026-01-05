@@ -6,14 +6,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Choose Your Path</title>
     <link rel="stylesheet" href="../resource/css/style.css">
+    <style>
+        /* Choice page specific button styling */
+        .buttons .next-button {
+            width: 200px;
+            height: 100px;
+            margin: 0 50px;
+            /* 100px total gap between buttons */
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .buttons .next-button img {
+            width: 32px;
+            height: 32px;
+        }
+    </style>
     <script type="module">
-        import { setDay, setMaxAllowedDay, setFinalChoice, play_notif_sfx } from '../resource/js/common.js';
+        import { setDay, setMaxAllowedDay, setFinalChoice, play_new_day_sfx } from '../resource/js/common.js';
+
+        // Play new day SFX when choice page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            play_new_day_sfx();
+        });
 
         // Make functions available globally for onclick handlers
         window.setDay = setDay;
         window.setMaxAllowedDay = setMaxAllowedDay;
         window.setFinalChoice = setFinalChoice;
-        window.play_notif_sfx = play_notif_sfx;
 
         function makeChoice(choice) {
             // Record the choice using common.js function
@@ -23,8 +45,10 @@
             setMaxAllowedDay(9);
             setDay(9);
 
-            // Redirect back to screen.html
-            window.location.href = 'screen.html';
+            // Hide loading bar and redirect after a short delay for the SFX
+            setTimeout(() => {
+                window.location.href = 'screen.html';
+            }, 500);
         }
 
         // Make the choice function globally available
@@ -32,21 +56,20 @@
     </script>
 </head>
 
-<body
-    style="background-color: #008080; margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center;">
+<body style="background-color: #008080; display: flex; justify-content: center; align-items: center; overflow:hidden">
     <div style="text-align: center; padding: 40px;">
         <h1
             style="font-family: 'MS Sans Serif', Tahoma, sans-serif; color: #000; margin-bottom: 40px; font-size: 24px;">
             Choose Your <span class="highlight-text">Gender™</span></h1>
 
         <div class="buttons" style="justify-content: center;">
-            <button onclick="play_notif_sfx(); makeChoice('influencer')" class="choice-btn">
+            <a href="#" onclick="makeChoice('influencer'); return false;" class="next-button">
                 <span class="highlight-text">Influencer</span>
-            </button>
+            </a>
 
-            <button onclick="play_notif_sfx(); makeChoice('chat')" class="choice-btn">
+            <a href="#" onclick="makeChoice('chat'); return false;" class="next-button">
                 <span class="highlight-text">Chat</span>
-            </button>
+            </a>
         </div>
     </div>
 </body>
