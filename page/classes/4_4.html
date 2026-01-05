@@ -13,10 +13,10 @@
         window.updateScoreDisplay = function () {
             const value = getValue();
             const scoreDisplay = document.getElementById('score-display');
-            scoreDisplay.textContent = value + '/500';
+            scoreDisplay.textContent = value + '/400';
 
             const nextButtonContainer = document.getElementById('next-button');
-            if (value >= 500) {
+            if (value >= 400) {
                 nextButtonContainer.style.display = 'block';
             } else {
                 nextButtonContainer.style.display = 'none';
@@ -44,8 +44,8 @@
     </div>
 
     <div class="info-panel">
-        <p>Accumulate 500 <span class="highlight-text">Value</span> to validate this class. (<span
-                id="score-display">0/500</span>)
+        <p>Accumulate 400 <span class="highlight-text">Value</span> to validate this class. (<span
+                id="score-display">0/400</span>)
         </p>
     </div>
 

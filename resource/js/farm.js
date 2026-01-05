@@ -1,6 +1,62 @@
-import { addStreamer, addSuggestedStreamer, getStreamers, getSuggestedStreamers } from '../common.js';
+import { addStreamer, addSuggestedStreamer, getStreamers, getSuggestedStreamers, getValue } from '../common.js';
 import { spawnSpecificStreamerAvatar } from '../game.js';
 import { getAvatarUrl } from '../twitch.js';
+
+// Price calculation function
+function getStreamerPrice(currentCount) {
+    switch (currentCount) {
+        case 0: return 1;
+        case 1: return 50;
+        case 2: return 100;
+        case 3: return 500;
+        case 4: return 1000;
+        case 5: return 10000;
+        default: return 10000 * Math.pow(10, currentCount - 3);
+    }
+}
+
+// Update value and price display
+function updateFarmStats() {
+    const valueElement = document.getElementById('farm-value');
+    const priceElement = document.getElementById('next-price');
+    if (valueElement && priceElement) {
+        const currentValue = getValue();
+        const currentStreamers = getStreamers().length;
+        const nextPrice = getStreamerPrice(currentStreamers);
+        valueElement.textContent = currentValue;
+        priceElement.textContent = nextPrice;
+    }
+
+    // Update streamer cell appearances based on current affordability
+    updateStreamerCellAppearances();
+}
+
+// Update visual state of streamer cells (greying/ungreying)
+function updateStreamerCellAppearances() {
+    const streamerCells = document.querySelectorAll('.streamer-cell');
+    const currentValue = getValue();
+    const currentStreamers = getStreamers().length;
+    const price = getStreamerPrice(currentStreamers);
+
+    streamerCells.forEach(cell => {
+        const avatarImg = cell.querySelector('.streamer-avatar');
+        const nameSpan = cell.querySelector('.streamer-name');
+
+        if (avatarImg && nameSpan) {
+            const canAfford = currentValue >= price;
+
+            if (!canAfford) {
+                avatarImg.style.filter = 'grayscale(100%)';
+                avatarImg.style.opacity = '0.5';
+                nameSpan.style.opacity = '0.5';
+            } else {
+                avatarImg.style.filter = '';
+                avatarImg.style.opacity = '';
+                nameSpan.style.opacity = '';
+            }
+        }
+    });
+}
 
 // Make functions available globally
 window.getStreamers = getStreamers;
@@ -64,13 +120,40 @@ async function createStreamerCell(username) {
     cell.appendChild(avatarImg);
     cell.appendChild(nameSpan);
 
+    // Check if player can afford this streamer
+    const currentValue = getValue();
+    const currentStreamers = getStreamers().length;
+    const price = getStreamerPrice(currentStreamers);
+    const canAfford = currentValue >= price;
+
+    // Grey out if cannot afford
+    if (!canAfford) {
+        avatarImg.style.filter = 'grayscale(100%)';
+        avatarImg.style.opacity = '0.5';
+        nameSpan.style.opacity = '0.5';
+    } else {
+        avatarImg.style.filter = '';
+        avatarImg.style.opacity = '';
+        nameSpan.style.opacity = '';
+    }
+
     // Add click event listener to avatar only to add streamer to main list
-    avatarImg.addEventListener('click', function () {
-        addStreamer(username);
-        if (window.spawnSpecificStreamerAvatar) {
-            window.spawnSpecificStreamerAvatar(username);
+    avatarImg.addEventListener('click', async function () {
+        const { incrementValue } = await import('../common.js');
+        const currentValue = getValue();
+        const currentStreamers = getStreamers().length;
+        const price = getStreamerPrice(currentStreamers);
+
+        if (currentValue >= price) {
+            addStreamer(username);
+            incrementValue(-price);
+            if (window.spawnSpecificStreamerAvatar) {
+                window.spawnSpecificStreamerAvatar(username);
+            }
+            updateFarmStats();
+            window.buildStreamerList();
         }
-        window.buildStreamerList();
+        // If cannot afford, do nothing (could add feedback here)
     });
 
     // Load avatar
@@ -107,6 +190,18 @@ window.changeBackgroundColor = function (color) {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function () {
+    // Load saved background color on page load
+    const savedColor = localStorage.getItem('farmBackgroundColor');
+    if (savedColor) {
+        window.changeBackgroundColor(savedColor);
+    }
+
+    // Initial stats update
+    updateFarmStats();
+
+    // Update stats every 200ms for real-time display
+    setInterval(updateFarmStats, 200);
+
     window.buildStreamerList();
 
     // Add streamer functionality
@@ -119,10 +214,4 @@ document.addEventListener('DOMContentLoaded', function () {
             input.value = '';
         }
     });
-
-    // Load saved background color on page load
-    const savedColor = localStorage.getItem('farmBackgroundColor');
-    if (savedColor) {
-        window.changeBackgroundColor(savedColor);
-    }
 });
