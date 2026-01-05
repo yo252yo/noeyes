@@ -1,4 +1,11 @@
 // Common utility functions for localStorage management
+
+// Ending sequences configuration
+const ENDING_DAYS = {
+    influencer: [9, 24, 68, 126, 202],
+    chat: [9, 32, 641, 642]
+};
+
 export function setChatters(chatters) {
     localStorage.setItem('twitch_chatters', JSON.stringify(chatters));
 }
@@ -60,6 +67,14 @@ export function setMaxAllowedDay(day) {
 export function setDay(day) {
     localStorage.setItem('current_day', day.toString());
     updateDayDisplay();
+
+    // Automatically show diary window during ending sequence
+    if (day >= 9) {
+        const diaryWindow = document.getElementById('diary-window');
+        if (diaryWindow) {
+            diaryWindow.style.visibility = 'visible';
+        }
+    }
 }
 
 export function incrementDay() {
@@ -86,7 +101,15 @@ export function updateHiveIconVisibility() {
 export function updateDayDisplay() {
     const dayElement = document.getElementById('day-text');
     if (dayElement) {
-        dayElement.textContent = `Day ${getDay()}/7`;
+        const currentDay = getDay();
+        const finalChoice = getFinalChoice();
+
+        // During ending sequence, show actual day number
+        if (finalChoice && currentDay >= 9) {
+            dayElement.textContent = `Day ${currentDay}`;
+        } else {
+            dayElement.textContent = `Day ${currentDay}/7`;
+        }
     }
     // Update farm icon visibility when day changes
     updateFarmIconVisibility();
@@ -209,6 +232,23 @@ export function setFinalChoice(choice) {
     localStorage.setItem('final_choice', choice);
 }
 
+function callItADay_ending(currentDay) {
+    const finalChoice = getFinalChoice();
+    const endingDays = ENDING_DAYS[finalChoice];
+    const currentIndex = endingDays.indexOf(currentDay);
+
+    if (currentIndex >= 0 && currentIndex < endingDays.length - 1) {
+        // Jump to next ending day
+        const nextDay = endingDays[currentIndex + 1];
+        setDay(nextDay);
+        setMaxAllowedDay(nextDay);
+        showPopup('Welcome to a new day', '../resource/icons/day.png');
+    } else if (currentIndex === endingDays.length - 1) {
+        // Last day reached, redirect to ending
+        window.location.href = 'ending.html';
+    }
+}
+
 export function callItADay() {
     const currentDay = getDay();
     const maxAllowedDay = getMaxAllowedDay();
@@ -219,6 +259,13 @@ export function callItADay() {
         return;
     }
 
+    // Check if we're in the ending sequence
+    if (currentDay >= 9) {
+        callItADay_ending(currentDay);
+        return;
+    }
+
+    // Normal day progression
     if (maxAllowedDay > currentDay) {
         incrementDay();
         showPopup('Welcome to a new day', '../resource/icons/day.png');

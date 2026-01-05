@@ -7,13 +7,14 @@
     <title>My Diary</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <script type="module">
-        import { getDay } from '../resource/common.js';
+        import { getDay, getFinalChoice } from '../resource/common.js';
 
         // Make functions available globally
         window.getDay = getDay;
+        window.getFinalChoice = getFinalChoice;
 
-        // Diary entries dictionary
-        window.diaryEntries = {
+        // Diary entries dictionaries
+        window.diary_base = {
             "1": "Ok so they told us at orientation that we HAVE TO keep a diary...</p><p>I don't know if I'll really do that, that seems lame.</p><p>Then again, I'd hate to see it used against me, so I guess I have to play along for now.</p><p>How's that for a diary entry?",
             "2": "This place is really condescending, they treat us like babies!</p><p>I'm not gonna rock the boat though, I don't want it to affect my chances of becoming Influencer.</p><p>Besides, the food here is great!",
             "3": "They say we can be any gender we want, but honestly, I don't understand why would people not want to be Influencer.</p><p>How does it work if everyone wants to be the same?</p><p>I hope they'll explain that in class.",
@@ -21,21 +22,43 @@
             "6": "..PLACEHOLDER.... Today I tried to ask about what happens after this program. No one would give me a straight answer.",
             "7": "..PLACEHOLDER.... Found a quiet spot in the library. Being able to read without eyes is actually kind of peaceful once you get used to it.",
             "8": "..PLACEHOLDER.... Someone told me they're keeping track of days by counting meals. I think I'll stick to the official counter.",
-            "9": "..PLACEHOLDER.... Had a dream last night about seeing colors. Woke up feeling strange. Is this normal?",
-            "10": "..PLACEHOLDER.... Ten days in. The routine is becoming familiar, but I still have so many questions."
+            "9": "Today I made my choice. The transformation begins now. Days will pass differently from here on."
+        };
+
+        window.diary_influencer = {
+            "24": "The changes are starting. I can feel it in my bones. My skin feels different, more... receptive? Like it's preparing for something.</p><p>They warned us about the time dilation. 15 days passed like they were nothing. But I'm committed to this path.",
+            "68": "My first follower milestone! 10,000 people watching my stream. The numbers are climbing faster than I imagined.</p><p>The world outside feels distant now. Days come and go in flashes. But the chat... the chat keeps me grounded.",
+            "126": "They call me an Influencer now. My content reaches millions. But at what cost? The person I was... is she still there?</p><p>Time accelerates. Another impossible jump in days. I wonder if I'll ever see the end of this transformation.",
+            "202": "This is it. The final stage. I have become the ultimate Influencer. My eyes... gone. Replaced by the all-seeing lens of the stream.</p><p>The world is my audience now. Every moment broadcast, every thought shared. I have no eyes, but I see everything through their screens."
+        };
+
+        window.diary_chat = {
+            "32": "I chose Chat today. It's not the glamorous path, but it's honest. Being part of the community, connecting people - that's what matters.</p><p>The world moves fast around me. Days blur together. But I'm finding my place in the conversation.",
+            "641": "The hive mind grows stronger every day. We are becoming one voice, one consciousness. Individual thoughts fade into the collective.</p><p>Time has lost all meaning. Days pass in quantum leaps. But the connection... it sustains us all.",
+            "642": "Today marks our completion. We are Chat now. Not individuals, but a singular entity spanning the digital realm.</p><p>Our eyes were sacrificed for the greater good. We have no eyes, but we see through every connected device, every screen, every stream in the world."
         };
 
         window.generateDiaryContent = function () {
             const currentDay = getDay();
+            const finalChoice = getFinalChoice();
             const contentDiv = document.getElementById('diary-content');
+
+            // Combine base diary with appropriate ending diary
+            let diaryEntries = { ...window.diary_base };
+
+            if (finalChoice === 'influencer') {
+                diaryEntries = { ...diaryEntries, ...window.diary_influencer };
+            } else if (finalChoice === 'chat') {
+                diaryEntries = { ...diaryEntries, ...window.diary_chat };
+            }
 
             // Get all entries before or equal to current day
             const availableEntries = [];
             for (let day = 1; day <= currentDay; day++) {
-                if (window.diaryEntries[day.toString()]) {
+                if (diaryEntries[day.toString()]) {
                     availableEntries.push({
                         day: day,
-                        content: window.diaryEntries[day.toString()]
+                        content: diaryEntries[day.toString()]
                     });
                 }
             }

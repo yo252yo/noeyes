@@ -1,5 +1,6 @@
 
 * write diary
+* write ending.html blurb
 * i got the same color for hive and farm by default
 * prevent select for the whole game
 * add login page (streamer choice) to initialize streamer list, right now its hardcoded

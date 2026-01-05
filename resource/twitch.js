@@ -1,6 +1,6 @@
 // Streamer arrays
 const streamers = ['vedal987'];
-const suggested_streamers = ['vedal987', 'dougdoug', 'shindigs', 'probelive', 'ellie_minibot', 'tenma'];
+const suggested_streamers = ['vedal987', 'dougdoug', 'shindigs', 'ellie_minibot', 'tenma', 'laynalazar']; // 'probelive',
 
 import { getStreamers, getSuggestedStreamers, setStreamers, setSuggestedStreamers } from './common.js';
 
