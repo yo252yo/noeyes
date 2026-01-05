@@ -64,8 +64,8 @@ async function createStreamerCell(username) {
     cell.appendChild(avatarImg);
     cell.appendChild(nameSpan);
 
-    // Add click event listener to add streamer to main list
-    cell.addEventListener('click', function () {
+    // Add click event listener to avatar only to add streamer to main list
+    avatarImg.addEventListener('click', function () {
         addStreamer(username);
         if (window.spawnSpecificStreamerAvatar) {
             window.spawnSpecificStreamerAvatar(username);
