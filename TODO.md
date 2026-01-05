@@ -24,9 +24,9 @@ dont come back to me until it's in working condition, observe your own web brows
 
 ================== v0
 
+* i think the js files are duplicated between resource and resource/js
 * accentuate the ratio chat to streamer, make sure to mention a couple of times in the game that there sould be a lot more chat than streamers 
 * put the word smile in bold in the diary
-* write ending.html blurb
 * prevent select for the whole game
 * remove X cross and mb add an option in menu to reset the game
 * post on itch with screenshots and descriptions
@@ -48,3 +48,4 @@ dont come back to me until it's in working condition, observe your own web brows
 * update IRC when getting new streamers
 * neurosama narration
 * iterate on title screen
+* rewrite ending.html blurb
