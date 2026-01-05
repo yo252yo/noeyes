@@ -209,24 +209,17 @@ export function setupNextButtonListeners() {
             // Show loading bar for up to 500ms
             const loadingBar = showLoadingBar(500);
 
-            // Navigate after sound plays or after a short delay
-            audio.play().then(() => {
-                // Wait for sound to finish, but don't wait longer than 500ms
-                setTimeout(() => {
-                    loadingBar.hide();
-                    const href = this.getAttribute('href') || this.closest('a')?.getAttribute('href');
-                    if (href) {
-                        window.location.href = href;
-                    }
-                }, Math.min(audio.duration * 1000, 500));
-            }).catch(() => {
-                // If sound fails to play, hide loading bar and navigate immediately
+            // Play sound and navigate after 500ms delay (don't wait for audio callback)
+            audio.play();
+
+            // Always wait 500ms regardless of audio status
+            setTimeout(() => {
                 loadingBar.hide();
                 const href = this.getAttribute('href') || this.closest('a')?.getAttribute('href');
                 if (href) {
                     window.location.href = href;
                 }
-            });
+            }, 500);
         });
     });
 }
