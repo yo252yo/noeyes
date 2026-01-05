@@ -1,6 +1,6 @@
-import { addStreamer, addSuggestedStreamer, getStreamers, getSuggestedStreamers, getValue } from '../common.js';
-import { spawnSpecificStreamerAvatar } from '../game.js';
-import { getAvatarUrl } from '../twitch.js';
+import { addStreamer, addSuggestedStreamer, getStreamers, getSuggestedStreamers, getValue } from './common.js';
+import { spawnSpecificStreamerAvatar } from './game.js';
+import { getAvatarUrl } from './twitch.js';
 
 // Price calculation function
 function getStreamerPrice(currentCount) {
@@ -139,7 +139,7 @@ async function createStreamerCell(username) {
 
     // Add click event listener to avatar only to add streamer to main list
     avatarImg.addEventListener('click', async function () {
-        const { incrementValue } = await import('../common.js');
+        const { incrementValue } = await import('./common.js');
         const currentValue = getValue();
         const currentStreamers = getStreamers().length;
         const price = getStreamerPrice(currentStreamers);

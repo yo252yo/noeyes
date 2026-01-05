@@ -1,14 +1,76 @@
-import { incrementNbChatters } from '../resource/common.js';
-import { spawnTarget } from '../resource/game.js';
+import { getAtt, getNbChatters, incrementAtt, incrementNbChatters } from './common.js';
+import { spawnTarget } from './game.js';
 
 // Make functions available globally
+window.getAtt = getAtt;
+window.getNbChatters = getNbChatters;
 window.incrementNbChatters = incrementNbChatters;
+window.incrementAtt = incrementAtt;
 window.spawnTarget = spawnTarget;
 
 window.gameConfig = {
     targets: 'username',
     winScore: 50,
     fixedTargetNb: 0
+};
+
+// Function to calculate next chat price
+window.getNextChatPrice = function (currentChats) {
+    const prices = {
+        1: 5,
+        2: 20,
+        3: 30,
+        4: 50,
+        5: 75,
+        6: 100,
+        7: 200,
+        8: 500,
+        9: 1000,
+        10: 5000,
+        11: 10000
+    };
+    if (currentChats in prices) {
+        return prices[currentChats];
+    } else {
+        return Math.pow(10, currentChats - 7);
+    }
+};
+
+// Update stats display
+window.updateHiveStats = function () {
+    const chatMembersEl = document.getElementById('chat-members');
+    const attentionEl = document.getElementById('attention');
+    const nextPriceEl = document.getElementById('next-price');
+    const buyButton = document.getElementById('buy-chat-btn');
+
+    if (chatMembersEl) chatMembersEl.textContent = getNbChatters();
+    if (attentionEl) attentionEl.textContent = getAtt();
+
+    const currentChats = getNbChatters();
+    const nextPrice = getNextChatPrice(currentChats);
+    if (nextPriceEl) nextPriceEl.textContent = nextPrice;
+
+    if (buyButton) {
+        const currentAtt = getAtt();
+        const canAfford = currentAtt >= nextPrice;
+        buyButton.disabled = !canAfford;
+        buyButton.style.opacity = canAfford ? '1' : '0.5';
+        buyButton.style.cursor = canAfford ? 'pointer' : 'not-allowed';
+    }
+};
+
+// Buy chat function
+window.buyChat = function () {
+    const currentChats = getNbChatters();
+    const price = getNextChatPrice(currentChats);
+    const currentAtt = getAtt();
+
+    if (currentAtt >= price) {
+        incrementNbChatters(1);
+        incrementAtt(-price);
+        spawnTarget(); // Spawn the new chatter
+        updateHiveStats();
+    }
 };
 
 // UI functions
@@ -32,13 +94,6 @@ window.changeBackgroundColor = function (color) {
     window.closeColorPicker();
 };
 
-window.spawnExtraChatter = function () {
-    // Increment the chatter count
-    incrementNbChatters(1);
-    // Spawn one additional target
-    spawnTarget();
-};
-
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function () {
     // Load saved background color on page load
@@ -46,4 +101,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (savedColor) {
         window.changeBackgroundColor(savedColor);
     }
+
+    // Initial stats update
+    updateHiveStats();
+
+    // Update stats every 200ms for real-time display
+    setInterval(updateHiveStats, 200);
 });
