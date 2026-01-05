@@ -24,13 +24,11 @@ dont come back to me until it's in working condition, observe your own web brows
 
 ================== v0
 
-* put the word smile in bold in the diary
 * post on itch with screenshots and descriptions
 
 * add bgm
 * add sound effect
 
-* capitalize Choice
 
 * ending flow needs to be scrollable
 * spawn the diary a bit more to the right
