@@ -77,6 +77,11 @@ async function createStreamerCell(username) {
     const avatarUrl = await getAvatarUrl(username);
     avatarImg.src = avatarUrl;
 
+    // Use default avatar if it fails to load (404 or other error)
+    avatarImg.addEventListener('error', function () {
+        avatarImg.src = '../resource/avatars/default.png';
+    });
+
     return cell;
 }
 
