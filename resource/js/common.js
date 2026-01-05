@@ -13,10 +13,13 @@ const SFX_FILES = {
     problem: 'resource/SFX/windows_98_error.mp3'
 };
 
-// SFX helper functions - delegate to top-level window
+// SFX helper functions - communicate with top-level window via postMessage
 export function playSFX(soundFile) {
-    if (window.top && window.top.playSFX) {
-        window.top.playSFX(soundFile);
+    if (window.top) {
+        window.top.postMessage({
+            type: 'playSFX',
+            soundFile: soundFile
+        }, '*');
     }
 }
 
