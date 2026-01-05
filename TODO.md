@@ -36,21 +36,19 @@ can you maybe rework the wall collistion? sometimes things go through the walls,
 
 
 
-add the sfx for games
-play_value_sfx on colab and emoji 
-play_click_sfx on click on username
-play_problem_sfx on overlap of usernames (with '💣interaction💣' notification)
-
+git checkout main
+git merge new_engine
 
 ================== v1
 * accentuate chat/streamer ratio, in particular make influencers consume more att and make chat smaller and cheaper
 * new game engine
-* add farmbot feature (class and feature day 6)
+* add farmbot feature (class and feature day 6), Ending I shows you your stats if they're machine enough, ending c could show you the list of chats who died 
 * add login page (streamer choice) to initialize streamer list, right now its hardcoded
 * i got the same color for hive and farm by default
 * add disclaimer/explanation about cognitive science
 * achivevements for certification every day
 * farm should display the current number of influencers
+* Make sure that names of dead schater can appear twice 
 
 
 ================== LONG TERM
