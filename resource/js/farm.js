@@ -17,7 +17,7 @@ window.gameConfig = {
 };
 
 // Move inline script logic here to ensure modules are loaded
-window.buildStreamerList = function () {
+window.buildStreamerList = async function () {
     const userStreamers = getStreamers(); // Get user's current streamers from localStorage
     const container = document.querySelector('.streamers-container');
     container.innerHTML = '';
@@ -25,40 +25,60 @@ window.buildStreamerList = function () {
     // Get streamers from suggested list that are NOT in user's streamer list, reversed so newest appears first
     const availableStreamers = getSuggestedStreamers().slice().reverse().filter(username => !userStreamers.includes(username));
 
-    // Function to create streamer element
-    const createStreamerElement = async (username) => {
-        const streamerDiv = document.createElement('div');
-        streamerDiv.className = 'streamer-item';
+    // Process streamers in pairs for 2-column table
+    for (let i = 0; i < availableStreamers.length; i += 2) {
+        const row = document.createElement('tr');
 
-        const avatarImg = document.createElement('img');
-        avatarImg.className = 'streamer-avatar';
-        avatarImg.alt = `${username} avatar`;
+        // Create first cell
+        const cell1 = await createStreamerCell(availableStreamers[i]);
+        row.appendChild(cell1);
 
-        const nameSpan = document.createElement('span');
-        nameSpan.className = 'streamer-name';
-        nameSpan.textContent = username;
+        // Create second cell (if exists)
+        if (i + 1 < availableStreamers.length) {
+            const cell2 = await createStreamerCell(availableStreamers[i + 1]);
+            row.appendChild(cell2);
+        } else {
+            // Empty cell for 50/50 split
+            const emptyCell = document.createElement('td');
+            emptyCell.className = 'streamer-cell';
+            row.appendChild(emptyCell);
+        }
 
-        streamerDiv.appendChild(avatarImg);
-        streamerDiv.appendChild(nameSpan);
-        container.appendChild(streamerDiv);
-
-        // Add click event listener to add streamer to main list
-        streamerDiv.addEventListener('click', function () {
-            addStreamer(username);
-            if (window.spawnSpecificStreamerAvatar) {
-                window.spawnSpecificStreamerAvatar(username);
-            }
-            window.buildStreamerList();
-        });
-
-        // Load avatar
-        const avatarUrl = await getAvatarUrl(username);
-        avatarImg.src = avatarUrl;
-    };
-
-    // Display available streamers
-    availableStreamers.forEach(username => createStreamerElement(username));
+        container.appendChild(row);
+    }
 };
+
+// Function to create streamer table cell
+async function createStreamerCell(username) {
+    const cell = document.createElement('td');
+    cell.className = 'streamer-cell';
+
+    const avatarImg = document.createElement('img');
+    avatarImg.className = 'streamer-avatar';
+    avatarImg.alt = `${username} avatar`;
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'streamer-name';
+    nameSpan.textContent = username;
+
+    cell.appendChild(avatarImg);
+    cell.appendChild(nameSpan);
+
+    // Add click event listener to add streamer to main list
+    cell.addEventListener('click', function () {
+        addStreamer(username);
+        if (window.spawnSpecificStreamerAvatar) {
+            window.spawnSpecificStreamerAvatar(username);
+        }
+        window.buildStreamerList();
+    });
+
+    // Load avatar
+    const avatarUrl = await getAvatarUrl(username);
+    avatarImg.src = avatarUrl;
+
+    return cell;
+}
 
 window.openColorPicker = function () {
     document.getElementById('color-picker-popup').style.display = 'block';

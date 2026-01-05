@@ -43,12 +43,15 @@
 
     <div id="overlay" class="overlay" onclick="closeColorPicker()"></div>
 
-    <div class="add-streamer-container">
-        <input type="text" id="add-streamer-input" class="win98-input" placeholder="Enter streamer username">
-        <button id="add-streamer-btn" class="popup-btn">ADD</button>
-    </div>
-
-    <div class="streamers-container"></div>
+    <table class="stats-table">
+        <tr>
+            <td colspan="2"><input type="text" id="add-streamer-input" class="win98-input"
+                    placeholder="Enter streamer username">
+                <button id="add-streamer-btn" class="popup-btn">ADD</button>
+            </td>
+        </tr>
+        <tbody class="streamers-container"></tbody>
+    </table>
 
 </body>
 
