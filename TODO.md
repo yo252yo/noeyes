@@ -28,7 +28,6 @@ dont come back to me until it's in working condition, observe your own web brows
 * accentuate the ratio chat to streamer, make sure to mention a couple of times in the game that there sould be a lot more chat than streamers 
 * put the word smile in bold in the diary
 * prevent select for the whole game
-* remove X cross and mb add an option in menu to reset the game
 * post on itch with screenshots and descriptions
 
 * add bgm

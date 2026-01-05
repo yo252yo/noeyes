@@ -14,18 +14,19 @@
             <iframe src="screen.html" class="screen-iframe"></iframe>
             <div class="screen-header">
                 <div class="buttons">
-                    <div class="button red">X</div>
-                    <div class="button yellow"></div>
-                    <div class="button green"></div>
+                    <div class="button red" title="Back to menu"></div>
+                    <div class="button yellow" title="Back to menu"></div>
+                    <div class="button green" title="Back to menu"></div>
                 </div>
             </div>
         </div>
         <div class="stand"></div>
     </div>
     <script>
-        document.querySelector('.button.red').addEventListener('click', function () {
-            localStorage.clear();
-            window.location.reload();
+        document.querySelectorAll('.button').forEach(button => {
+            button.addEventListener('click', function () {
+                window.location.href = 'menu.html';
+            });
         });
     </script>
 </body>
