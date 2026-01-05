@@ -31,11 +31,13 @@ dont come back to me until it's in working condition, observe your own web brows
 * remove X cross and mb add an option in menu to reset the game
 * post on itch with screenshots and descriptions
 
-================== v1
-* add farmbot feature (class and feature day 6)
-* add login page (streamer choice) to initialize streamer list, right now its hardcoded
 * add bgm
 * add sound effect
+
+================== v1
+* new game engine
+* add farmbot feature (class and feature day 6)
+* add login page (streamer choice) to initialize streamer list, right now its hardcoded
 * i got the same color for hive and farm by default
 * add disclaimer/explanation about cognitive science
 * achivevements for certification every day
