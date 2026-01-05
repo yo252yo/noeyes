@@ -353,22 +353,44 @@ a:hover {
     color: #666;
 }
 
-/* Windows 98 style input */
+/* DOS-style input field */
 .win98-input {
-    background: #ffffff;
-    border: 2px inset #c0c0c0;
+    background: #000080;
+    /* Classic DOS blue */
+    border: 1px solid #ffffff;
+    /* White border */
     padding: 4px 6px;
-    font-family: "MS Sans Serif", sans-serif;
+    font-family: 'Courier New', monospace;
+    /* DOS monospace font */
     font-size: 12px;
-    color: #000;
+    font-weight: normal;
+    color: #c0c0c0;
+    /* Light gray text */
     box-sizing: border-box;
     outline: none;
-    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    /* Fit container but not too wide */
+    max-width: 100px;
+    /* Limit width to fit half table */
+    height: 20px;
+    line-height: 1;
+    box-shadow: none;
+    /* DOS style all caps */
+}
+
+.win98-input::placeholder {
+    color: #808080;
+    /* Darker gray for placeholder */
+    text-transform: uppercase;
 }
 
 .win98-input:focus {
-    border: 2px inset #808080;
-    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.7);
+    background: #0000a0;
+    /* Slightly lighter blue when focused */
+    border: 1px solid #ffff00;
+    /* Yellow border when focused */
+    color: #ffffff;
+    /* White text when focused */
 }
 
 /* Add streamer container */

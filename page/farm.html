@@ -44,10 +44,16 @@
     <div id="overlay" class="overlay" onclick="closeColorPicker()"></div>
 
     <table class="stats-table">
-        <tr>
-            <td colspan="2"><input type="text" id="add-streamer-input" class="win98-input"
-                    placeholder="Enter streamer username">
+        <tr class="table-bg-blue">
+            <td colspan="2">
+                <div style="font-size: 10px; color: white; margin-bottom: 4px; text-align: center;">
+                    Our Program reads live chat but does not autocorrect.
+                </div>
+                <input type="text" id="add-streamer-input" class="win98-input" placeholder="twitch_id">
                 <button id="add-streamer-btn" class="popup-btn">SUGGEST</button>
+                <div style="font-size: 10px; color: white; margin-top: 4px; text-align: center;">
+                    Click on an avatar to purchase streamer.<br />No takebacks for misclicks.
+                </div>
             </td>
         </tr>
         <tbody class="streamers-container"></tbody>
