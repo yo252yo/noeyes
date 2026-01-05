@@ -2,7 +2,7 @@
 
 // SFX function mappings - common.js knows which files to play
 const SFX_FILES = {
-    test: 'resource/SFX/windows_98_tada.mp3',
+    value: 'resource/SFX/windows_98_tada.mp3',
     startup: 'resource/SFX/windows_98_startup.mp3',
     click: 'resource/SFX/windows_98_click.mp3',
     error: 'resource/SFX/windows_98_chord_1.mp3',
@@ -17,8 +17,8 @@ export function playSFX(soundFile) {
     }
 }
 
-export function play_test_sfx() {
-    playSFX(SFX_FILES.test);
+export function play_value_sfx() {
+    playSFX(SFX_FILES.value);
 }
 
 export function play_startup_sfx() {

@@ -7,9 +7,9 @@
     <title>Menu</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <script type="module">
-        import { play_startup_sfx, play_test_sfx } from '../resource/js/common.js';
+        import { play_startup_sfx, play_value_sfx } from '../resource/js/common.js';
         window.play_startup_sfx = play_startup_sfx;
-        window.play_test_sfx = play_test_sfx;
+        window.play_value_sfx = play_value_sfx;
     </script>
     <style>
         /* Menu-specific Windows 98 styling */
@@ -238,7 +238,7 @@
             const volume = value / 100;
             localStorage.setItem('sfx_volume', volume.toString());
             // Play test sound to verify volume
-            window.play_test_sfx();
+            window.play_value_sfx();
         }
 
         function getSFXVolume() {

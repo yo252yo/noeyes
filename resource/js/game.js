@@ -15,7 +15,9 @@ import {
     getValue,
     incrementAtt,
     incrementNbChatters,
-    incrementValue
+    incrementValue,
+    play_click_sfx,
+    play_value_sfx
 } from './common.js';
 import { generateMultiple, generateTwitchUsername } from './fake_users.js';
 import { getAvatarUrl } from './twitch.js';
@@ -489,6 +491,9 @@ function handleEmojiClick(clickedEmoji, event) {
         activeTargets.splice(index, 1);
     }
 
+    // Play value sound
+    play_value_sfx();
+
     // Create +1 Value feedback
     createValueFeedback('+1 Value', event.clientX, event.clientY, 4000);
 
@@ -544,6 +549,9 @@ function handleAvatarClick(clickedAvatar, event) {
 
         // Create COLLAB message for high scores (>5)
         if (valueGained > 5) {
+            // Play value sound for collab
+            play_value_sfx();
+
             const collabMsg = document.createElement('div');
             collabMsg.textContent = '✨COLLAB✨';
             collabMsg.style.position = 'absolute';
@@ -581,6 +589,9 @@ function handleAvatarClick(clickedAvatar, event) {
 
 // Click handler for username mode: reverse direction (no scoring, no consumption)
 function handleUsernameClick(event) {
+    // Play ding sound
+    play_click_sfx();
+
     // Reverse direction on click (no scoring, no consumption)
     let dx = parseFloat(this.dataset.dx);
     let dy = parseFloat(this.dataset.dy);
