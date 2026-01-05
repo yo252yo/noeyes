@@ -6,6 +6,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>I Have No Eyes And I Must Stream</title>
     <link rel="stylesheet" href="resource/css/style.css">
+    <script>
+        var MUSIC_AUDIO = new Audio();
+        MUSIC_AUDIO.loop = "loop";
+        MUSIC_AUDIO.volume = localStorage.getItem("music_volume") || 0.4;
+
+        MUSIC_AUDIO.src = "resource/Soft and Furious - Bae - 02 Game On.mp3";
+
+        function startMusic() {
+            MUSIC_AUDIO.play().catch(function (error) {
+                setTimeout(startMusic, 100);
+            });
+        }
+        startMusic();
+
+        function changeMusicVolume(value) {
+            MUSIC_AUDIO.volume = value / 100;
+            localStorage.setItem("music_volume", MUSIC_AUDIO.volume);
+        }
+    </script>
     <script type="module">
         import './resource/js/common.js';
         import './resource/js/twitch.js';

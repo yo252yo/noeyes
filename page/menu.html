@@ -107,6 +107,73 @@
         .menu-start-btn {
             margin: 20px;
         }
+
+        /* Volume control Windows 98 styling */
+        .menu-volume-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 8px 12px;
+            font-family: "MS Sans Serif", sans-serif;
+            font-size: 12px;
+        }
+
+        .menu-volume-label {
+            color: #000;
+            font-weight: bold;
+        }
+
+        .menu-volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 120px;
+            height: 20px;
+            background: #c0c0c0;
+            border: 1px inset #c0c0c0;
+            border-radius: 0;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .menu-volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 18px;
+            background: #c0c0c0;
+            border: 1px outset #c0c0c0;
+            cursor: pointer;
+            border-radius: 0;
+        }
+
+        .menu-volume-slider::-webkit-slider-thumb:hover {
+            background: #dfdfdf;
+        }
+
+        .menu-volume-slider::-webkit-slider-thumb:active {
+            border: 1px inset #c0c0c0;
+            background: #b0b0b0;
+        }
+
+        .menu-volume-slider::-moz-range-thumb {
+            width: 16px;
+            height: 18px;
+            background: #c0c0c0;
+            border: 1px outset #c0c0c0;
+            cursor: pointer;
+            border-radius: 0;
+        }
+
+        .menu-volume-slider::-moz-range-thumb:hover {
+            background: #dfdfdf;
+        }
+
+        .menu-volume-slider::-moz-range-thumb:active {
+            border: 1px inset #c0c0c0;
+            background: #b0b0b0;
+        }
     </style>
 </head>
 
@@ -122,8 +189,15 @@
                     &lt;30 minutes interactive<br />Science fiction short story/management game
                 </div>
                 <a href="computer.html" class="menu-start-btn">Play</a>
+
+                <div class="menu-volume-control">
+                    <label for="volume-slider" class="menu-volume-label">Music:</label>
+                    <input type="range" id="volume-slider" min="0" max="100" value="40" class="menu-volume-slider">
+                </div>
+
                 <div class="menu-credit">
-                    By <a href="http://www.yo252yo.com" target="_blank">yo252yo</a>.
+                    By <a href="http://www.yo252yo.com" target="_blank">yo252yo</a> with
+                    music by <a href="https://loyaltyfreakmusic.com/" target="_blank">Rrrrrose Azerty</a>
                     <br />
                     The events portrayed are entirely fictional.
                     <br />
@@ -137,6 +211,23 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Volume control functionality
+        const volumeSlider = document.getElementById('volume-slider');
+        volumeSlider.addEventListener('input', function () {
+            if (window.parent) {
+                window.parent.changeMusicVolume(volumeSlider.value);
+            }
+        });
+
+        // Set initial volume from parent
+        try {
+            volumeSlider.value = Math.floor(100 * window.parent.MUSIC_AUDIO.volume);
+        } catch {
+            // fallback if not iframed
+        }
+    </script>
 </body>
 
 </html>

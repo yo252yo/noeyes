@@ -29,7 +29,6 @@ dont come back to me until it's in working condition, observe your own web brows
 * add bgm
 * add sound effect
 
-
 * ending flow needs to be scrollable
 * spawn the diary a bit more to the right
 
@@ -52,3 +51,4 @@ dont come back to me until it's in working condition, observe your own web brows
 * neurosama narration
 * iterate on title screen
 * rewrite ending.html blurb
+* better BGM ???
