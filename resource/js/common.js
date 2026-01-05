@@ -5,6 +5,7 @@ const SFX_FILES = {
     value: 'resource/SFX/windows_98_tada.mp3',
     startup: 'resource/SFX/windows_98_startup.mp3',
     click: 'resource/SFX/windows_98_click.mp3',
+    notify: 'resource/SFX/windows_98_notify.mp3',
     error: 'resource/SFX/windows_98_chord_1.mp3',
     new_day: 'resource/SFX/windows_98_ring.mp3',
     ding: 'resource/SFX/windows_98_ding.mp3',
@@ -29,6 +30,10 @@ export function play_startup_sfx() {
 
 export function play_click_sfx() {
     playSFX(SFX_FILES.click);
+}
+
+export function play_notif_sfx() {
+    playSFX(SFX_FILES.notify);
 }
 
 export function play_error_sfx() {
@@ -310,6 +315,7 @@ function callItADay_ending(currentDay) {
         showPopup('Welcome to a new day', '../resource/icons/day.png');
         play_new_day_sfx();
     } else if (currentIndex === endingDays.length - 1) {
+        play_problem_sfx();
         // Last day reached, redirect to appropriate ending page
         window.location.href = `ending_${finalChoice}.html`;
     }
@@ -322,6 +328,7 @@ export function callItADay() {
     if (currentDay === 7) {
         // Special case: redirect to choice page
         window.location.href = 'choice.html';
+        play_new_day_sfx();
         return;
     }
 

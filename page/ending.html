@@ -7,11 +7,12 @@
     <title>The End</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <script type="module">
-        import { setDay, setMaxAllowedDay } from '../resource/js/common.js';
+        import { setDay, setMaxAllowedDay, play_notif_sfx } from '../resource/js/common.js';
 
         // Make functions available globally for onclick handlers
         window.setDay = setDay;
         window.setMaxAllowedDay = setMaxAllowedDay;
+        window.play_notif_sfx = play_notif_sfx;
 
         function backToDay7() {
             setDay(7);
@@ -48,7 +49,8 @@
         </div>
 
         <div style="margin-top: 40px;">
-            <button onclick="backToDay7()" class="choice-btn" style="font-size: 16px; padding: 12px 24px;">
+            <button onclick="play_notif_sfx(); backToDay7()" class="choice-btn"
+                style="font-size: 16px; padding: 12px 24px;">
                 Back to Day 7
             </button>
         </div>
