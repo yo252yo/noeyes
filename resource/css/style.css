@@ -288,25 +288,7 @@ a:hover {
     background-color: #b0b0b0;
 }
 
-/* Choice page buttons */
-.choice-btn {
-    padding: 20px 40px;
-    font-size: 24px;
-    border: 1px outset #c0c0c0;
-    background: #c0c0c0;
-    font-family: "MS Sans Serif", Tahoma, sans-serif;
-    cursor: pointer;
-    width: 200px;
-}
 
-.choice-btn:hover {
-    background-color: #dfdfdf;
-}
-
-.choice-btn:active {
-    border: 1px inset #c0c0c0;
-    background-color: #b0b0b0;
-}
 
 /* Help bubble styles - Windows 98 style */
 .help-bubble {
