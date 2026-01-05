@@ -28,6 +28,17 @@
         }
         startMusic();
 
+        // Update music volume from localStorage every 300ms
+        setInterval(function () {
+            const savedMusicVolume = localStorage.getItem("music_volume");
+            if (savedMusicVolume) {
+                const volume = parseFloat(savedMusicVolume);
+                if (MUSIC_AUDIO.volume !== volume) {
+                    MUSIC_AUDIO.volume = volume;
+                }
+            }
+        }, 300);
+
         function playSFX(soundFile) {
             // Create new audio element each time and set volume from localStorage
             const audio = new Audio(soundFile);

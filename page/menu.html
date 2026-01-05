@@ -225,12 +225,11 @@
         // Volume changing functions
         function changeMusicVolume(value) {
             const volume = value / 100;
-            window.top.MUSIC_AUDIO.volume = volume;
             localStorage.setItem("music_volume", volume.toString());
         }
 
         function getMusicVolume() {
-            return window.top.MUSIC_AUDIO.volume;
+            return parseFloat(localStorage.getItem("music_volume") || "0.8");
         }
 
         function changeSFXVolume(value) {
