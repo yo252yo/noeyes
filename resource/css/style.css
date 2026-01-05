@@ -297,6 +297,8 @@ a:hover {
     font-family: "MS Sans Serif", Tahoma, sans-serif;
     cursor: pointer;
     width: 200px;
+    z-index: 100;
+    position: relative;
 }
 
 .choice-btn:hover {
