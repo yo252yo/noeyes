@@ -4,7 +4,9 @@
 const SFX_FILES = {
     test: 'resource/SFX/windows_98_tada.mp3',
     startup: 'resource/SFX/windows_98_startup.mp3',
-    click: 'resource/SFX/windows_98_click.mp3'
+    click: 'resource/SFX/windows_98_click.mp3',
+    error: 'resource/SFX/windows_98_chord_1.mp3',
+    new_day: 'resource/SFX/windows_98_ring.mp3'
 };
 
 // SFX helper functions - delegate to top-level window
@@ -24,6 +26,14 @@ export function play_startup_sfx() {
 
 export function play_click_sfx() {
     playSFX(SFX_FILES.click);
+}
+
+export function play_error_sfx() {
+    playSFX(SFX_FILES.error);
+}
+
+export function play_new_day_sfx() {
+    playSFX(SFX_FILES.new_day);
 }
 
 // Ending sequences configuration
@@ -269,6 +279,7 @@ function callItADay_ending(currentDay) {
         setDay(nextDay);
         setMaxAllowedDay(nextDay);
         showPopup('Welcome to a new day', '../resource/icons/day.png');
+        play_new_day_sfx();
     } else if (currentIndex === endingDays.length - 1) {
         // Last day reached, redirect to appropriate ending page
         window.location.href = `ending_${finalChoice}.html`;
@@ -295,7 +306,9 @@ export function callItADay() {
     if (maxAllowedDay > currentDay) {
         incrementDay();
         showPopup('Welcome to a new day', '../resource/icons/day.png');
+        play_new_day_sfx();
     } else {
         showPopup('You must complete all your classes for the day before you can log off', '../resource/icons/error.png', true);
+        play_error_sfx();
     }
 }
