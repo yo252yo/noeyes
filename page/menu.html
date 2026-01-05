@@ -7,9 +7,12 @@
     <title>Menu</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <script type="module">
-        import { changeSFXVolume, getSFXVolume } from '../resource/js/common.js';
+        import { changeSFXVolume, getSFXVolume, play_startup_sfx, changeMusicVolume, getMusicVolume } from '../resource/js/common.js';
         window.changeSFXVolume = changeSFXVolume;
         window.getSFXVolume = getSFXVolume;
+        window.play_startup_sfx = play_startup_sfx;
+        window.changeMusicVolume = changeMusicVolume;
+        window.getMusicVolume = getMusicVolume;
     </script>
     <style>
         /* Menu-specific Windows 98 styling */
@@ -119,9 +122,8 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 1px;
-            margin-top: 1px;
-            padding: 4px 6px;
+            margin-bottom: 2px;
+            padding: 8px 12px;
             font-family: "MS Sans Serif", sans-serif;
             font-size: 12px;
         }
@@ -192,18 +194,18 @@
             <div class="menu-content">
                 <h1>I Have No Eyes<br />And I Must Stream</h1>
                 <div class="menu-credit">
-                    &lt;30 minutes interactive<br />Science fiction short story/management game
+                    &lt;30 minutes interactive<br />science fiction short story/management game
                 </div>
-                <a href="computer.html" class="menu-start-btn">Play</a>
+                <a href="computer.html" class="menu-start-btn" onclick="window.play_startup_sfx()">Play</a>
 
                 <div class="menu-volume-control">
                     <label for="volume-slider" class="menu-volume-label">Music:</label>
-                    <input type="range" id="volume-slider" min="0" max="100" value="60" class="menu-volume-slider">
+                    <input type="range" id="volume-slider" min="0" max="100" value="0" class="menu-volume-slider">
                 </div>
 
                 <div class="menu-volume-control">
                     <label for="sfx-slider" class="menu-volume-label"> SFX : </label>
-                    <input type="range" id="sfx-slider" min="0" max="100" value="70" class="menu-volume-slider">
+                    <input type="range" id="sfx-slider" min="0" max="100" value="0" class="menu-volume-slider">
                 </div>
 
                 <div class="menu-credit">
@@ -224,33 +226,46 @@
     </div>
 
     <script>
-        // Music volume control functionality
-        const volumeSlider = document.getElementById('volume-slider');
-        volumeSlider.addEventListener('input', function () {
-            if (window.parent) {
-                window.parent.changeMusicVolume(volumeSlider.value);
+        // Wait for module to load, then initialize volumes
+        function initializeVolumes() {
+            if (window.getMusicVolume && window.getSFXVolume) {
+                // Music volume control functionality
+                const volumeSlider = document.getElementById('volume-slider');
+                if (volumeSlider) {
+                    volumeSlider.addEventListener('input', function () {
+                        window.changeMusicVolume(volumeSlider.value);
+                    });
+
+                    // Set initial music volume from parent
+                    try {
+                        volumeSlider.value = Math.floor(100 * window.getMusicVolume());
+                    } catch {
+                        volumeSlider.value = 60; // fallback default
+                    }
+                }
+
+                // SFX volume control functionality
+                const sfxSlider = document.getElementById('sfx-slider');
+                if (sfxSlider) {
+                    sfxSlider.addEventListener('input', function () {
+                        window.changeSFXVolume(sfxSlider.value);
+                    });
+
+                    // Set initial SFX volume
+                    try {
+                        sfxSlider.value = Math.floor(100 * window.getSFXVolume());
+                    } catch {
+                        sfxSlider.value = 70; // fallback default
+                    }
+                }
+            } else {
+                // Retry after a short delay if functions aren't loaded yet
+                setTimeout(initializeVolumes, 100);
             }
-        });
-
-        // Set initial music volume from parent
-        try {
-            volumeSlider.value = Math.floor(100 * window.parent.MUSIC_AUDIO.volume);
-        } catch {
-            // fallback if not iframed
         }
 
-        // SFX volume control functionality
-        const sfxSlider = document.getElementById('sfx-slider');
-        sfxSlider.addEventListener('input', function () {
-            window.changeSFXVolume(sfxSlider.value);
-        });
-
-        // Set initial SFX volume
-        try {
-            sfxSlider.value = Math.floor(100 * window.getSFXVolume());
-        } catch {
-            // fallback
-        }
+        // Start initialization
+        initializeVolumes();
     </script>
 </body>
 

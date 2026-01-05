@@ -1,45 +1,52 @@
 // Common utility functions for localStorage management
 
-// SFX functionality
-let SFX_AUDIO = null;
+// SFX function mappings - common.js knows which files to play
+const SFX_FILES = {
+    test: 'resource/SFX/windows_98_tada.mp3',
+    startup: 'resource/SFX/windows_98_startup.mp3'
+};
 
+// Audio helper functions - delegate to top-level window
 export function getSFXVolume() {
-    const stored = localStorage.getItem('sfx_volume');
-    return stored ? parseFloat(stored) : 0.7;
+    if (window.top && window.top.getSFXVolume) {
+        return window.top.getSFXVolume();
+    }
+    return 0.7; // fallback
 }
 
-export function setSFXVolume(volume) {
-    volume = Math.max(0, Math.min(1, volume));
-    localStorage.setItem('sfx_volume', volume.toString());
+export function getMusicVolume() {
+    if (window.top && window.top.MUSIC_AUDIO) {
+        return window.top.MUSIC_AUDIO.volume;
+    }
+    return 0.6; // fallback
+}
+
+export function changeMusicVolume(value) {
+    if (window.top && window.top.changeMusicVolume) {
+        window.top.changeMusicVolume(value);
+    }
 }
 
 export function playSFX(soundFile) {
-    // Stop any currently playing SFX
-    if (SFX_AUDIO) {
-        SFX_AUDIO.pause();
-        SFX_AUDIO.currentTime = 0;
+    if (window.top && window.top.playSFX) {
+        window.top.playSFX(soundFile);
     }
-
-    // Create new audio element
-    SFX_AUDIO = new Audio(soundFile);
-    SFX_AUDIO.volume = getSFXVolume();
-
-    // Play the sound
-    SFX_AUDIO.play().catch(function (error) {
-        console.warn('SFX playback failed:', error);
-    });
 }
 
 export function play_test_sfx() {
-    playSFX('../resource/SFX/windows_98_tada.mp3');
+    playSFX(SFX_FILES.test);
+}
+
+export function play_startup_sfx() {
+    playSFX(SFX_FILES.startup);
 }
 
 export function changeSFXVolume(value) {
-    const volume = value / 100;
-    setSFXVolume(volume);
-
-    // Play test sound when volume changes
-    play_test_sfx();
+    if (window.top && window.top.changeSFXVolume) {
+        window.top.changeSFXVolume(value);
+        // Play test sound when volume changes
+        play_test_sfx();
+    }
 }
 
 // Ending sequences configuration

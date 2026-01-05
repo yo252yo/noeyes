@@ -24,6 +24,41 @@
             MUSIC_AUDIO.volume = value / 100;
             localStorage.setItem("music_volume", MUSIC_AUDIO.volume);
         }
+
+        // SFX functionality at parent level
+        var SFX_AUDIO = null;
+
+        function getSFXVolume() {
+            const stored = localStorage.getItem('sfx_volume');
+            return stored ? parseFloat(stored) : 0.7;
+        }
+
+        function setSFXVolume(volume) {
+            volume = Math.max(0, Math.min(1, volume));
+            localStorage.setItem('sfx_volume', volume.toString());
+        }
+
+        function playSFX(soundFile) {
+            // Stop any currently playing SFX
+            if (SFX_AUDIO) {
+                SFX_AUDIO.pause();
+                SFX_AUDIO.currentTime = 0;
+            }
+
+            // Create new audio element
+            SFX_AUDIO = new Audio(soundFile);
+            SFX_AUDIO.volume = getSFXVolume();
+
+            // Play the sound
+            SFX_AUDIO.play().catch(function (error) {
+                console.warn('SFX playback failed:', error);
+            });
+        }
+
+        function changeSFXVolume(value) {
+            const volume = value / 100;
+            setSFXVolume(volume);
+        }
     </script>
     <script type="module">
         import './resource/js/common.js';

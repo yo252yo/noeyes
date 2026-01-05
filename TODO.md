@@ -22,15 +22,6 @@ dont come back to me until it's in working condition, observe your own web brows
 * vertical scroll messes with bounce. in general the boundaries are pretyt shit
 * sometimes clicks dont register i think mb because they conflict with drag? (lets pray for pixi solution)
 
-================== v0
-
-* post on itch with screenshots and descriptions
-
-* add bgm
-* add sound effect
-
-* ending flow needs to be scrollable
-* spawn the diary a bit more to the right
 
 ================== v1
 * accentuate chat/streamer ratio, in particular make influencers consume more att and make chat smaller and cheaper
