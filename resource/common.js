@@ -244,8 +244,8 @@ function callItADay_ending(currentDay) {
         setMaxAllowedDay(nextDay);
         showPopup('Welcome to a new day', '../resource/icons/day.png');
     } else if (currentIndex === endingDays.length - 1) {
-        // Last day reached, redirect to ending
-        window.location.href = 'ending.html';
+        // Last day reached, redirect to appropriate ending page
+        window.location.href = `ending_${finalChoice}.html`;
     }
 }
 
