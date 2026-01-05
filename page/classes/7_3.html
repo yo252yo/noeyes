@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Influencers</title>
+    <link rel="stylesheet" href="../../resource/css/style.css">
+    <link rel="stylesheet" href="../../resource/css/class.css">
+    <script type="module">
+        import { getValue } from '../../resource/common.js';
+
+        window.updateScoreDisplay = function () {
+            const value = getValue();
+            const scoreDisplay = document.getElementById('score-display');
+            scoreDisplay.textContent = value + '/5000';
+
+            const nextButtonContainer = document.getElementById('next-button');
+            if (value >= 5000) {
+                nextButtonContainer.style.display = 'block';
+            } else {
+                nextButtonContainer.style.display = 'none';
+            }
+        };
+
+        // Update on page load
+        document.addEventListener('DOMContentLoaded', window.updateScoreDisplay);
+
+        // Update periodically in case value changes from other sources
+        setInterval(window.updateScoreDisplay, 1000);
+    </script>
+</head>
+
+<body style="margin: 0; padding: 20px;">
+    <h1 class="welcome-text">The last stretch</h1>
+
+    <p>Your <span class="highlight-text">future</span> is in your hands. You know what to do.</p>
+
+    <div class="info-panel">
+        <p>Gather 5000 <span class="highlight-text">Value</span> to unlock your <span
+                class="highlight-text">Gender™</span>. (<span id="score-display">0/5000</span>)
+        </p>
+    </div>
+
+    <div style="text-align: center; display:none;" id="next-button">
+        <a href="7_4.html" class="next-button">
+            <img src="../../resource/icons/next.png" alt="Continue" />
+            NEXT
+        </a>
+    </div>
+</body>
+
+</html>

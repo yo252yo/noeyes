@@ -1,4 +1,14 @@
+
+* write diary
 * i got the same color for hive and farm by default
+* prevent select for the whole game
+* add login page (streamer choice) to initialize streamer list, right now its hardcoded
+* add bgm
+* add sound effect
+* add disclaimer/explanation about cognitive science
+* post on itch with screenshots and descriptions
+* achivevements for certification every day
+* add farmbot feature (class and feature day 6)
 
 ==================
 should diary be paginated or big flow? should it appear character by character?
@@ -23,16 +33,6 @@ Don't forget to include the pixi library where you use it :)
 * sometimes clicks dont register i think mb because they conflict with drag? (lets pray for pixi solution)
 ==================
 
-* prevent select for the whole game
-* add login page (streamer choice) to initialize streamer list, right now its hardcoded
-* add bgm
-* add sound effect
-* add disclaimer/explanation about cognitive science
-* post on itch with screenshots and descriptions
-* achivevements for certification every day
-* add farmbot feature
-
-==================
 
 * mb adjust speed for phone screens
 * add OS start
