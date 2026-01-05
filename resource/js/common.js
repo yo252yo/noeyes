@@ -1,5 +1,47 @@
 // Common utility functions for localStorage management
 
+// SFX functionality
+let SFX_AUDIO = null;
+
+export function getSFXVolume() {
+    const stored = localStorage.getItem('sfx_volume');
+    return stored ? parseFloat(stored) : 0.7;
+}
+
+export function setSFXVolume(volume) {
+    volume = Math.max(0, Math.min(1, volume));
+    localStorage.setItem('sfx_volume', volume.toString());
+}
+
+export function playSFX(soundFile) {
+    // Stop any currently playing SFX
+    if (SFX_AUDIO) {
+        SFX_AUDIO.pause();
+        SFX_AUDIO.currentTime = 0;
+    }
+
+    // Create new audio element
+    SFX_AUDIO = new Audio(soundFile);
+    SFX_AUDIO.volume = getSFXVolume();
+
+    // Play the sound
+    SFX_AUDIO.play().catch(function (error) {
+        console.warn('SFX playback failed:', error);
+    });
+}
+
+export function play_test_sfx() {
+    playSFX('../resource/SFX/windows_98_tada.mp3');
+}
+
+export function changeSFXVolume(value) {
+    const volume = value / 100;
+    setSFXVolume(volume);
+
+    // Play test sound when volume changes
+    play_test_sfx();
+}
+
 // Ending sequences configuration
 const ENDING_DAYS = {
     influencer: [9, 24, 31, 35, 38, 47, 52, 55, 58, 62, 65, 66, 67, 69, 71, 72, 73],
