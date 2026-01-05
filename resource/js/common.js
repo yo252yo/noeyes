@@ -3,7 +3,8 @@
 // SFX function mappings - common.js knows which files to play
 const SFX_FILES = {
     test: 'resource/SFX/windows_98_tada.mp3',
-    startup: 'resource/SFX/windows_98_startup.mp3'
+    startup: 'resource/SFX/windows_98_startup.mp3',
+    click: 'resource/SFX/windows_98_click.mp3'
 };
 
 // SFX helper functions - delegate to top-level window
@@ -19,6 +20,10 @@ export function play_test_sfx() {
 
 export function play_startup_sfx() {
     playSFX(SFX_FILES.startup);
+}
+
+export function play_click_sfx() {
+    playSFX(SFX_FILES.click);
 }
 
 // Ending sequences configuration

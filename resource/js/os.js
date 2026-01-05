@@ -1,22 +1,26 @@
 
-import { setFarmOpen, setHiveOpen, updateDayDisplay, updateFarmIconVisibility, updateHiveIconVisibility, updateTimeDisplay } from './common.js';
+import { play_click_sfx, setFarmOpen, setHiveOpen, updateDayDisplay, updateFarmIconVisibility, updateHiveIconVisibility, updateTimeDisplay } from './common.js';
 
 export function closeDiaryWindow() {
     document.getElementById('diary-window').style.visibility = 'hidden';
+    play_click_sfx();
 }
 
 export function closeClassWindow() {
     document.getElementById('class-window').style.visibility = 'hidden';
+    play_click_sfx();
 }
 
 export function closeFarmWindow() {
     document.getElementById('farm-window').style.visibility = 'hidden';
     setFarmOpen(false);
+    play_click_sfx();
 }
 
 export function closeHiveWindow() {
     document.getElementById('hive-window').style.visibility = 'hidden';
     setHiveOpen(false);
+    play_click_sfx();
 }
 
 // Shared Icon Dragger Class
@@ -434,12 +438,14 @@ document.addEventListener('DOMContentLoaded', function () {
         diaryWindow.style.visibility = 'visible';
         // Update interaction when opening window
         windowZIndexManager.updateInteraction(diaryWindow);
+        play_click_sfx();
     }
 
     function displayClass() {
         classWindow.style.visibility = 'visible';
         // Update interaction when opening window
         windowZIndexManager.updateInteraction(classWindow);
+        play_click_sfx();
     }
 
     function displayFarm() {
@@ -447,6 +453,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setFarmOpen(true);
         // Update interaction when opening window
         windowZIndexManager.updateInteraction(farmWindow);
+        play_click_sfx();
     }
 
     function displayHive() {
@@ -454,6 +461,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setHiveOpen(true);
         // Update interaction when opening window
         windowZIndexManager.updateInteraction(hiveWindow);
+        play_click_sfx();
     }
 
     // Add click event listeners to window content areas for interaction tracking
