@@ -8,7 +8,8 @@ const SFX_FILES = {
     error: 'resource/SFX/windows_98_chord_1.mp3',
     new_day: 'resource/SFX/windows_98_ring.mp3',
     ding: 'resource/SFX/windows_98_ding.mp3',
-    chime: 'resource/SFX/windows_98_chimes.mp3'
+    chime: 'resource/SFX/windows_98_chimes.mp3',
+    problem: 'resource/SFX/windows_98_error.mp3'
 };
 
 // SFX helper functions - delegate to top-level window
@@ -32,6 +33,10 @@ export function play_click_sfx() {
 
 export function play_error_sfx() {
     playSFX(SFX_FILES.error);
+}
+
+export function play_problem_sfx() {
+    playSFX(SFX_FILES.problem);
 }
 
 export function play_new_day_sfx() {

@@ -17,6 +17,7 @@ import {
     incrementNbChatters,
     incrementValue,
     play_click_sfx,
+    play_problem_sfx,
     play_value_sfx
 } from './common.js';
 import { generateMultiple, generateTwitchUsername } from './fake_users.js';
@@ -821,6 +822,39 @@ function manageTextTargetCollisions() {
                 (yA < yB + heightB) && (yA + heightA > yB);
 
             if (overlap) {
+                // Play interaction sound
+                play_problem_sfx();
+
+                // Create interaction message (black with 💣 emoji)
+                const interactionMsg = document.createElement('div');
+                interactionMsg.textContent = '💣interaction💣';
+                interactionMsg.style.position = 'absolute';
+                // Position at midpoint between the two colliding targets
+                const midX = (centerXA + (xB + widthB / 2)) / 2;
+                const midY = (centerYA + (yB + heightB / 2)) / 2;
+                interactionMsg.style.left = (midX - 50) + 'px'; // Center the text
+                interactionMsg.style.top = (midY - 10) + 'px';
+                interactionMsg.style.color = 'black';
+                interactionMsg.style.fontSize = '14px';
+                interactionMsg.style.fontWeight = 'bold';
+                interactionMsg.style.pointerEvents = 'none';
+                interactionMsg.style.zIndex = '102';
+                interactionMsg.style.textAlign = 'center';
+                interactionMsg.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+                interactionMsg.style.padding = '2px 6px';
+                interactionMsg.style.borderRadius = '4px';
+                interactionMsg.style.textShadow = '0 0 5px black, 0 0 10px black, 0 0 15px black, 0 0 20px black';
+                // Animation: grow bigger while fading
+                interactionMsg.style.animation = 'collabGrow 2s ease-out forwards';
+                document.body.appendChild(interactionMsg);
+
+                // Remove after animation
+                setTimeout(() => {
+                    if (interactionMsg.parentNode) {
+                        interactionMsg.parentNode.removeChild(interactionMsg);
+                    }
+                }, 2000);
+
                 // Mark both targets for removal
                 targetsToRemove.add(targetA);
                 targetsToRemove.add(targetB);
