@@ -139,7 +139,7 @@ async function createStreamerCell(username) {
 
     // Add click event listener to avatar only to add streamer to main list
     avatarImg.addEventListener('click', async function () {
-        const { incrementValue } = await import('./common.js');
+        const { incrementValue, play_chime_sfx } = await import('./common.js');
         const currentValue = getValue();
         const currentStreamers = getStreamers().length;
         const price = getStreamerPrice(currentStreamers);
@@ -147,6 +147,7 @@ async function createStreamerCell(username) {
         if (currentValue >= price) {
             addStreamer(username);
             incrementValue(-price);
+            play_chime_sfx();
             if (window.spawnSpecificStreamerAvatar) {
                 window.spawnSpecificStreamerAvatar(username);
             }

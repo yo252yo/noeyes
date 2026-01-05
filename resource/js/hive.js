@@ -1,4 +1,4 @@
-import { getAtt, getNbChatters, incrementAtt, incrementNbChatters } from './common.js';
+import { getAtt, getNbChatters, incrementAtt, incrementNbChatters, play_chime_sfx } from './common.js';
 import { spawnTarget } from './game.js';
 
 // Make functions available globally
@@ -68,6 +68,7 @@ window.buyChat = function () {
     if (currentAtt >= price) {
         incrementNbChatters(1);
         incrementAtt(-price);
+        play_chime_sfx();
         spawnTarget(); // Spawn the new chatter
         updateHiveStats();
     }

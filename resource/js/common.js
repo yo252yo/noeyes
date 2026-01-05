@@ -7,7 +7,8 @@ const SFX_FILES = {
     click: 'resource/SFX/windows_98_click.mp3',
     error: 'resource/SFX/windows_98_chord_1.mp3',
     new_day: 'resource/SFX/windows_98_ring.mp3',
-    ding: 'resource/SFX/windows_98_ding.mp3'
+    ding: 'resource/SFX/windows_98_ding.mp3',
+    chime: 'resource/SFX/windows_98_chimes.mp3'
 };
 
 // SFX helper functions - delegate to top-level window
@@ -39,6 +40,10 @@ export function play_new_day_sfx() {
 
 export function play_ding_sfx() {
     playSFX(SFX_FILES.ding);
+}
+
+export function play_chime_sfx() {
+    playSFX(SFX_FILES.chime);
 }
 
 // Automatically set up click listeners for next-button elements
