@@ -1,7 +1,7 @@
 /* Farm-specific polka dot styling */
 body {
     margin: 0;
-    padding: 20px;
+    padding: 10px;
     background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" fill="%23800080"/><circle cx="16" cy="16" r="8" fill="%2300ffff" opacity="0.1"/></svg>') repeat;
     font-family: "MS Sans Serif", Tahoma, sans-serif;
     color: white;
@@ -146,6 +146,10 @@ body {
     margin-bottom: 10px;
 }
 
+.fh-header h1 {
+    margin: 5px;
+}
+
 .color-picker-btn {
     font-size: 24px;
     background: none;
@@ -251,7 +255,7 @@ body {
 /* Hive-specific striped styling */
 body {
     margin: 0;
-    padding: 20px;
+    padding: 10px;
     background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%2396CEB4"/><rect x="0" y="0" width="20" height="40" fill="%23ffff00" opacity="0.15"/><rect x="20" y="0" width="20" height="40" fill="%2396CEB4"/></svg>') repeat;
     font-family: "MS Sans Serif", Tahoma, sans-serif;
     color: white;
@@ -480,6 +484,10 @@ body {
     font-size: 14px;
     color: white;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.farm-table {
+    width: 100%;
 }
 
 .stats-table td {
