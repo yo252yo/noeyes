@@ -6,7 +6,8 @@ const SFX_FILES = {
     startup: 'resource/SFX/windows_98_startup.mp3',
     click: 'resource/SFX/windows_98_click.mp3',
     error: 'resource/SFX/windows_98_chord_1.mp3',
-    new_day: 'resource/SFX/windows_98_ring.mp3'
+    new_day: 'resource/SFX/windows_98_ring.mp3',
+    ding: 'resource/SFX/windows_98_ding.mp3'
 };
 
 // SFX helper functions - delegate to top-level window
@@ -35,6 +36,24 @@ export function play_error_sfx() {
 export function play_new_day_sfx() {
     playSFX(SFX_FILES.new_day);
 }
+
+export function play_ding_sfx() {
+    playSFX(SFX_FILES.ding);
+}
+
+// Automatically set up click listeners for next-button elements
+export function setupNextButtonListeners() {
+    const nextButtons = document.querySelectorAll('.next-button');
+    nextButtons.forEach(button => {
+        button.addEventListener('click', play_ding_sfx);
+    });
+}
+
+// Automatically set up next button listeners when the page loads
+document.addEventListener('DOMContentLoaded', function () {
+    setupNextButtonListeners();
+});
+setupNextButtonListeners();
 
 // Ending sequences configuration
 const ENDING_DAYS = {
