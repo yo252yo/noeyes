@@ -491,12 +491,6 @@ export function callItADay() {
     const currentDay = getDay();
     const maxAllowedDay = getMaxAllowedDay();
 
-    if (currentDay === 7) {
-        // Special case: redirect to choice page
-        window.location.href = 'choice.html';
-        return;
-    }
-
     // Check if we're in the ending sequence
     if (currentDay >= 9) {
         callItADay_ending(currentDay);
@@ -505,6 +499,11 @@ export function callItADay() {
 
     // Normal day progression
     if (maxAllowedDay > currentDay) {
+        if (currentDay === 7) {
+            // Special case: redirect to choice page
+            window.location.href = 'choice.html';
+            return;
+        }
         incrementDay();
         showPopup('Welcome to a new day', getResourcePath('resource/icons/day.png'));
         play_new_day_sfx();
