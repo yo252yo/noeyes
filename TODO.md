@@ -1,35 +1,4 @@
-* purchase influencers and chat proper flows and balance
-* allow removal of streamers to alleviate softlock
-the second streamer should cost like 50 value cause we know we have that, the third should be much more.
-
-mb chat can be priced in att? and then i dont have to kill streamers lol
-
-" 
-
-
-
-
-
-    <!-- <div id="chatters-list" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;">
-    </div>
-
-    <script>
-        function updateChattersDisplay() {
-            const chatters = getChatters();
-            const chattersDiv = document.getElementById('chatters-list');
-            if (chatters.length > 0) {
-                chattersDiv.innerHTML = '<strong>Live Chatters:</strong><br>' + chatters.join(', ');
-            } else {
-                chattersDiv.innerHTML = '<em>No chatters yet...</em>';
-            }
-        }
-
-        // Update chatters display immediately and then every 5 seconds
-        updateChattersDisplay();
-        setInterval(updateChattersDisplay, 5000);
-    </script> -->
-
-
+* i got the same color for hive and farm by default
 
 ==================
 should diary be paginated or big flow? should it appear character by character?

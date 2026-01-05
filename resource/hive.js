@@ -19,19 +19,20 @@ window.getNextChatPrice = function (currentChats) {
     const prices = {
         1: 5,
         2: 20,
-        3: 40,
-        4: 60,
-        5: 100,
-        6: 200,
-        7: 500,
-        8: 1000,
-        9: 5000,
-        10: 10000
+        3: 30,
+        4: 50,
+        5: 75,
+        6: 100,
+        7: 200,
+        8: 500,
+        9: 1000,
+        10: 5000,
+        11: 10000
     };
     if (currentChats in prices) {
         return prices[currentChats];
     } else {
-        return Math.pow(10, currentChats - 5);
+        return Math.pow(10, currentChats - 7);
     }
 };
 
