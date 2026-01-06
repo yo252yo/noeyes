@@ -1020,8 +1020,40 @@ function initializePixiApp() {
                 global: { x, y }
             };
             targetFound.handleClick(clickEvent);
+        } else {
+            // No target found - forward click to HTML elements below
+            forwardClickToHTML(event);
         }
     });
+
+    // Forward click to HTML elements when no target is found
+    function forwardClickToHTML(originalEvent) {
+        // Temporarily disable pointer events on canvas
+        const canvas = pixiApp.view;
+        const originalPointerEvents = canvas.style.pointerEvents;
+        canvas.style.pointerEvents = 'none';
+
+        // Use elementFromPoint to find what HTML element would receive the click
+        const targetElement = document.elementFromPoint(
+            originalEvent.clientX,
+            originalEvent.clientY
+        );
+
+        // Restore pointer events immediately
+        canvas.style.pointerEvents = originalPointerEvents;
+
+        // If we found an HTML element and it's not the canvas itself, forward the click
+        if (targetElement && targetElement !== canvas && targetElement !== document.body) {
+            // Create a new click event and dispatch it to the target element
+            const forwardedEvent = new MouseEvent('click', {
+                bubbles: true,
+                cancelable: true,
+                clientX: originalEvent.clientX,
+                clientY: originalEvent.clientY
+            });
+            targetElement.dispatchEvent(forwardedEvent);
+        }
+    }
 
     // Handle resize
     window.addEventListener('resize', () => {
