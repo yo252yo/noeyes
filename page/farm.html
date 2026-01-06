@@ -9,6 +9,18 @@
     <link rel="stylesheet" href="../resource/css/farm_hive.css">
     <script src="../resource/js/pixi.min.js"></script>
     <script type="module" src="../resource/js/farm.js"></script>
+    <script type="module">
+        import { getStreamers } from '../resource/js/common.js';
+
+        // Update influencer count display every 400ms
+        setInterval(() => {
+            const influencerCountElement = document.getElementById('influencer-count');
+            if (influencerCountElement) {
+                const streamersCount = getStreamers().length;
+                influencerCountElement.textContent = streamersCount;
+            }
+        }, 400);
+    </script>
 </head>
 
 <body style="overflow-y:scroll">
@@ -47,8 +59,8 @@
     <div class="farm-stats-container">
         <table class="stats-table">
             <tr class="table-bg-blue">
-                <td>Next <span class="highlight-text"
-                        style="margin:0px;padding:0px;font-size:smaller;">Influencer</span>.</td>
+                <td><span id="influencer-count">0</span> <span class="highlight-text"
+                        style="margin:0px;padding:0px;font-size:smaller;">influencers</span>. Next:</td>
                 <td><span id="farm-value"></span> / <span id="next-price"></span></td>
             </tr>
         </table>
