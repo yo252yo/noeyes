@@ -1,6 +1,7 @@
 import { getAtt, getNbChatters, getValue, incrementAtt } from '../common.js';
 import { manageTextTargetCollisions } from './game-collision.js';
 import { gameConfig } from './game-config.js';
+import { initializeDebugRendering, renderDebugInfo } from './game-debug.js';
 import { initializePixiApp } from './game-pixi.js';
 import { createAttFeedback, showNextButton, updateAttDisplay, updateScoreDisplay } from './game-ui.js';
 import { AvatarTarget } from './target-avatar.js';
@@ -18,6 +19,11 @@ export function startGame() {
         initializePixiApp();
     }
 
+    // Initialize debug rendering if debug mode is enabled
+    if (gameConfig.debugMode && typeof initializeDebugRendering === 'function') {
+        initializeDebugRendering();
+    }
+
     setScore(gameConfig.targets === 'username' ? getAtt() : getValue());
     setupGameIntervals();
     updateScoreDisplay();
@@ -29,6 +35,11 @@ export function startGame() {
 
 export function gameLoop() {
     activeTargets.forEach(target => target.update());
+
+    // Render debug information if debug mode is enabled
+    if (typeof renderDebugInfo === 'function') {
+        renderDebugInfo();
+    }
 }
 
 export function setupGameIntervals() {

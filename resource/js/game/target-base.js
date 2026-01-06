@@ -63,6 +63,32 @@ export function isTutorial() {
     return gameConfig.fixedTargetNb > 0;
 }
 
+// Collision boundary helper functions
+export function getCollisionLeftBoundary() {
+    return 0;
+}
+
+export function getCollisionRightBoundary(width) {
+    return window.innerWidth - width;
+}
+
+export function getCollisionTopBoundary() {
+    return 0;
+}
+
+export function getCollisionBottomBoundary(height) {
+    return window.innerHeight - height;
+}
+
+export function getCollisionRect(width, height) {
+    return {
+        x: getCollisionLeftBoundary(),
+        y: getCollisionTopBoundary(),
+        width: getCollisionRightBoundary(width) - getCollisionLeftBoundary(),
+        height: getCollisionBottomBoundary(height) - getCollisionTopBoundary()
+    };
+}
+
 // Helper function to calculate distance between two points
 export function calculateDistance(x1, y1, x2, y2) {
     return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
@@ -105,14 +131,19 @@ export class Target {
         let newDx = this.dx;
         let newDy = this.dy;
 
-        // Check collisions with viewport edges
-        if (x <= 0 || x >= window.innerWidth - width) {
+        // Check collisions with viewport edges using shared boundary functions
+        const leftBoundary = getCollisionLeftBoundary();
+        const rightBoundary = getCollisionRightBoundary(width);
+        const topBoundary = getCollisionTopBoundary();
+        const bottomBoundary = getCollisionBottomBoundary(height);
+
+        if (x <= leftBoundary || x >= rightBoundary) {
             newDx = -newDx;
-            newX = Math.max(0, Math.min(window.innerWidth - width, newX));
+            newX = Math.max(leftBoundary, Math.min(rightBoundary, newX));
         }
-        if (y <= 0 || y >= window.innerHeight - height) {
+        if (y <= topBoundary || y >= bottomBoundary) {
             newDy = -newDy;
-            newY = Math.max(0, Math.min(window.innerHeight - height, newY));
+            newY = Math.max(topBoundary, Math.min(bottomBoundary, newY));
         }
 
         return { x: newX, y: newY, dx: newDx, dy: newDy };

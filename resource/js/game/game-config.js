@@ -2,7 +2,8 @@
 export let gameConfig = window.gameConfig || {
     targets: 'emoji', // 'emoji', 'avatar', or 'username'
     winScore: 5,
-    fixedTargetNb: 10 // null for unlimited (emoji mode), number for avatar mode
+    fixedTargetNb: 10, // null for unlimited (emoji mode), number for avatar mode
+    debugMode: true // Enable debug mode to show hitboxes and collision boundaries
 };
 
 export const emoji = ['👶', '👦', '👧', '👨', '👩', '🧑', '👴', '👵'];
