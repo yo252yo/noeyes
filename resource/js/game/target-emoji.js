@@ -1,0 +1,286 @@
+import { incrementValue, play_value_sfx } from '../common.js';
+import { emoji, max_speed_emoji, min_speed_emoji } from './game-config.js';
+import { spawnTarget, updateScoreAfterClick } from './game-logic.js';
+import { createValueFeedback } from './game-ui.js';
+import { Target, activeTargets, calculateDistance } from './target-base.js';
+
+// Emoji Target class
+export class EmojiTarget extends Target {
+    constructor() {
+        super();
+        this.createSprite();
+        this.setupInteraction();
+    }
+
+    createSprite() {
+        const randomEmoji = emoji[Math.floor(Math.random() * emoji.length)];
+        this.container = new window.PIXI.Text(randomEmoji, {
+            fontSize: 30,
+            fontFamily: 'Arial',
+            fill: 0xffffff
+        });
+        this.container.anchor.set(0.5);
+
+        // Random position and velocity
+        const spawnPos = this.findBestSpawnPosition(this.container.width, this.container.height);
+        this.container.x = spawnPos.x + this.container.width / 2;
+        this.container.y = spawnPos.y + this.container.height / 2;
+
+        const speed = min_speed_emoji + Math.random() * (max_speed_emoji - min_speed_emoji);
+        const angle = Math.random() * 2 * Math.PI;
+        this.dx = Math.cos(angle) * speed;
+        this.dy = Math.sin(angle) * speed;
+    }
+
+    setupInteraction() {
+        this.container.interactive = true;
+        this.container.buttonMode = true;
+        this.container.hitArea = new window.PIXI.Circle(20, 20, 30); // Even larger hit area
+
+        // Create extra click detection zone (20% larger)
+        const bounds = this.container.getBounds();
+        const extraWidth = bounds.width * 0.2;
+        const extraHeight = bounds.height * 0.2;
+
+        this.clickZone = new window.PIXI.Graphics();
+        this.clickZone.beginFill(0xff0000, 0.0); // Invisible red for debugging (set alpha to 0 for production)
+        this.clickZone.drawRect(-extraWidth / 2, -extraHeight / 2, bounds.width + extraWidth, bounds.height + extraHeight);
+        this.clickZone.endFill();
+        this.clickZone.interactive = true;
+        this.clickZone.buttonMode = true;
+        this.clickZone.x = bounds.width / 2;
+        this.clickZone.y = bounds.height / 2;
+
+        // Add click zone behind the visual target
+        this.container.addChildAt(this.clickZone, 0);
+
+        // Pointer events (primary) - on both visual target and click zone
+        const clickHandler = (event) => this.handleClick(event);
+        const pointerDownHandler = (event) => this.handlePointerDown(event);
+        const pointerUpHandler = (event) => this.handlePointerUp(event);
+
+        this.container.on('pointertap', clickHandler);
+        this.container.on('pointerdown', pointerDownHandler);
+        this.container.on('pointerup', pointerUpHandler);
+        this.container.on('pointerupoutside', () => this.cancelClick());
+
+        this.clickZone.on('pointertap', clickHandler);
+        this.clickZone.on('pointerdown', pointerDownHandler);
+        this.clickZone.on('pointerup', pointerUpHandler);
+        this.clickZone.on('pointerupoutside', () => this.cancelClick());
+
+        // Mouse events (fallback)
+        const mouseDownHandler = (event) => this.handleMouseDown(event);
+        const mouseUpHandler = (event) => this.handleMouseUp(event);
+
+        this.container.on('mousedown', mouseDownHandler);
+        this.container.on('mouseup', mouseUpHandler);
+        this.container.on('mouseout', () => this.cancelClick());
+
+        this.clickZone.on('mousedown', mouseDownHandler);
+        this.clickZone.on('mouseup', mouseUpHandler);
+        this.clickZone.on('mouseout', () => this.cancelClick());
+
+        // Touch events (fallback)
+        const touchStartHandler = (event) => this.handleTouchStart(event);
+        const touchEndHandler = (event) => this.handleTouchEnd(event);
+
+        this.container.on('touchstart', touchStartHandler);
+        this.container.on('touchend', touchEndHandler);
+
+        this.clickZone.on('touchstart', touchStartHandler);
+        this.clickZone.on('touchend', touchEndHandler);
+    }
+
+    handleMouseDown(event) {
+        this.clickStartTime = Date.now();
+        this.clickStartX = event.clientX;
+        this.clickStartY = event.clientY;
+        this.isPotentialClick = true;
+    }
+
+    handleMouseUp(event) {
+        if (this.isPotentialClick) {
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(event.clientX - this.clickStartX, 2) +
+                Math.pow(event.clientY - this.clickStartY, 2)
+            );
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                this.handleClick({ global: { x: event.clientX, y: event.clientY } });
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    handleTouchStart(event) {
+        const touch = event.touches[0];
+        this.clickStartTime = Date.now();
+        this.clickStartX = touch.clientX;
+        this.clickStartY = touch.clientY;
+        this.isPotentialClick = true;
+    }
+
+    handleTouchEnd(event) {
+        if (this.isPotentialClick && event.changedTouches.length > 0) {
+            const touch = event.changedTouches[0];
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(touch.clientX - this.clickStartX, 2) +
+                Math.pow(touch.clientY - this.clickStartY, 2)
+            );
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                this.handleClick({ global: { x: touch.clientX, y: touch.clientY } });
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    handlePointerDown(event) {
+        console.log(`${this.constructor.name}: pointerdown at (${event.global.x}, ${event.global.y})`);
+        this.clickStartTime = Date.now();
+        this.clickStartX = event.global.x;
+        this.clickStartY = event.global.y;
+        this.isPotentialClick = true;
+    }
+
+    handlePointerUp(event) {
+        if (this.isPotentialClick) {
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(event.global.x - this.clickStartX, 2) +
+                Math.pow(event.global.y - this.clickStartY, 2)
+            );
+
+            console.log(`${this.constructor.name}: pointerup - duration: ${duration}ms, distance: ${distance.toFixed(1)}px`);
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                console.log(`${this.constructor.name}: VALID CLICK - processing`);
+                this.handleClick(event);
+            } else {
+                console.log(`${this.constructor.name}: INVALID CLICK - ${duration >= 500 ? 'too slow' : 'moved too much'}`);
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    handleMouseDown(event) {
+        this.clickStartTime = Date.now();
+        this.clickStartX = event.clientX;
+        this.clickStartY = event.clientY;
+        this.isPotentialClick = true;
+    }
+
+    handleMouseUp(event) {
+        if (this.isPotentialClick) {
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(event.clientX - this.clickStartX, 2) +
+                Math.pow(event.clientY - this.clickStartY, 2)
+            );
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                this.handleClick({ global: { x: event.clientX, y: event.clientY } });
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    handleTouchStart(event) {
+        const touch = event.touches[0];
+        this.clickStartTime = Date.now();
+        this.clickStartX = touch.clientX;
+        this.clickStartY = touch.clientY;
+        this.isPotentialClick = true;
+    }
+
+    handleTouchEnd(event) {
+        if (this.isPotentialClick && event.changedTouches.length > 0) {
+            const touch = event.changedTouches[0];
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(touch.clientX - this.clickStartX, 2) +
+                Math.pow(touch.clientY - this.clickStartY, 2)
+            );
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                this.handleClick({ global: { x: touch.clientX, y: touch.clientY } });
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    cancelClick() {
+        this.isPotentialClick = false;
+    }
+
+    handleClick(event) {
+        // Play value sound
+        play_value_sfx();
+
+        // Remove from active targets
+        const index = activeTargets.indexOf(this);
+        if (index > -1) {
+            activeTargets.splice(index, 1);
+        }
+
+        // Create feedback
+        createValueFeedback('+1 Value', event.global.x, event.global.y, 4000);
+
+        this.destroy();
+        incrementValue();
+        updateScoreAfterClick();
+
+        // Spawn replacement
+        spawnTarget();
+    }
+
+    findBestSpawnPosition(width, height, candidates = 3) {
+        const candidatePositions = [];
+        for (let i = 0; i < candidates; i++) {
+            candidatePositions.push({
+                x: Math.random() * (window.innerWidth - width),
+                y: Math.random() * (window.innerHeight - height)
+            });
+        }
+
+        if (activeTargets.length === 0) {
+            return candidatePositions[Math.floor(Math.random() * candidatePositions.length)];
+        }
+
+        let bestPosition = candidatePositions[0];
+        let bestMinDistance = 0;
+
+        for (const candidate of candidatePositions) {
+            let minDistance = Infinity;
+
+            for (const existingTarget of activeTargets) {
+                const existingBounds = existingTarget.container.getBounds();
+                const existingCenterX = existingBounds.x + existingBounds.width / 2;
+                const existingCenterY = existingBounds.y + existingBounds.height / 2;
+
+                const candidateCenterX = candidate.x + width / 2;
+                const candidateCenterY = candidate.y + height / 2;
+
+                const distance = calculateDistance(candidateCenterX, candidateCenterY, existingCenterX, existingCenterY);
+                minDistance = Math.min(minDistance, distance);
+            }
+
+            if (minDistance > bestMinDistance) {
+                bestMinDistance = minDistance;
+                bestPosition = candidate;
+            }
+        }
+
+        return bestPosition;
+    }
+}
+
+// Helper functions that need to be imported from game-ui.js and game-logic.js

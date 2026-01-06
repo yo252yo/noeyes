@@ -1,0 +1,321 @@
+import { getAtt, getStreamers } from '../common.js';
+import { getAvatarUrl } from '../twitch.js';
+import { borderColors, max_speed_avatar, min_speed_avatar } from './game-config.js';
+import { Target, activeTargets, isTutorial } from './target-base.js';
+
+// Avatar Target class
+export class AvatarTarget extends Target {
+    constructor(specificUsername = null) {
+        super();
+        this.streamer = this.selectStreamer(specificUsername);
+        this.init();
+    }
+
+    selectStreamer(specificUsername) {
+        if (specificUsername) return specificUsername;
+
+        const storedStreamers = getStreamers();
+        if (storedStreamers.length > 0) {
+            const activeStreamerNames = activeTargets.map(target => target.streamer).filter(Boolean);
+            const availableStreamers = storedStreamers.filter(s => !activeStreamerNames.includes(s));
+
+            if (availableStreamers.length > 0) {
+                return availableStreamers[Math.floor(Math.random() * availableStreamers.length)];
+            } else {
+                return storedStreamers[Math.floor(Math.random() * storedStreamers.length)];
+            }
+        }
+        return 'vedal987'; // Fallback
+    }
+
+    async init() {
+        await this.createSprite();
+        this.setupInteraction();
+    }
+
+    async createSprite() {
+        const avatarUrl = await getAvatarUrl(this.streamer);
+        const randomColor = borderColors[Math.floor(Math.random() * borderColors.length)];
+
+        this.container = new window.PIXI.Container();
+
+        // Create circular border
+        const borderGraphics = new window.PIXI.Graphics();
+        borderGraphics.beginFill(window.PIXI.utils.string2hex(randomColor));
+        borderGraphics.drawCircle(20, 20, 20);
+        borderGraphics.endFill();
+        this.container.addChild(borderGraphics);
+
+        // Create mask
+        const mask = new window.PIXI.Graphics();
+        mask.beginFill(0xffffff);
+        mask.drawCircle(20, 20, 18);
+        mask.endFill();
+
+        // Load avatar
+        let texture;
+        try {
+            texture = await window.PIXI.Texture.fromURL(avatarUrl);
+        } catch (e) {
+            console.warn('Failed to load avatar for', this.streamer, e);
+            texture = window.PIXI.Texture.WHITE;
+        }
+        const avatarSprite = new window.PIXI.Sprite(texture);
+        avatarSprite.width = 36;
+        avatarSprite.height = 36;
+        avatarSprite.x = 2;
+        avatarSprite.y = 2;
+        avatarSprite.mask = mask;
+        this.container.addChild(avatarSprite);
+        this.container.addChild(mask);
+
+        // Position and velocity
+        const spawnPos = this.findBestSpawnPosition(40, 40);
+        this.container.x = spawnPos.x;
+        this.container.y = spawnPos.y;
+
+        const speed = min_speed_avatar + Math.random() * (max_speed_avatar - min_speed_avatar);
+        const angle = Math.random() * 2 * Math.PI;
+        this.dx = Math.cos(angle) * speed;
+        this.dy = Math.sin(angle) * speed;
+    }
+
+    setupInteraction() {
+        this.container.interactive = true;
+        this.container.buttonMode = true;
+        this.container.hitArea = new window.PIXI.Circle(20, 20, 30); // Even larger hit area
+
+        // Create extra click detection zone (20% larger)
+        const bounds = this.container.getBounds();
+        const extraWidth = bounds.width * 0.2;
+        const extraHeight = bounds.height * 0.2;
+
+        this.clickZone = new window.PIXI.Graphics();
+        this.clickZone.beginFill(0xff0000, 0.0); // Invisible red for debugging (set alpha to 0 for production)
+        this.clickZone.drawRect(-extraWidth / 2, -extraHeight / 2, bounds.width + extraWidth, bounds.height + extraHeight);
+        this.clickZone.endFill();
+        this.clickZone.interactive = true;
+        this.clickZone.buttonMode = true;
+        this.clickZone.x = bounds.width / 2;
+        this.clickZone.y = bounds.height / 2;
+
+        // Add click zone behind the visual target
+        this.container.addChildAt(this.clickZone, 0);
+
+        // Pointer events (primary) - on both visual target and click zone
+        const clickHandler = (event) => this.handleClick(event);
+        const pointerDownHandler = (event) => this.handlePointerDown(event);
+        const pointerUpHandler = (event) => this.handlePointerUp(event);
+
+        this.container.on('pointertap', clickHandler);
+        this.container.on('pointerdown', pointerDownHandler);
+        this.container.on('pointerup', pointerUpHandler);
+        this.container.on('pointerupoutside', () => this.cancelClick());
+
+        this.clickZone.on('pointertap', clickHandler);
+        this.clickZone.on('pointerdown', pointerDownHandler);
+        this.clickZone.on('pointerup', pointerUpHandler);
+        this.clickZone.on('pointerupoutside', () => this.cancelClick());
+
+        // Mouse events (fallback)
+        const mouseDownHandler = (event) => this.handleMouseDown(event);
+        const mouseUpHandler = (event) => this.handleMouseUp(event);
+
+        this.container.on('mousedown', mouseDownHandler);
+        this.container.on('mouseup', mouseUpHandler);
+        this.container.on('mouseout', () => this.cancelClick());
+
+        this.clickZone.on('mousedown', mouseDownHandler);
+        this.clickZone.on('mouseup', mouseUpHandler);
+        this.clickZone.on('mouseout', () => this.cancelClick());
+
+        // Touch events (fallback)
+        const touchStartHandler = (event) => this.handleTouchStart(event);
+        const touchEndHandler = (event) => this.handleTouchEnd(event);
+
+        this.container.on('touchstart', touchStartHandler);
+        this.container.on('touchend', touchEndHandler);
+
+        this.clickZone.on('touchstart', touchStartHandler);
+        this.clickZone.on('touchend', touchEndHandler);
+    }
+
+    handlePointerDown(event) {
+        console.log(`${this.constructor.name}: pointerdown at (${event.global.x}, ${event.global.y})`);
+        this.clickStartTime = Date.now();
+        this.clickStartX = event.global.x;
+        this.clickStartY = event.global.y;
+        this.isPotentialClick = true;
+    }
+
+    handlePointerUp(event) {
+        if (this.isPotentialClick) {
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(event.global.x - this.clickStartX, 2) +
+                Math.pow(event.global.y - this.clickStartY, 2)
+            );
+
+            console.log(`${this.constructor.name}: pointerup - duration: ${duration}ms, distance: ${distance.toFixed(1)}px`);
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                console.log(`${this.constructor.name}: VALID CLICK - processing`);
+                this.handleClick(event);
+            } else {
+                console.log(`${this.constructor.name}: INVALID CLICK - ${duration >= 500 ? 'too slow' : 'moved too much'}`);
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    cancelClick() {
+        this.isPotentialClick = false;
+    }
+
+    handleClick(event) {
+        // Remove clicked avatar
+        const clickedIndex = activeTargets.indexOf(this);
+        if (clickedIndex > -1) {
+            activeTargets.splice(clickedIndex, 1);
+        }
+
+        // Find closest remaining avatar
+        let closestAvatar = null;
+        let minDistance = Infinity;
+        const clickedBounds = this.container.getBounds();
+        const clickedCenterX = clickedBounds.x + clickedBounds.width / 2;
+        const clickedCenterY = clickedBounds.y + clickedBounds.height / 2;
+
+        for (const avatar of activeTargets) {
+            if (!(avatar instanceof AvatarTarget)) continue;
+            const avatarBounds = avatar.container.getBounds();
+            const avatarCenterX = avatarBounds.x + avatarBounds.width / 2;
+            const avatarCenterY = avatarBounds.y + avatarBounds.height / 2;
+            const distance = calculateDistance(clickedCenterX, clickedCenterY, avatarCenterX, avatarCenterY);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestAvatar = avatar;
+            }
+        }
+
+        // Remove closest avatar if found
+        if (closestAvatar) {
+            const closestIndex = activeTargets.indexOf(closestAvatar);
+            if (closestIndex > -1) {
+                activeTargets.splice(closestIndex, 1);
+            }
+            closestAvatar.destroy();
+
+            // Calculate score
+            const valueGained = Math.min(100, Math.pow(Math.floor(200 / minDistance), 2));
+            incrementValue(valueGained);
+
+            createValueFeedback(`+${valueGained} Value`, event.global.x, event.global.y, 2000);
+
+            // Create COLLAB message for high scores
+            if (valueGained > 5) {
+                const collabMsg = document.createElement('div');
+                collabMsg.textContent = '✨COLLAB✨';
+                collabMsg.style.position = 'absolute';
+                collabMsg.style.left = (event.global.x - 40) + 'px';
+                collabMsg.style.top = (event.global.y + 10) + 'px';
+                collabMsg.style.color = 'fuchsia';
+                collabMsg.style.fontSize = '14px';
+                collabMsg.style.fontWeight = 'bold';
+                collabMsg.style.pointerEvents = 'none';
+                collabMsg.style.zIndex = '102';
+                collabMsg.style.textAlign = 'center';
+                collabMsg.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+                collabMsg.style.padding = '2px 6px';
+                collabMsg.style.borderRadius = '4px';
+                collabMsg.style.textShadow = '0 0 5px fuchsia, 0 0 10px fuchsia, 0 0 15px fuchsia, 0 0 20px fuchsia';
+                collabMsg.style.animation = 'collabGrow 2s ease-out forwards';
+                document.body.appendChild(collabMsg);
+
+                setTimeout(() => {
+                    if (collabMsg.parentNode) {
+                        collabMsg.parentNode.removeChild(collabMsg);
+                    }
+                }, 2000);
+            }
+        }
+
+        this.destroy();
+        updateScoreAfterClick();
+    }
+
+    findBestSpawnPosition(width, height, candidates = 3) {
+        const candidatePositions = [];
+        for (let i = 0; i < candidates; i++) {
+            candidatePositions.push({
+                x: Math.random() * (window.innerWidth - width),
+                y: Math.random() * (window.innerHeight - height)
+            });
+        }
+
+        if (activeTargets.length === 0) {
+            return candidatePositions[Math.floor(Math.random() * candidatePositions.length)];
+        }
+
+        let bestPosition = candidatePositions[0];
+        let bestMinDistance = 0;
+
+        for (const candidate of candidatePositions) {
+            let minDistance = Infinity;
+
+            for (const existingTarget of activeTargets) {
+                const existingBounds = existingTarget.container.getBounds();
+                const existingCenterX = existingBounds.x + existingBounds.width / 2;
+                const existingCenterY = existingBounds.y + existingBounds.height / 2;
+
+                const candidateCenterX = candidate.x + width / 2;
+                const candidateCenterY = candidate.y + height / 2;
+
+                const distance = calculateDistance(candidateCenterX, candidateCenterY, existingCenterX, existingCenterY);
+                minDistance = Math.min(minDistance, distance);
+            }
+
+            if (minDistance > bestMinDistance) {
+                bestMinDistance = minDistance;
+                bestPosition = candidate;
+            }
+        }
+
+        return bestPosition;
+    }
+
+    update() {
+        if (this.destroyed) return;
+
+        // Scale speed based on Att (disabled in tutorial mode)
+        let speedScale = 1;
+        if (!isTutorial()) {
+            const currentAtt = getAtt();
+            speedScale = Math.min(Math.max(currentAtt / 100, 0.3), 1); // Minimum 30% speed
+        }
+
+        let x = this.container.x;
+        let y = this.container.y;
+
+        x += this.dx * speedScale;
+        y += this.dy * speedScale;
+
+        const bounds = this.container.getBounds();
+        const collisionResult = this.handleWallCollision(x, y, bounds.width, bounds.height);
+        x = collisionResult.x;
+        y = collisionResult.y;
+        this.dx = collisionResult.dx;
+        this.dy = collisionResult.dy;
+
+        this.container.x = x;
+        this.container.y = y;
+    }
+}
+
+import { incrementValue } from '../common.js';
+import { updateScoreAfterClick } from './game-logic.js';
+import { createValueFeedback } from './game-ui.js';
+import { calculateDistance } from './target-base.js';
+
