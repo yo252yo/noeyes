@@ -106,19 +106,17 @@ export class UsernameTarget extends Target {
         this.container.hitArea = new window.PIXI.Circle(this.container.width / 2, this.container.height / 2, Math.max(this.container.width, this.container.height) / 2 + 15); // Even larger hit area
         console.log(`${this.constructor.name}: Hit area set to circle(${this.container.width / 2}, ${this.container.height / 2}, ${Math.max(this.container.width, this.container.height) / 2 + 15}), bounds:`, this.container.getBounds());
 
-        // Create extra click detection zone (20% larger)
-        const bounds = this.container.getBounds();
-        const extraWidth = bounds.width * 0.2;
-        const extraHeight = bounds.height * 0.2;
+        // Create extra click detection zone (50% larger than hit area for maximum leniency)
+        const hitRadius = Math.max(this.container.width, this.container.height) + 20; // Same as hit area
+        const clickZoneSize = hitRadius * 1.5;
 
         this.clickZone = new window.PIXI.Graphics();
-        this.clickZone.beginFill(0xff0000, 0.0); // Invisible red for debugging (set alpha to 0 for production)
-        this.clickZone.drawRect(-extraWidth / 2, -extraHeight / 2, bounds.width + extraWidth, bounds.height + extraHeight);
+        this.clickZone.beginFill(0xff0000, 0.0); // Invisible
+        this.clickZone.drawRect(-clickZoneSize, -clickZoneSize, clickZoneSize * 2, clickZoneSize * 2);
         this.clickZone.endFill();
         this.clickZone.interactive = true;
         this.clickZone.buttonMode = true;
-        this.clickZone.x = bounds.width / 2;
-        this.clickZone.y = bounds.height / 2;
+        // No positioning offset needed since it's centered at (0,0)
 
         // Add click zone behind the visual target
         this.container.addChildAt(this.clickZone, 0);
@@ -138,7 +136,29 @@ export class UsernameTarget extends Target {
         this.clickZone.on('pointerup', pointerUpHandler);
         this.clickZone.on('pointerupoutside', () => this.cancelClick());
 
-        console.log(`${this.constructor.name}: Extra click zone added (${extraWidth.toFixed(1)}x${extraHeight.toFixed(1)}px larger)`);
+        // Mouse events (fallback)
+        const mouseDownHandler = (event) => this.handleMouseDown(event);
+        const mouseUpHandler = (event) => this.handleMouseUp(event);
+
+        this.container.on('mousedown', mouseDownHandler);
+        this.container.on('mouseup', mouseUpHandler);
+        this.container.on('mouseout', () => this.cancelClick());
+
+        this.clickZone.on('mousedown', mouseDownHandler);
+        this.clickZone.on('mouseup', mouseUpHandler);
+        this.clickZone.on('mouseout', () => this.cancelClick());
+
+        // Touch events (fallback)
+        const touchStartHandler = (event) => this.handleTouchStart(event);
+        const touchEndHandler = (event) => this.handleTouchEnd(event);
+
+        this.container.on('touchstart', touchStartHandler);
+        this.container.on('touchend', touchEndHandler);
+
+        this.clickZone.on('touchstart', touchStartHandler);
+        this.clickZone.on('touchend', touchEndHandler);
+
+        console.log(`${this.constructor.name}: Extra click zone added (${(clickZoneSize * 2).toFixed(1)}px diameter)`);
         console.log(`${this.constructor.name}: Interaction setup complete`);
     }
 
@@ -171,17 +191,55 @@ export class UsernameTarget extends Target {
         this.isPotentialClick = false;
     }
 
+    handleMouseDown(event) {
+        // Alias for handlePointerDown for mouse events
+        this.handlePointerDown(event);
+    }
+
+    handleMouseUp(event) {
+        // Alias for handlePointerUp for mouse events
+        this.handlePointerUp(event);
+    }
+
+    handleTouchStart(event) {
+        // Alias for handlePointerDown for touch events
+        this.handlePointerDown(event);
+    }
+
+    handleTouchEnd(event) {
+        // Alias for handlePointerUp for touch events
+        this.handlePointerUp(event);
+    }
+
     cancelClick() {
         this.isPotentialClick = false;
     }
 
     handleClick(event) {
+        // Guard against destroyed containers
+        if (!this.container || this.destroyed) {
+            console.log('UsernameTarget: handleClick called on destroyed container');
+            return;
+        }
+
+        // Prevent double-clicking from both container and clickZone
+        const now = Date.now();
+        if (this.lastClickTime && now - this.lastClickTime < 100) {
+            console.log('UsernameTarget: Ignoring duplicate click');
+            return;
+        }
+        this.lastClickTime = now;
+
+        console.log(`UsernameTarget: handleClick called - reversing direction from (${this.dx.toFixed(2)}, ${this.dy.toFixed(2)})`);
+
         // Play ding sound
         play_click_sfx();
 
         // Reverse direction
         this.dx = -this.dx;
         this.dy = -this.dy;
+
+        console.log(`UsernameTarget: direction reversed to (${this.dx.toFixed(2)}, ${this.dy.toFixed(2)})`);
     }
 
     findBestSpawnPosition(width, height, candidates = 3) {

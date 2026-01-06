@@ -170,11 +170,36 @@ export class AvatarTarget extends Target {
         this.isPotentialClick = false;
     }
 
+    handleMouseDown(event) {
+        // Alias for handlePointerDown for mouse events
+        this.handlePointerDown(event);
+    }
+
+    handleMouseUp(event) {
+        // Alias for handlePointerUp for mouse events
+        this.handlePointerUp(event);
+    }
+
+    handleTouchStart(event) {
+        // Alias for handlePointerDown for touch events
+        this.handlePointerDown(event);
+    }
+
+    handleTouchEnd(event) {
+        // Alias for handlePointerUp for touch events
+        this.handlePointerUp(event);
+    }
+
     cancelClick() {
         this.isPotentialClick = false;
     }
 
     handleClick(event) {
+        // Guard against destroyed containers
+        if (!this.container || this.destroyed) {
+            return;
+        }
+
         // Remove clicked avatar
         const clickedIndex = activeTargets.indexOf(this);
         if (clickedIndex > -1) {

@@ -28,14 +28,6 @@ dont come back to me until it's in working condition, observe your own web brows
 
 
 
-ok sometimes the avatar stops moving and its -1Att appears in a random location im confused
-
-
-
-can you maybe rework the wall collistion? sometimes things go through the walls, especially the usernames, id love for the collision to be more precise, and to not make the parent have extra scrollbars
-
-
-
 git checkout main
 git merge new_engine
 
