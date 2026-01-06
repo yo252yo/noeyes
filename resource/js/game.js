@@ -6,8 +6,6 @@ let gameConfig = window.gameConfig || {
 };
 
 // Import PIXI
-import './pixi.min.js';
-
 import {
     getAtt,
     getChatters,
@@ -148,7 +146,6 @@ class Target {
 class EmojiTarget extends Target {
     constructor() {
         super();
-        console.log('EmojiTarget created');
         this.createSprite();
         this.setupInteraction();
     }
@@ -176,9 +173,190 @@ class EmojiTarget extends Target {
     setupInteraction() {
         this.container.interactive = true;
         this.container.buttonMode = true;
-        this.container.hitArea = new PIXI.Circle(20, 20, 25); // Larger hit area
-        this.container.on('pointertap', (event) => this.handleClick(event));
-        this.container.on('click', (event) => this.handleClick(event)); // Additional event listener
+        this.container.hitArea = new PIXI.Circle(20, 20, 30); // Even larger hit area
+
+        // Create extra click detection zone (20% larger)
+        const bounds = this.container.getBounds();
+        const extraWidth = bounds.width * 0.2;
+        const extraHeight = bounds.height * 0.2;
+
+        this.clickZone = new PIXI.Graphics();
+        this.clickZone.beginFill(0xff0000, 0.0); // Invisible red for debugging (set alpha to 0 for production)
+        this.clickZone.drawRect(-extraWidth / 2, -extraHeight / 2, bounds.width + extraWidth, bounds.height + extraHeight);
+        this.clickZone.endFill();
+        this.clickZone.interactive = true;
+        this.clickZone.buttonMode = true;
+        this.clickZone.x = bounds.width / 2;
+        this.clickZone.y = bounds.height / 2;
+
+        // Add click zone behind the visual target
+        this.container.addChildAt(this.clickZone, 0);
+
+        // Pointer events (primary) - on both visual target and click zone
+        const clickHandler = (event) => this.handleClick(event);
+        const pointerDownHandler = (event) => this.handlePointerDown(event);
+        const pointerUpHandler = (event) => this.handlePointerUp(event);
+
+        this.container.on('pointertap', clickHandler);
+        this.container.on('pointerdown', pointerDownHandler);
+        this.container.on('pointerup', pointerUpHandler);
+        this.container.on('pointerupoutside', () => this.cancelClick());
+
+        this.clickZone.on('pointertap', clickHandler);
+        this.clickZone.on('pointerdown', pointerDownHandler);
+        this.clickZone.on('pointerup', pointerUpHandler);
+        this.clickZone.on('pointerupoutside', () => this.cancelClick());
+
+        // Mouse events (fallback)
+        const mouseDownHandler = (event) => this.handleMouseDown(event);
+        const mouseUpHandler = (event) => this.handleMouseUp(event);
+
+        this.container.on('mousedown', mouseDownHandler);
+        this.container.on('mouseup', mouseUpHandler);
+        this.container.on('mouseout', () => this.cancelClick());
+
+        this.clickZone.on('mousedown', mouseDownHandler);
+        this.clickZone.on('mouseup', mouseUpHandler);
+        this.clickZone.on('mouseout', () => this.cancelClick());
+
+        // Touch events (fallback)
+        const touchStartHandler = (event) => this.handleTouchStart(event);
+        const touchEndHandler = (event) => this.handleTouchEnd(event);
+
+        this.container.on('touchstart', touchStartHandler);
+        this.container.on('touchend', touchEndHandler);
+
+        this.clickZone.on('touchstart', touchStartHandler);
+        this.clickZone.on('touchend', touchEndHandler);
+    }
+
+    handleMouseDown(event) {
+        this.clickStartTime = Date.now();
+        this.clickStartX = event.clientX;
+        this.clickStartY = event.clientY;
+        this.isPotentialClick = true;
+    }
+
+    handleMouseUp(event) {
+        if (this.isPotentialClick) {
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(event.clientX - this.clickStartX, 2) +
+                Math.pow(event.clientY - this.clickStartY, 2)
+            );
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                this.handleClick({ global: { x: event.clientX, y: event.clientY } });
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    handleTouchStart(event) {
+        const touch = event.touches[0];
+        this.clickStartTime = Date.now();
+        this.clickStartX = touch.clientX;
+        this.clickStartY = touch.clientY;
+        this.isPotentialClick = true;
+    }
+
+    handleTouchEnd(event) {
+        if (this.isPotentialClick && event.changedTouches.length > 0) {
+            const touch = event.changedTouches[0];
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(touch.clientX - this.clickStartX, 2) +
+                Math.pow(touch.clientY - this.clickStartY, 2)
+            );
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                this.handleClick({ global: { x: touch.clientX, y: touch.clientY } });
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    handlePointerDown(event) {
+        console.log(`${this.constructor.name}: pointerdown at (${event.global.x}, ${event.global.y})`);
+        this.clickStartTime = Date.now();
+        this.clickStartX = event.global.x;
+        this.clickStartY = event.global.y;
+        this.isPotentialClick = true;
+    }
+
+    handlePointerUp(event) {
+        if (this.isPotentialClick) {
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(event.global.x - this.clickStartX, 2) +
+                Math.pow(event.global.y - this.clickStartY, 2)
+            );
+
+            console.log(`${this.constructor.name}: pointerup - duration: ${duration}ms, distance: ${distance.toFixed(1)}px`);
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                console.log(`${this.constructor.name}: VALID CLICK - processing`);
+                this.handleClick(event);
+            } else {
+                console.log(`${this.constructor.name}: INVALID CLICK - ${duration >= 500 ? 'too slow' : 'moved too much'}`);
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    handleMouseDown(event) {
+        this.clickStartTime = Date.now();
+        this.clickStartX = event.clientX;
+        this.clickStartY = event.clientY;
+        this.isPotentialClick = true;
+    }
+
+    handleMouseUp(event) {
+        if (this.isPotentialClick) {
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(event.clientX - this.clickStartX, 2) +
+                Math.pow(event.clientY - this.clickStartY, 2)
+            );
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                this.handleClick({ global: { x: event.clientX, y: event.clientY } });
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    handleTouchStart(event) {
+        const touch = event.touches[0];
+        this.clickStartTime = Date.now();
+        this.clickStartX = touch.clientX;
+        this.clickStartY = touch.clientY;
+        this.isPotentialClick = true;
+    }
+
+    handleTouchEnd(event) {
+        if (this.isPotentialClick && event.changedTouches.length > 0) {
+            const touch = event.changedTouches[0];
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(touch.clientX - this.clickStartX, 2) +
+                Math.pow(touch.clientY - this.clickStartY, 2)
+            );
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                this.handleClick({ global: { x: touch.clientX, y: touch.clientY } });
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    cancelClick() {
+        this.isPotentialClick = false;
     }
 
     handleClick(event) {
@@ -323,9 +501,94 @@ class AvatarTarget extends Target {
     setupInteraction() {
         this.container.interactive = true;
         this.container.buttonMode = true;
-        this.container.hitArea = new PIXI.Circle(20, 20, 25); // Larger hit area
-        this.container.on('pointertap', (event) => this.handleClick(event));
-        this.container.on('click', (event) => this.handleClick(event)); // Additional event listener
+        this.container.hitArea = new PIXI.Circle(20, 20, 30); // Even larger hit area
+
+        // Create extra click detection zone (20% larger)
+        const bounds = this.container.getBounds();
+        const extraWidth = bounds.width * 0.2;
+        const extraHeight = bounds.height * 0.2;
+
+        this.clickZone = new PIXI.Graphics();
+        this.clickZone.beginFill(0xff0000, 0.0); // Invisible red for debugging (set alpha to 0 for production)
+        this.clickZone.drawRect(-extraWidth / 2, -extraHeight / 2, bounds.width + extraWidth, bounds.height + extraHeight);
+        this.clickZone.endFill();
+        this.clickZone.interactive = true;
+        this.clickZone.buttonMode = true;
+        this.clickZone.x = bounds.width / 2;
+        this.clickZone.y = bounds.height / 2;
+
+        // Add click zone behind the visual target
+        this.container.addChildAt(this.clickZone, 0);
+
+        // Pointer events (primary) - on both visual target and click zone
+        const clickHandler = (event) => this.handleClick(event);
+        const pointerDownHandler = (event) => this.handlePointerDown(event);
+        const pointerUpHandler = (event) => this.handlePointerUp(event);
+
+        this.container.on('pointertap', clickHandler);
+        this.container.on('pointerdown', pointerDownHandler);
+        this.container.on('pointerup', pointerUpHandler);
+        this.container.on('pointerupoutside', () => this.cancelClick());
+
+        this.clickZone.on('pointertap', clickHandler);
+        this.clickZone.on('pointerdown', pointerDownHandler);
+        this.clickZone.on('pointerup', pointerUpHandler);
+        this.clickZone.on('pointerupoutside', () => this.cancelClick());
+
+        // Mouse events (fallback)
+        const mouseDownHandler = (event) => this.handleMouseDown(event);
+        const mouseUpHandler = (event) => this.handleMouseUp(event);
+
+        this.container.on('mousedown', mouseDownHandler);
+        this.container.on('mouseup', mouseUpHandler);
+        this.container.on('mouseout', () => this.cancelClick());
+
+        this.clickZone.on('mousedown', mouseDownHandler);
+        this.clickZone.on('mouseup', mouseUpHandler);
+        this.clickZone.on('mouseout', () => this.cancelClick());
+
+        // Touch events (fallback)
+        const touchStartHandler = (event) => this.handleTouchStart(event);
+        const touchEndHandler = (event) => this.handleTouchEnd(event);
+
+        this.container.on('touchstart', touchStartHandler);
+        this.container.on('touchend', touchEndHandler);
+
+        this.clickZone.on('touchstart', touchStartHandler);
+        this.clickZone.on('touchend', touchEndHandler);
+    }
+
+    handlePointerDown(event) {
+        console.log(`${this.constructor.name}: pointerdown at (${event.global.x}, ${event.global.y})`);
+        this.clickStartTime = Date.now();
+        this.clickStartX = event.global.x;
+        this.clickStartY = event.global.y;
+        this.isPotentialClick = true;
+    }
+
+    handlePointerUp(event) {
+        if (this.isPotentialClick) {
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(event.global.x - this.clickStartX, 2) +
+                Math.pow(event.global.y - this.clickStartY, 2)
+            );
+
+            console.log(`${this.constructor.name}: pointerup - duration: ${duration}ms, distance: ${distance.toFixed(1)}px`);
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                console.log(`${this.constructor.name}: VALID CLICK - processing`);
+                this.handleClick(event);
+            } else {
+                console.log(`${this.constructor.name}: INVALID CLICK - ${duration >= 500 ? 'too slow' : 'moved too much'}`);
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    cancelClick() {
+        this.isPotentialClick = false;
     }
 
     handleClick(event) {
@@ -566,11 +829,79 @@ class UsernameTarget extends Target {
     }
 
     setupInteraction() {
+        console.log(`${this.constructor.name}: Setting up interaction at (${this.container.x}, ${this.container.y})`);
         this.container.interactive = true;
         this.container.buttonMode = true;
-        this.container.hitArea = new PIXI.Circle(this.container.width / 2, this.container.height / 2, Math.max(this.container.width, this.container.height) / 2 + 10); // Larger hit area
-        this.container.on('pointertap', (event) => this.handleClick(event));
-        this.container.on('click', (event) => this.handleClick(event)); // Additional event listener
+        this.container.hitArea = new PIXI.Circle(this.container.width / 2, this.container.height / 2, Math.max(this.container.width, this.container.height) / 2 + 15); // Even larger hit area
+        console.log(`${this.constructor.name}: Hit area set to circle(${this.container.width / 2}, ${this.container.height / 2}, ${Math.max(this.container.width, this.container.height) / 2 + 15}), bounds:`, this.container.getBounds());
+
+        // Create extra click detection zone (20% larger)
+        const bounds = this.container.getBounds();
+        const extraWidth = bounds.width * 0.2;
+        const extraHeight = bounds.height * 0.2;
+
+        this.clickZone = new PIXI.Graphics();
+        this.clickZone.beginFill(0xff0000, 0.0); // Invisible red for debugging (set alpha to 0 for production)
+        this.clickZone.drawRect(-extraWidth / 2, -extraHeight / 2, bounds.width + extraWidth, bounds.height + extraHeight);
+        this.clickZone.endFill();
+        this.clickZone.interactive = true;
+        this.clickZone.buttonMode = true;
+        this.clickZone.x = bounds.width / 2;
+        this.clickZone.y = bounds.height / 2;
+
+        // Add click zone behind the visual target
+        this.container.addChildAt(this.clickZone, 0);
+
+        // Pointer events (primary) - on both visual target and click zone
+        const clickHandler = (event) => this.handleClick(event);
+        const pointerDownHandler = (event) => this.handlePointerDown(event);
+        const pointerUpHandler = (event) => this.handlePointerUp(event);
+
+        this.container.on('pointertap', clickHandler);
+        this.container.on('pointerdown', pointerDownHandler);
+        this.container.on('pointerup', pointerUpHandler);
+        this.container.on('pointerupoutside', () => this.cancelClick());
+
+        this.clickZone.on('pointertap', clickHandler);
+        this.clickZone.on('pointerdown', pointerDownHandler);
+        this.clickZone.on('pointerup', pointerUpHandler);
+        this.clickZone.on('pointerupoutside', () => this.cancelClick());
+
+        console.log(`${this.constructor.name}: Extra click zone added (${extraWidth.toFixed(1)}x${extraHeight.toFixed(1)}px larger)`);
+        console.log(`${this.constructor.name}: Interaction setup complete`);
+    }
+
+    handlePointerDown(event) {
+        console.log(`${this.constructor.name}: pointerdown at (${event.global.x}, ${event.global.y})`);
+        this.clickStartTime = Date.now();
+        this.clickStartX = event.global.x;
+        this.clickStartY = event.global.y;
+        this.isPotentialClick = true;
+    }
+
+    handlePointerUp(event) {
+        if (this.isPotentialClick) {
+            const duration = Date.now() - this.clickStartTime;
+            const distance = Math.sqrt(
+                Math.pow(event.global.x - this.clickStartX, 2) +
+                Math.pow(event.global.y - this.clickStartY, 2)
+            );
+
+            console.log(`${this.constructor.name}: pointerup - duration: ${duration}ms, distance: ${distance.toFixed(1)}px`);
+
+            // Allow up to 10px movement and 500ms duration for a valid click
+            if (duration < 500 && distance < 10) {
+                console.log(`${this.constructor.name}: VALID CLICK - processing`);
+                this.handleClick(event);
+            } else {
+                console.log(`${this.constructor.name}: INVALID CLICK - ${duration >= 500 ? 'too slow' : 'moved too much'}`);
+            }
+        }
+        this.isPotentialClick = false;
+    }
+
+    cancelClick() {
+        this.isPotentialClick = false;
     }
 
     handleClick(event) {
@@ -624,7 +955,6 @@ class UsernameTarget extends Target {
 }
 
 function initializePixiApp() {
-    console.log('Initializing PixiApp');
     pixiApp = new PIXI.Application({
         width: window.innerWidth,
         height: window.innerHeight,
@@ -635,7 +965,6 @@ function initializePixiApp() {
         autoDensity: true,
         resizeTo: window
     });
-    console.log('PixiApp created successfully');
 
     document.body.appendChild(pixiApp.view);
 
@@ -647,6 +976,52 @@ function initializePixiApp() {
 
     gameContainer = new PIXI.Container();
     pixiApp.stage.addChild(gameContainer);
+
+    // Ensure Pixi stage and container can receive pointer events
+    pixiApp.stage.interactive = true;
+    pixiApp.stage.hitArea = pixiApp.screen;
+    pixiApp.stage.sortableChildren = true;
+
+    gameContainer.interactive = false; // Don't let container consume events
+    gameContainer.interactiveChildren = true; // Allow children to receive events
+
+    // Manual click detection system
+    pixiApp.view.addEventListener('click', (event) => {
+        const rect = pixiApp.view.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        // Find the target that contains this click
+        let targetFound = null;
+        let minDistance = Infinity;
+
+        activeTargets.forEach((target) => {
+            const bounds = target.container.getBounds();
+            const centerX = bounds.x + bounds.width / 2;
+            const centerY = bounds.y + bounds.height / 2;
+            const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+
+            // Check if click is within bounds with some tolerance
+            const tolerance = 20;
+            const withinBounds = x >= bounds.x - tolerance &&
+                x <= bounds.x + bounds.width + tolerance &&
+                y >= bounds.y - tolerance &&
+                y <= bounds.y + bounds.height + tolerance;
+
+            if (withinBounds && distance < minDistance) {
+                minDistance = distance;
+                targetFound = target;
+            }
+        });
+
+        if (targetFound) {
+            // Simulate the click on the target
+            const clickEvent = {
+                global: { x, y }
+            };
+            targetFound.handleClick(clickEvent);
+        }
+    });
 
     // Handle resize
     window.addEventListener('resize', () => {
