@@ -1,6 +1,6 @@
 // Debug rendering system for visualizing hitboxes and collision boundaries
 import { gameConfig } from './game-config.js';
-import { activeTargets, gameContainer, getCollisionRect, pixiApp } from './target-base.js';
+import { activeTargets, gameContainer, pixiApp } from './target-base.js';
 
 // Debug graphics container
 let debugGraphics = null;
@@ -19,7 +19,14 @@ export function renderDebugInfo() {
     // Clear previous debug graphics
     debugGraphics.clear();
 
-    // Draw target hitboxes in green and their collision boundaries in red
+    // Draw webpage visible area boundaries as red rectangle outline (shared for all targets)
+    // Use client dimensions to account for scrollbars
+    const clientWidth = document.documentElement.clientWidth;
+    const clientHeight = document.documentElement.clientHeight;
+    debugGraphics.lineStyle(3, 0xff0000, 1); // Red 3px line for visibility
+    debugGraphics.drawRect(1, 1, clientWidth - 2, clientHeight - 2);
+
+    // Draw target hitboxes in green
     activeTargets.forEach(target => {
         if (target.container && !target.destroyed) {
             // Get the same position and size values used in collision detection
@@ -29,14 +36,9 @@ export function renderDebugInfo() {
             const width = bounds.width;
             const height = bounds.height;
 
-            // Draw target hitbox in green (1px lines) - same rectangle used for collision
+            // Draw target hitbox in green (1px lines) - represents the actual hitbox used in collision (centered on target)
             debugGraphics.lineStyle(1, 0x00ff00, 1); // Green 1px line
-            debugGraphics.drawRect(x - width, y - height, width, height);
-
-            // Draw collision rectangle for this target in red (1px lines) using shared function
-            const collisionRect = getCollisionRect(width, height);
-            debugGraphics.lineStyle(1, 0xff0000, 1); // Red 1px line
-            debugGraphics.drawRect(collisionRect.x, collisionRect.y, collisionRect.width, collisionRect.height);
+            debugGraphics.drawRect(x - width / 2, y - height / 2, width, height);
         }
     });
 }

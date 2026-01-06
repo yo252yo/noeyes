@@ -38,18 +38,19 @@ export class AvatarTarget extends Target {
         const randomColor = borderColors[Math.floor(Math.random() * borderColors.length)];
 
         this.container = new window.PIXI.Container();
+        this.container.pivot.set(0, 0); // Center the container on the visual center (circle at 0,0)
 
         // Create circular border
         const borderGraphics = new window.PIXI.Graphics();
         borderGraphics.beginFill(window.PIXI.utils.string2hex(randomColor));
-        borderGraphics.drawCircle(20, 20, 20);
+        borderGraphics.drawCircle(0, 0, 20); // Center at container origin
         borderGraphics.endFill();
         this.container.addChild(borderGraphics);
 
         // Create mask
         const mask = new window.PIXI.Graphics();
         mask.beginFill(0xffffff);
-        mask.drawCircle(20, 20, 18);
+        mask.drawCircle(0, 0, 18); // Center at container origin
         mask.endFill();
 
         // Load avatar
@@ -63,8 +64,8 @@ export class AvatarTarget extends Target {
         const avatarSprite = new window.PIXI.Sprite(texture);
         avatarSprite.width = 36;
         avatarSprite.height = 36;
-        avatarSprite.x = 2;
-        avatarSprite.y = 2;
+        avatarSprite.x = -18; // Center the 36x36 sprite on origin
+        avatarSprite.y = -18;
         avatarSprite.mask = mask;
         this.container.addChild(avatarSprite);
         this.container.addChild(mask);
@@ -83,7 +84,7 @@ export class AvatarTarget extends Target {
     setupInteraction() {
         this.container.interactive = true;
         this.container.buttonMode = true;
-        this.container.hitArea = new window.PIXI.Circle(20, 20, 30); // Even larger hit area
+        this.container.hitArea = new window.PIXI.Circle(0, 0, 30); // Even larger hit area, centered
 
         // Create extra click detection zone (20% larger)
         const bounds = this.container.getBounds();

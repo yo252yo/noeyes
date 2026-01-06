@@ -68,24 +68,24 @@ export function getCollisionLeftBoundary() {
     return 0;
 }
 
-export function getCollisionRightBoundary(width) {
-    return window.innerWidth - width;
+export function getCollisionRightBoundary() {
+    return document.documentElement.clientWidth;
 }
 
 export function getCollisionTopBoundary() {
     return 0;
 }
 
-export function getCollisionBottomBoundary(height) {
-    return window.innerHeight - height;
+export function getCollisionBottomBoundary() {
+    return document.documentElement.clientHeight;
 }
 
-export function getCollisionRect(width, height) {
+export function getCollisionRect() {
     return {
         x: getCollisionLeftBoundary(),
         y: getCollisionTopBoundary(),
-        width: getCollisionRightBoundary(width) - getCollisionLeftBoundary(),
-        height: getCollisionBottomBoundary(height) - getCollisionTopBoundary()
+        width: getCollisionRightBoundary() - getCollisionLeftBoundary(),
+        height: getCollisionBottomBoundary() - getCollisionTopBoundary()
     };
 }
 
@@ -131,19 +131,33 @@ export class Target {
         let newDx = this.dx;
         let newDy = this.dy;
 
-        // Check collisions with viewport edges using shared boundary functions
+        // Check collisions with viewport edges using hitbox boundaries (centered on target)
         const leftBoundary = getCollisionLeftBoundary();
-        const rightBoundary = getCollisionRightBoundary(width);
+        const rightBoundary = getCollisionRightBoundary();
         const topBoundary = getCollisionTopBoundary();
-        const bottomBoundary = getCollisionBottomBoundary(height);
+        const bottomBoundary = getCollisionBottomBoundary();
 
-        if (x <= leftBoundary || x >= rightBoundary) {
+        // Hitbox edges
+        const hitboxLeft = x - width / 2;
+        const hitboxRight = x + width / 2;
+        const hitboxTop = y - height / 2;
+        const hitboxBottom = y + height / 2;
+
+        if (hitboxLeft <= leftBoundary || hitboxRight >= rightBoundary) {
             newDx = -newDx;
-            newX = Math.max(leftBoundary, Math.min(rightBoundary, newX));
+            if (hitboxLeft <= leftBoundary) {
+                newX = leftBoundary + width / 2;
+            } else if (hitboxRight >= rightBoundary) {
+                newX = rightBoundary - width / 2;
+            }
         }
-        if (y <= topBoundary || y >= bottomBoundary) {
+        if (hitboxTop <= topBoundary || hitboxBottom >= bottomBoundary) {
             newDy = -newDy;
-            newY = Math.max(topBoundary, Math.min(bottomBoundary, newY));
+            if (hitboxTop <= topBoundary) {
+                newY = topBoundary + height / 2;
+            } else if (hitboxBottom >= bottomBoundary) {
+                newY = bottomBoundary - height / 2;
+            }
         }
 
         return { x: newX, y: newY, dx: newDx, dy: newDy };
