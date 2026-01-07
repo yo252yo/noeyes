@@ -104,57 +104,11 @@ export class UsernameTarget extends Target {
         this.container.buttonMode = true;
         this.container.hitArea = new window.PIXI.Circle(this.container.width / 2, this.container.height / 2, Math.max(this.container.width, this.container.height) / 2 + 15); // Even larger hit area
 
-        // Create extra click detection zone (50% larger than hit area for maximum leniency)
-        const hitRadius = Math.max(this.container.width, this.container.height) + 20; // Same as hit area
-        const clickZoneSize = hitRadius * 1.5;
-
-        this.clickZone = new window.PIXI.Graphics();
-        this.clickZone.beginFill(0xff0000, 0.0); // Invisible
-        this.clickZone.drawRect(-clickZoneSize, -clickZoneSize, clickZoneSize * 2, clickZoneSize * 2);
-        this.clickZone.endFill();
-        this.clickZone.interactive = true;
-        this.clickZone.buttonMode = true;
-        // No positioning offset needed since it's centered at (0,0)
-
-        // Add click zone behind the visual target
-        this.container.addChildAt(this.clickZone, 0);
-
-        // Pointer events (primary) - on both visual target and click zone
-        const clickHandler = (event) => this.handleClick(event);
-        const pointerDownHandler = (event) => this.handlePointerDown(event);
-        const pointerUpHandler = (event) => this.handlePointerUp(event);
-
-        this.container.on('pointertap', clickHandler);
-        this.container.on('pointerdown', pointerDownHandler);
-        this.container.on('pointerup', pointerUpHandler);
+        // Pointer events for clicking the target
+        this.container.on('pointertap', (event) => this.handleClick(event));
+        this.container.on('pointerdown', (event) => this.handlePointerDown(event));
+        this.container.on('pointerup', (event) => this.handlePointerUp(event));
         this.container.on('pointerupoutside', () => this.cancelClick());
-
-        this.clickZone.on('pointertap', clickHandler);
-        this.clickZone.on('pointerdown', pointerDownHandler);
-        this.clickZone.on('pointerup', pointerUpHandler);
-        this.clickZone.on('pointerupoutside', () => this.cancelClick());
-
-        // Mouse events (fallback)
-        const mouseDownHandler = (event) => this.handleMouseDown(event);
-        const mouseUpHandler = (event) => this.handleMouseUp(event);
-
-        this.container.on('mousedown', mouseDownHandler);
-        this.container.on('mouseup', mouseUpHandler);
-        this.container.on('mouseout', () => this.cancelClick());
-
-        this.clickZone.on('mousedown', mouseDownHandler);
-        this.clickZone.on('mouseup', mouseUpHandler);
-        this.clickZone.on('mouseout', () => this.cancelClick());
-
-        // Touch events (fallback)
-        const touchStartHandler = (event) => this.handleTouchStart(event);
-        const touchEndHandler = (event) => this.handleTouchEnd(event);
-
-        this.container.on('touchstart', touchStartHandler);
-        this.container.on('touchend', touchEndHandler);
-
-        this.clickZone.on('touchstart', touchStartHandler);
-        this.clickZone.on('touchend', touchEndHandler);
     }
 
     handlePointerDown(event) {
