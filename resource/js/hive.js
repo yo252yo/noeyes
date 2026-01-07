@@ -1,12 +1,7 @@
+import { TARGET_TYPES } from '../engine/config.js';
+import { requestNewTarget, start } from '../engine/engine.js';
 import { getAtt, getNbChatters, incrementAtt, incrementNbChatters, play_chime_sfx } from './common.js';
-import { spawnTarget } from './game.js';
 
-// Make functions available globally
-window.getAtt = getAtt;
-window.getNbChatters = getNbChatters;
-window.incrementNbChatters = incrementNbChatters;
-window.incrementAtt = incrementAtt;
-window.spawnTarget = spawnTarget;
 
 window.gameConfig = {
     targets: 'username',
@@ -69,7 +64,7 @@ window.buyChat = function () {
         incrementNbChatters(1);
         incrementAtt(-price);
         play_chime_sfx();
-        spawnTarget(); // Spawn the new chatter
+        requestNewTarget(); // Request the engine to spawn a new target
         updateHiveStats();
     }
 };
@@ -96,7 +91,10 @@ window.changeBackgroundColor = function (color) {
 };
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
+    // Initialize the engine
+    start(TARGET_TYPES.USERNAME, 0); // Start with username targets, 0 auto-spawn
+
     // Load saved background color on page load
     const savedColor = localStorage.getItem('hiveBackgroundColor');
     if (savedColor) {

@@ -433,7 +433,7 @@ export function setNbChatters(nb) {
 
 export function incrementNbChatters(amount = 1) {
     const current = getNbChatters();
-    setNbChatters(current + amount);
+    setNbChatters(Math.max(1, current + amount));
 }
 
 export function getFarmOpen() {

@@ -4,6 +4,8 @@ import { decreaseNumTargets } from './config.js';
 import { TARGETS_LIST } from './target.js';
 import { createAttFeedback, createCollabPopup, createInteractionFeedback, createValueFeedback, drawCollaborationLine } from './ui.js';
 
+import { incrementNbChatters } from '../js/common.js';
+
 // Handle value increment and feedback
 export function value(amount = 1, x, y) {
     // Increment value from common.js
@@ -82,4 +84,5 @@ export function interaction(targetA, targetB) {
 
     // Decrease target count
     decreaseNumTargets(1);
+    incrementNbChatters(-1);
 }

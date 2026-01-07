@@ -1,4 +1,5 @@
 // Engine module that imports and initializes the window
+import { getNbChatters } from '../js/common.js';
 import { NUM_TARGETS, setNumTargets, TARGET_TYPES } from './config.js';
 import { interaction } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
@@ -21,7 +22,7 @@ export function getPixiApp() {
 }
 
 // Function to spawn a single target
-function spawnTarget() {
+export function spawnTarget() {
     if (!globalApp) return;
 
     let target;
@@ -36,6 +37,11 @@ function spawnTarget() {
     }
 
     globalApp.stage.addChild(target.graphics);
+}
+
+// Request a new target by incrementing the target count
+export function requestNewTarget() {
+    setNumTargets(NUM_TARGETS + 1);
 }
 
 // Check for overlapping username targets and trigger interactions
@@ -97,7 +103,13 @@ export function start(targetType = TARGET_TYPES.EMPTY, tutorial_targets = 0) {
     globalApp = initializeEngine();
 
     CURRENT_TARGET_TYPE = targetType;
-    setNumTargets(tutorial_targets);
+
+    // If target type is username and tutorial_targets is 0, set to number of chatters
+    if (targetType === TARGET_TYPES.USERNAME && tutorial_targets === 0) {
+        setNumTargets(getNbChatters());
+    } else {
+        setNumTargets(tutorial_targets);
+    }
 
     // Main game loop using PIXI's ticker (better than setInterval)
     globalApp.ticker.add(app_ticker);
