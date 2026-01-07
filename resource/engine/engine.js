@@ -14,6 +14,11 @@ let CURRENT_TARGET_TYPE = TARGET_TYPES.EMPTY;
 // Global app reference for spawning
 let globalApp = null;
 
+// Export the PIXI app for use by UI functions
+export function getPixiApp() {
+    return globalApp;
+}
+
 // Function to spawn a single target
 function spawnTarget() {
     if (!globalApp) return;

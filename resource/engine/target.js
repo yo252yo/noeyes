@@ -149,11 +149,51 @@ export class Target {
 
     // Called when target is clicked/touched
     click() {
+        // Prevent double-clicking - subclasses can override if needed
+        if (!this.preventDoubleClick()) {
+            return;
+        }
+
         console.log('click recorded');
+    }
+
+    // Common click debouncing method (500ms threshold)
+    preventDoubleClick() {
+        const now = Date.now();
+        if (this.lastClickTime && now - this.lastClickTime < 500) {
+            return false;
+        }
+        this.lastClickTime = now;
+        return true;
     }
 
     // Get speed modifier based on game state (can be overridden by subclasses)
     getSpeedModifier() {
         return 1; // Default: normal speed
+    }
+
+    // Find the closest avatar target (used by Avatar class)
+    findClosestAvatar() {
+        let closestAvatar = null;
+        let minDistance = Infinity;
+
+        for (const target of TARGETS_LIST) {
+            // Import Avatar class dynamically to avoid circular dependency
+            if (target === this) continue;
+
+            // Check if target is an Avatar instance by checking for streamer property
+            if (!target.streamer) continue;
+
+            const dx = this.x - target.x;
+            const dy = this.y - target.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestAvatar = target;
+            }
+        }
+
+        return closestAvatar;
     }
 }

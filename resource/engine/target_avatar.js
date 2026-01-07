@@ -1,7 +1,7 @@
 import { getAtt, getStreamers } from '../js/common.js';
 import { borderColors } from '../js/game/game-config.js';
 import { getAvatarUrl } from '../js/twitch.js';
-import { attention } from './logic.js';
+import { attention, collab } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
 
 export class Avatar extends Target {
@@ -99,9 +99,17 @@ export class Avatar extends Target {
         attention(-1, this.x, this.y);
     }
 
-    // Empty click behavior - do nothing for now
+    // Click behavior - find closest avatar and collaborate
     click() {
-        // Do nothing
+        // Prevent double-clicking
+        if (!this.preventDoubleClick()) {
+            return;
+        }
+
+        collab(this, this.findClosestAvatar());
+
+        // Remove this avatar
+        this.remove();
     }
 
     // Get speed modifier based on attention level

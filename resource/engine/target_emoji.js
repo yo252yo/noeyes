@@ -51,6 +51,10 @@ export class Emoji extends Target {
 
     // Click behavior - award value and remove target
     click() {
+        if (!this.preventDoubleClick()) {
+            return;
+        }
+
         // Call value function to increment value and show feedback
         value(1, this.x, this.y);
 
