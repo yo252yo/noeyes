@@ -4,6 +4,9 @@ should diary be paginated or big flow? should it appear character by character?
 corporate sponsor modifiers ???
 another lesson about before the fall explaining that they had class division based on money etc...
 file:// protocol isnt supported =x
+
+
+
 ================== GAME ENGINE
 
 * purple coloring of visited links might not be up to date
