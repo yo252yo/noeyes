@@ -54,6 +54,8 @@ export function collab(clickedAvatar, closestAvatar) {
             TARGETS_LIST.splice(closestIndex, 1);
         }
         closestAvatar.remove();
+    } else {
+        play_error_sfx();
     }
 
     // Always gain value (0 if no collaboration)
