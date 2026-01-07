@@ -1,6 +1,7 @@
 import { getStreamers } from '../js/common.js';
 import { borderColors } from '../js/game/game-config.js';
 import { getAvatarUrl } from '../js/twitch.js';
+import { attention } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
 
 export class Avatar extends Target {
@@ -92,9 +93,10 @@ export class Avatar extends Target {
         // TODO: Add avatar-specific animations later
     }
 
-    // Empty tick behavior - do nothing for now
+    // Tick behavior - consume attention
     tick() {
-        // Do nothing
+        // Call attention function with -1 to consume attention
+        attention(-1, this.x, this.y);
     }
 
     // Empty click behavior - do nothing for now

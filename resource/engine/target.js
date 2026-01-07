@@ -142,8 +142,6 @@ export class Target {
     // Called every second by the engine
     tick() {
         console.log('tick recorded');
-        // Create "Att" feedback bubble at target position
-        // createAttFeedback('Att', this.x, this.y);
     }
 
     // Called when target is clicked/touched
