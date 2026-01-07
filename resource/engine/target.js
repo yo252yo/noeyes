@@ -2,12 +2,20 @@
 import { DEBUG } from './config.js';
 
 export class Target {
-    constructor(x, y, dx, dy, size = 50) {
+    // Speed bounds - can be overridden by subclasses
+    static MIN_SPEED = 1;
+    static MAX_SPEED = 3;
+
+    constructor(x, y, size = 50) {
         this.x = x;
         this.y = y;
-        this.dx = dx;
-        this.dy = dy;
         this.size = size;
+
+        // Generate random velocity within speed bounds
+        const speed = this.constructor.MIN_SPEED + Math.random() * (this.constructor.MAX_SPEED - this.constructor.MIN_SPEED);
+        const angle = Math.random() * Math.PI * 2; // Random direction
+        this.dx = Math.cos(angle) * speed;
+        this.dy = Math.sin(angle) * speed;
 
         // Create PIXI graphics
         this.graphics = new window.PIXI.Graphics();

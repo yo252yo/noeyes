@@ -1,6 +1,5 @@
 // Simple PIXI engine that draws screen border
-import { DEBUG, NUM_TARGETS } from './config.js';
-import { Target } from './target.js';
+import { DEBUG } from './config.js';
 
 export function initializeEngine() {
     // Create PIXI application
@@ -27,9 +26,6 @@ export function initializeEngine() {
     const graphics = new window.PIXI.Graphics();
     app.stage.addChild(graphics);
 
-    // Array to hold targets
-    const targets = [];
-
     // Function to draw border
     function drawBorder() {
         graphics.clear();
@@ -41,38 +37,8 @@ export function initializeEngine() {
         }
     }
 
-    // Function to spawn targets
-    function spawnTargets() {
-        const clientWidth = document.documentElement.clientWidth;
-        const clientHeight = document.documentElement.clientHeight;
-
-        for (let i = 0; i < NUM_TARGETS; i++) {
-            // Random position within bounds
-            const x = Math.random() * (clientWidth - 100) + 50;
-            const y = Math.random() * (clientHeight - 100) + 50;
-
-            // Random velocity
-            const dx = (Math.random() - 0.5) * 4; // -2 to 2
-            const dy = (Math.random() - 0.5) * 4; // -2 to 2
-
-            const target = new Target(x, y, dx, dy);
-            targets.push(target);
-            app.stage.addChild(target.graphics);
-        }
-    }
-
-    // Update loop
-    function update() {
-        targets.forEach(target => {
-            target.update();
-        });
-        requestAnimationFrame(update);
-    }
-
     // Initial setup
     drawBorder();
-    spawnTargets();
-    update();
 
     // Handle resize
     window.addEventListener('resize', () => {
