@@ -148,6 +148,11 @@ export class AvatarTarget extends Target {
             return;
         }
 
+        // Prevent double-clicking
+        if (!this.shouldAllowClick()) {
+            return;
+        }
+
         // Remove clicked avatar
         const clickedIndex = activeTargets.indexOf(this);
         if (clickedIndex > -1) {

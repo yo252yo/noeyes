@@ -95,6 +95,17 @@ export class Target {
         this.dx = 0;
         this.dy = 0;
         this.destroyed = false;
+        this.lastClickTime = 0;
+    }
+
+    // Common click debouncing method (500ms threshold)
+    shouldAllowClick() {
+        const now = Date.now();
+        if (this.lastClickTime && now - this.lastClickTime < 500) {
+            return false;
+        }
+        this.lastClickTime = now;
+        return true;
     }
 
     update() {

@@ -92,6 +92,11 @@ export class EmojiTarget extends Target {
     }
 
     handleClick(event) {
+        // Prevent double-clicking
+        if (!this.shouldAllowClick()) {
+            return;
+        }
+
         // Play value sound
         play_value_sfx();
 

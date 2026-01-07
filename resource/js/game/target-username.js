@@ -164,12 +164,10 @@ export class UsernameTarget extends Target {
             return;
         }
 
-        // Prevent double-clicking from both container and clickZone
-        const now = Date.now();
-        if (this.lastClickTime && now - this.lastClickTime < 100) {
+        // Prevent double-clicking
+        if (!this.shouldAllowClick()) {
             return;
         }
-        this.lastClickTime = now;
 
         // Play ding sound
         play_click_sfx();
