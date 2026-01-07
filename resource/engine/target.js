@@ -1,14 +1,64 @@
 // Simple bouncing square target
 import { DEBUG } from './config.js';
 
+// Global list of all targets
+export const TARGETS_LIST = [];
+
 export class Target {
     // Speed bounds - can be overridden by subclasses
     static MIN_SPEED = 1;
     static MAX_SPEED = 3;
 
-    constructor(x, y, size = 50) {
-        this.x = x;
-        this.y = y;
+    // Find the best spawn position that maximizes distance from other targets
+    static find_free_spawn() {
+        const clientWidth = document.documentElement.clientWidth;
+        const clientHeight = document.documentElement.clientHeight;
+        const margin = 50; // Keep away from edges
+
+        // Generate 4 candidate positions
+        const candidates = [];
+        for (let i = 0; i < 4; i++) {
+            candidates.push({
+                x: Math.random() * (clientWidth - margin * 2) + margin,
+                y: Math.random() * (clientHeight - margin * 2) + margin
+            });
+        }
+
+        // If no targets exist yet, return first candidate
+        if (TARGETS_LIST.length === 0) {
+            return candidates[0];
+        }
+
+        // Evaluate each candidate by finding minimum distance to existing targets
+        let bestCandidate = candidates[0];
+        let bestDistance = 0;
+
+        for (const candidate of candidates) {
+            let minDistance = Infinity;
+
+            // Find minimum distance to any existing target
+            for (const target of TARGETS_LIST) {
+                const dx = candidate.x - target.x;
+                const dy = candidate.y - target.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                minDistance = Math.min(minDistance, distance);
+            }
+
+            // Keep track of the candidate with highest minimum distance
+            if (minDistance > bestDistance) {
+                bestDistance = minDistance;
+                bestCandidate = candidate;
+            }
+        }
+
+        return bestCandidate;
+    }
+
+    constructor(size = 50) {
+        // Find the best spawn position
+        const spawnPos = this.constructor.find_free_spawn();
+        this.x = spawnPos.x;
+        this.y = spawnPos.y;
         this.size = size;
 
         // Generate random velocity within speed bounds
@@ -16,6 +66,9 @@ export class Target {
         const angle = Math.random() * Math.PI * 2; // Random direction
         this.dx = Math.cos(angle) * speed;
         this.dy = Math.sin(angle) * speed;
+
+        // Add to global targets list
+        TARGETS_LIST.push(this);
 
         // Create PIXI graphics
         this.graphics = new window.PIXI.Graphics();
