@@ -3,7 +3,7 @@ import { getAvatarUrl } from '../twitch.js';
 import { borderColors, max_speed_avatar, min_speed_avatar } from './game-config.js';
 import { updateScoreAfterClick } from './game-logic.js';
 import { createValueFeedback } from './game-ui.js';
-import { Target, activeTargets, calculateDistance, isTutorial } from './target-base.js';
+import { Target, activeTargets, calculateDistance, isTutorial, pixiApp } from './target-base.js';
 
 // Avatar Target class
 export class AvatarTarget extends Target {
@@ -184,6 +184,11 @@ export class AvatarTarget extends Target {
 
         // Remove closest avatar if found
         if (closestAvatar) {
+            // Get bounds before destroying
+            const avatarBounds = closestAvatar.container.getBounds();
+            const avatarCenterX = avatarBounds.x + avatarBounds.width / 2;
+            const avatarCenterY = avatarBounds.y + avatarBounds.height / 2;
+
             const closestIndex = activeTargets.indexOf(closestAvatar);
             if (closestIndex > -1) {
                 activeTargets.splice(closestIndex, 1);
@@ -193,6 +198,19 @@ export class AvatarTarget extends Target {
             // Calculate score
             const valueGained = Math.min(100, Math.pow(Math.floor(200 / minDistance), 2));
             incrementValue(valueGained);
+
+            // Draw line connecting centers - fuchsia if high score, green if low
+            const lineColor = valueGained > 5 ? 0xff00ff : 0x4CAF50;
+            const lineGraphics = new window.PIXI.Graphics();
+            lineGraphics.lineStyle(4, lineColor);
+            lineGraphics.moveTo(clickedCenterX, clickedCenterY);
+            lineGraphics.lineTo(avatarCenterX, avatarCenterY);
+            pixiApp.stage.addChild(lineGraphics);
+
+            // Delete the line after 1s
+            setTimeout(() => {
+                pixiApp.stage.removeChild(lineGraphics);
+            }, 300);
 
             createValueFeedback(`+${valueGained} Value`, event.global.x, event.global.y, 2000);
 
