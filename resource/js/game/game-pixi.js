@@ -20,7 +20,7 @@ export function initializePixiApp() {
     app.view.style.position = 'fixed';
     app.view.style.top = '0';
     app.view.style.left = '0';
-    app.view.style.pointerEvents = 'auto';
+    app.view.style.pointerEvents = 'none'; // Start with none to allow buttons to work
     app.view.style.zIndex = '50';
 
     const container = new window.PIXI.Container();
@@ -78,6 +78,29 @@ export function initializePixiApp() {
     // Handle resize
     window.addEventListener('resize', () => {
         app.renderer.resize(window.innerWidth, window.innerHeight);
+    });
+
+    // Dynamically set pointer-events based on mouse position relative to targets
+    window.addEventListener('mousemove', (event) => {
+        const rect = app.view.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        // Check if mouse is over any active target
+        let overTarget = false;
+        for (const target of activeTargets) {
+            if (!target.container || target.destroyed) continue;
+
+            const bounds = target.container.getBounds();
+            if (x >= bounds.x && x <= bounds.x + bounds.width &&
+                y >= bounds.y && y <= bounds.y + bounds.height) {
+                overTarget = true;
+                break;
+            }
+        }
+
+        // Set pointer-events based on whether mouse is over a target
+        app.view.style.pointerEvents = overTarget ? 'auto' : 'none';
     });
 
     // Handle stage clicks - forward to HTML if no target found
