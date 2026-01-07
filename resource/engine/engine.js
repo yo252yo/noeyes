@@ -108,7 +108,6 @@ export function start(targetType = TARGET_TYPES.EMPTY, tutorial_targets = 0) {
     if (targetType === TARGET_TYPES.USERNAME && tutorial_targets === 0) {
         setNumTargets(getNbChatters());
     } else if (targetType === TARGET_TYPES.AVATAR && tutorial_targets === 0) {
-        console.log(getStreamers().length);
         setNumTargets(getStreamers().length);
     } else {
         setNumTargets(tutorial_targets);

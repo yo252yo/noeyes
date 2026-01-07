@@ -1,7 +1,8 @@
 import { play_click_sfx } from '../js/common.js';
-import { emoji } from '../js/game/game-config.js';
 import { value } from './logic.js';
 import { Target } from './target.js';
+
+export const emoji = ['👶', '👦', '👧', '👨', '👩', '🧑', '👴', '👵'];
 
 export class Emoji extends Target {
     static MIN_SPEED = .5;

@@ -6,6 +6,8 @@ another lesson about before the fall explaining that they had class division bas
 file:// protocol isnt supported =x
 ================== GAME ENGINE
 
+
+
 * the default avatar resource is failing
 
 * accentuate chat/streamer ratio, in particular make influencers consume more att and make chat smaller and cheaper
@@ -21,8 +23,6 @@ file:// protocol isnt supported =x
 * achivevements for certification every day
 
 
-
-================== LONG TERM
 * proofread/edit text with grok or chatgpt
 * mb adjust speed for phone screens
 * add OS start
@@ -30,4 +30,3 @@ file:// protocol isnt supported =x
 * neurosama narration
 * iterate on title screen
 * rewrite ending.html blurb
-* better BGM ???

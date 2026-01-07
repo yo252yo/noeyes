@@ -1,8 +1,9 @@
 import { getAtt, getDay, getStreamers } from '../js/common.js';
-import { borderColors } from '../js/game/game-config.js';
 import { getAvatarUrl } from '../js/twitch.js';
 import { attention, collab } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
+
+export const borderColors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'magenta', 'lime', 'maroon', 'navy', 'olive', 'teal', 'aqua', 'fuchsia'];
 
 export class Avatar extends Target {
     constructor(width = 50, height = 50) {
