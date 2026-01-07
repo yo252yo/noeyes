@@ -17,29 +17,35 @@ Don't forget to include the pixi library where you use it :)
 dont come back to me until it's in working condition, observe your own web browser on :8000 with yout mcp for testing i want something that runs and spawns targets on 1_5.html, farm.html and hive.html
     
 
+* make sure that the +/-Att popups and the COLAB/INTERACTION notifications are all well handled in the same place, and most importantly make sure that they do not extend the canvas or webpage i dont want them to cause scrolling i want them to be hidden silently when they go over the boundaries
 
-* I think chat usernames can accidentally collide with the divs of the +1Att notifications, can you double check for sure, i saw some chat usernames just disappear
-* vertical scroll messes with bounce. in general the boundaries are pretyt shit
-* sometimes clicks dont register i think mb because they conflict with drag? (lets pray for pixi solution)
+* sometimes new elements of the game make it so that the boundaries of the page are extended and i can scroll right for instance. i dont want that make sure that all overflow from the pixi canvas is hidden. reminder that the game affects 1_A 2_A 3_A farm and hive, and that i absolutely need the scrollbars on all the time
+
+* sometimes i see the actual avatar portrait disconnect from its hitbox it remains static and the hitbox keeps moving please fix this
+
+* sometimes clicking counts as double click, mostly on username, can you make it so that clicks are only counted once? if needed you can add for each target a timestamp of when they last received a click and only accept a click if its further than 500ms for instance
+
+* Sometimes targets, mostly usernames, seem to change direction arbitrarily i think mb they collide with notification divs or something can you make sure 
+
+
 * the default avatar resource is failing
 
-==================
 
-
-
-
-git checkout main
-git merge new_engine
-
-================== v1
 * accentuate chat/streamer ratio, in particular make influencers consume more att and make chat smaller and cheaper
-* new game engine
+
+
 * add farmbot feature (class and feature day 6), Ending I shows you your stats if they're machine enough, ending c could show you the list of chats who died 
+
 * add login page (streamer choice) to initialize streamer list, right now its hardcoded
+
 * i got the same color for hive and farm by default
+
 * add disclaimer/explanation about cognitive science
+
 * achivevements for certification every day
+
 * farm should display the current number of influencers
+
 * Make sure that names of dead schater can appear twice 
 
 
