@@ -5,12 +5,16 @@ import { initializeEngine } from './window.js';
 // Global time accumulator for second-based events
 let secondAccumulator = 0;
 
-// Function to spawn targets
-function spawnTargets(app, numTargets) {
-    for (let i = 0; i < numTargets; i++) {
-        const target = new Target();
-        app.stage.addChild(target.graphics);
-    }
+let NUM_TARGETS = 0;
+
+// Global app reference for spawning
+let globalApp = null;
+
+// Function to spawn a single target
+function spawnTarget() {
+    if (!globalApp) return;
+    const target = new Target();
+    globalApp.stage.addChild(target.graphics);
 }
 
 // Dedicated ticker function for the main game loop
@@ -25,6 +29,11 @@ function app_ticker(deltaTime) {
 
     // When 1 second has passed, call tick on all targets
     if (secondAccumulator >= 1.0) {
+        // Check if we need to spawn more targets
+        if (TARGETS_LIST.length < NUM_TARGETS) {
+            spawnTarget();
+        }
+
         TARGETS_LIST.forEach(target => {
             target.tick();
         });
@@ -34,9 +43,10 @@ function app_ticker(deltaTime) {
 
 // Start the game with specified number of tutorial targets
 export function start(tutorial_targets = 0) {
-    const app = initializeEngine();
-    spawnTargets(app, tutorial_targets);
+    globalApp = initializeEngine();
+
+    NUM_TARGETS = tutorial_targets;
 
     // Main game loop using PIXI's ticker (better than setInterval)
-    app.ticker.add(app_ticker);
+    globalApp.ticker.add(app_ticker);
 }
