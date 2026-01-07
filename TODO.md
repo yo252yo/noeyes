@@ -21,7 +21,7 @@ dont come back to me until it's in working condition, observe your own web brows
 * I think chat usernames can accidentally collide with the divs of the +1Att notifications, can you double check for sure, i saw some chat usernames just disappear
 * vertical scroll messes with bounce. in general the boundaries are pretyt shit
 * sometimes clicks dont register i think mb because they conflict with drag? (lets pray for pixi solution)
-
+* the default avatar resource is failing
 
 ==================
 
