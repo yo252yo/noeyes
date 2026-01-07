@@ -245,7 +245,7 @@ export class AvatarTarget extends Target {
         y += this.dy * speedScale;
 
         // Use fixed hitbox size (diameter of hit area circle = 60)
-        const collisionResult = this.handleWallCollision(x, y, 60, 60);
+        const collisionResult = this.handleWallCollision(x, y, 45, 45);
         x = collisionResult.x;
         y = collisionResult.y;
         this.dx = collisionResult.dx;

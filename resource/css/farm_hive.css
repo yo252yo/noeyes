@@ -483,8 +483,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 20px 0;
+    margin: 20px auto;
     gap: 20px;
+    max-width: 400px;
 }
 
 .farm-stats-container {
@@ -492,10 +493,16 @@ body {
     justify-content: center;
     align-items: center;
     margin: 10px 0;
+    width: 100%;
+}
+
+.farm-stats-container>.stats-table {
+    max-width: 400px;
 }
 
 .stats-table {
     width: 300px;
+    max-width: 400px;
     border: 4px outset #c0c0c0;
     font-family: "MS Sans Serif", sans-serif;
     font-size: 14px;
@@ -505,6 +512,10 @@ body {
 
 .farm-table {
     width: 100%;
+}
+
+.farm-table td {
+    width: 50%;
 }
 
 .stats-table td {

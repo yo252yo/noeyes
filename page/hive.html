@@ -11,62 +11,60 @@
     <script type="module" src="../resource/js/hive.js"></script>
 </head>
 
-<body style="overflow: scroll;">
-    <div class="fh-header">
-        <h1 class="welcome-text">Your <span class="highlight-text">Chat</span> hive</h1>
-        <button class="color-picker-btn" onclick="openColorPicker()" title="Change background color">🎨</button>
-    </div>
-
-    <div class="hive-stats-container">
-        <table class="stats-table table-bg-blue">
-            <tr>
-                <td>Chat members:</td>
-                <td><span id="chat-members"></span></td>
-            </tr>
-            <tr>
-                <td>Attention:</td>
-                <td><span id="attention"></span></td>
-            </tr>
-            <tr>
-                <td>Next Chat price:</td>
-                <td><span id="next-price"></span> Att.</td>
-            </tr>
-        </table>
-        <div class="buy-column">
-            <button id="buy-chat-btn" class="popup-btn" onclick="buyChat()">Buy 1 Chat</button>
+<body style="overflow: hidden; padding: 0; margin: 0;">
+    <div style="overflow-y: auto; height: 100vh; width: 100vw; box-sizing: border-box; padding: 20px;">
+        <div class="fh-header">
+            <h1 class="welcome-text">Your <span class="highlight-text">Chat</span> hive</h1>
+            <button class="color-picker-btn" onclick="openColorPicker()" title="Change background color">🎨</button>
         </div>
-    </div>
 
-    <div id="color-picker-popup" class="color-picker-popup">
-        <h3>Choose Background Color</h3>
-        <div class="color-options">
-            <div class="color-option" style="background-color: #FF6B6B;" onclick="changeBackgroundColor('#FF6B6B')">
-            </div>
-            <div class="color-option" style="background-color: #4ECDC4;" onclick="changeBackgroundColor('#4ECDC4')">
-            </div>
-            <div class="color-option" style="background-color: #45B7D1;" onclick="changeBackgroundColor('#45B7D1')">
-            </div>
-            <div class="color-option" style="background-color: #96CEB4;" onclick="changeBackgroundColor('#96CEB4')">
-            </div>
-            <div class="color-option" style="background-color: #FFEAA7;" onclick="changeBackgroundColor('#FFEAA7')">
-            </div>
-            <div class="color-option" style="background-color: #DDA0DD;" onclick="changeBackgroundColor('#DDA0DD')">
-            </div>
-            <div class="color-option" style="background-color: #F7DC6F;" onclick="changeBackgroundColor('#F7DC6F')">
-            </div>
-            <div class="color-option" style="background-color: #BB8FCE;" onclick="changeBackgroundColor('#BB8FCE')">
+        <div class="hive-stats-container">
+            <table class="stats-table table-bg-blue">
+                <tr>
+                    <td>Chat members:</td>
+                    <td><span id="chat-members"></span></td>
+                </tr>
+                <tr>
+                    <td>Attention:</td>
+                    <td><span id="attention"></span></td>
+                </tr>
+                <tr>
+                    <td>Next Chat price:</td>
+                    <td><span id="next-price"></span> Att.</td>
+                </tr>
+            </table>
+            <div class="buy-column">
+                <button id="buy-chat-btn" class="popup-btn" onclick="buyChat()">Buy 1 Chat</button>
             </div>
         </div>
-        <div class="popup-buttons">
-            <button class="popup-btn" onclick="closeColorPicker()">Cancel</button>
+
+        <div id="color-picker-popup" class="color-picker-popup">
+            <h3>Choose Background Color</h3>
+            <div class="color-options">
+                <div class="color-option" style="background-color: #FF6B6B;" onclick="changeBackgroundColor('#FF6B6B')">
+                </div>
+                <div class="color-option" style="background-color: #4ECDC4;" onclick="changeBackgroundColor('#4ECDC4')">
+                </div>
+                <div class="color-option" style="background-color: #45B7D1;" onclick="changeBackgroundColor('#45B7D1')">
+                </div>
+                <div class="color-option" style="background-color: #96CEB4;" onclick="changeBackgroundColor('#96CEB4')">
+                </div>
+                <div class="color-option" style="background-color: #FFEAA7;" onclick="changeBackgroundColor('#FFEAA7')">
+                </div>
+                <div class="color-option" style="background-color: #DDA0DD;" onclick="changeBackgroundColor('#DDA0DD')">
+                </div>
+                <div class="color-option" style="background-color: #F7DC6F;" onclick="changeBackgroundColor('#F7DC6F')">
+                </div>
+                <div class="color-option" style="background-color: #BB8FCE;" onclick="changeBackgroundColor('#BB8FCE')">
+                </div>
+            </div>
+            <div class="popup-buttons">
+                <button class="popup-btn" onclick="closeColorPicker()">Cancel</button>
+            </div>
         </div>
+
+        <div id="overlay" class="overlay" onclick="closeColorPicker()"></div>
     </div>
-
-    <div id="overlay" class="overlay" onclick="closeColorPicker()"></div>
-
-
-
-
 </body>
 
 </html>
