@@ -6,7 +6,7 @@ another lesson about before the fall explaining that they had class division bas
 file:// protocol isnt supported =x
 ================== GAME ENGINE
 
-
+* purple coloring of visited links might not be up to date
 
 * the default avatar resource is failing
 
