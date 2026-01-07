@@ -25,10 +25,10 @@ function secondTicker() {
     });
 }
 
-// Start the game with specified number of targets
-export function start(numTargets) {
+// Start the game with specified number of tutorial targets
+export function start(tutorial_targets = 0) {
     const app = initializeEngine();
-    spawnTargets(app, numTargets);
+    spawnTargets(app, tutorial_targets);
     update();
     setInterval(secondTicker, 1000); // Call tick every second
 }
