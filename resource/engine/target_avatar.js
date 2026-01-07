@@ -1,4 +1,4 @@
-import { getStreamers } from '../js/common.js';
+import { getAtt, getStreamers } from '../js/common.js';
 import { borderColors } from '../js/game/game-config.js';
 import { getAvatarUrl } from '../js/twitch.js';
 import { attention } from './logic.js';
@@ -102,5 +102,12 @@ export class Avatar extends Target {
     // Empty click behavior - do nothing for now
     click() {
         // Do nothing
+    }
+
+    // Get speed modifier based on attention level
+    getSpeedModifier() {
+        const currentAtt = getAtt();
+        // Speed scales with attention: 0.3 at 0 Att, 1.0 at 100+ Att, linear in between
+        return Math.min(currentAtt / 100, 1);
     }
 }

@@ -94,9 +94,12 @@ export class Target {
     }
 
     update(deltaTime = 1) {
+        // Get speed modifier (can be overridden by subclasses)
+        const speedModifier = this.getSpeedModifier();
+
         // Update position
-        this.x += this.dx * deltaTime;
-        this.y += this.dy * deltaTime;
+        this.x += this.dx * deltaTime * speedModifier;
+        this.y += this.dy * deltaTime * speedModifier;
 
         // Check bounds and bounce (with leeway)
         const clientWidth = document.documentElement.clientWidth;
@@ -147,5 +150,10 @@ export class Target {
     // Called when target is clicked/touched
     click() {
         console.log('click recorded');
+    }
+
+    // Get speed modifier based on game state (can be overridden by subclasses)
+    getSpeedModifier() {
+        return 1; // Default: normal speed
     }
 }
