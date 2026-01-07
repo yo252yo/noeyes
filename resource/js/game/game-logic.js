@@ -77,7 +77,19 @@ export function setupGameIntervals() {
             } else if (target instanceof UsernameTarget) {
                 // Usernames generate +1 Att
                 const bounds = target.container.getBounds();
-                createAttFeedback('+1 Att', bounds.x + bounds.width / 2, bounds.y - 10);
+                let popupX = bounds.x + bounds.width / 2;
+                let popupY = bounds.y - 10;
+
+                // Adjust Y position if too high (popup would be cut off)
+                if (popupY < 20) {
+                    popupY = bounds.y + bounds.height + 15;
+                }
+
+                // Ensure popup is within viewport bounds
+                popupX = Math.max(20, Math.min(popupX, window.innerWidth - 100));
+                popupY = Math.max(20, Math.min(popupY, window.innerHeight - 50));
+
+                createAttFeedback('+1 Att', popupX, popupY);
                 totalAttChange += 1;
             }
         });
