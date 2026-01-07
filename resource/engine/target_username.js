@@ -6,24 +6,36 @@ import { Target } from './target.js';
 // Track spawned usernames for uniqueness (local to engine)
 const spawnedUsernames = new Set();
 
-// Color options for username backgrounds
-const borderColors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'magenta', 'lime', 'maroon', 'navy', 'olive', 'teal', 'aqua', 'fuchsia'];
+// Color options for username backgrounds (dark colors as hex codes for consistent styling)
+const backgroundColors = ['#FF0000', '#0000FF', '#00FF00', '#800080', '#FFA500', '#FF00FF', '#800000', '#000080', '#808000', '#008080', '#FF00FF', '#FFFF00', '#00FFFF', '#FFC0CB', '#FFA07A'];
 
 export class Username extends Target {
     // Speed bounds - can be overridden by subclasses
     static MIN_SPEED = .3;
     static MAX_SPEED = 1.5;
 
-    constructor(width = 50, height = 50) {
+    constructor() {
+        // Create temporary text to measure size
+        const username = Username.selectUsername();
+        const usernameText = new window.PIXI.Text(username, {
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fill: 0x000000
+        });
+
+        // Calculate width and height based on text bubble
+        const width = usernameText.width + 10; // 5px padding on each side
+        const height = usernameText.height + 10;
+
         super(width, height);
 
         // Override graphics to use a container with background and text
         this.graphics = new window.PIXI.Container();
-        this.username = this.selectUsername();
+        this.username = username;
         this.draw();
     }
 
-    selectUsername() {
+    static selectUsername() {
         const chatters = getChatters();
         const availableChatters = chatters.filter(chatter => !spawnedUsernames.has(chatter));
 
@@ -56,17 +68,29 @@ export class Username extends Target {
         // Create placeholder username text
         const username = this.username;
         this.usernameText = new window.PIXI.Text(username, {
-            fontSize: 12,
+            fontSize: 10,
             fontFamily: 'Arial',
-            fill: 0x000000
+            fill: 0xffffff,
+            fontWeight: 'bold'
         });
         this.usernameText.anchor.set(0.5); // Center the text
 
-        // Create background
-        const bg = new window.PIXI.Graphics();
-        bg.beginFill(0xffffff);
-        bg.drawRoundedRect(-this.usernameText.width / 2 - 5, -this.usernameText.height / 2 - 5, this.usernameText.width + 10, this.usernameText.height + 10, 5);
-        bg.endFill();
+        // Pick random background color from dark colors
+        const bgColor = backgroundColors[Math.floor(Math.random() * backgroundColors.length)];
+
+        // Create blended color for text and border (mix background color with black)
+        const blendedColor = this.blendWithBlack(bgColor, 0.5); // 50% blend with black
+
+        // Always use white highlight and blended text color for consistent styling
+        const highlightRgba = 'rgba(255,255,255,0.7)';
+        this.usernameText.style.fill = blendedColor;
+
+        // Create oval background with radial gradient (add padding to prevent edge cropping)
+        const bg = this.createGradientOval(Math.ceil(1.1 * this.usernameText.width) + 8, this.usernameText.height + 10, bgColor, highlightRgba, blendedColor);
+
+        // Position background at center
+        bg.x = 0;
+        bg.y = 0;
 
         // Add to container
         this.graphics.addChild(bg);
@@ -75,6 +99,57 @@ export class Username extends Target {
         // Position the container
         this.graphics.x = this.x;
         this.graphics.y = this.y;
+    }
+
+    createGradientOval(width, height, bgColor, highlightRgba, borderColor) {
+        // Create canvas for gradient
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+
+        // Create radial gradient
+        const gradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) / 2);
+        gradient.addColorStop(0, highlightRgba); // Highlight center with transparency
+        gradient.addColorStop(1, bgColor);       // Background edge
+
+        // Draw oval gradient background
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.ellipse(width / 2, height / 2, width / 2 - 1, height / 2 - 1, 0, 0, 2 * Math.PI);
+        ctx.fill();
+
+        // Add a blended border
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Create PIXI texture and sprite
+        const texture = window.PIXI.Texture.from(canvas);
+        const sprite = new window.PIXI.Sprite(texture);
+        sprite.anchor.set(0.5);
+
+        return sprite;
+    }
+
+    blendWithBlack(hexColor, ratio) {
+        // Convert hex to RGB
+        const r = parseInt(hexColor.slice(1, 3), 16);
+        const g = parseInt(hexColor.slice(3, 5), 16);
+        const b = parseInt(hexColor.slice(5, 7), 16);
+
+        // Blend with black
+        const blendedR = Math.round(r * (1 - ratio));
+        const blendedG = Math.round(g * (1 - ratio));
+        const blendedB = Math.round(b * (1 - ratio));
+
+        // Convert back to hex
+        const blendedHex = '#' + [blendedR, blendedG, blendedB].map(x => {
+            const hex = x.toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
+
+        return blendedHex;
     }
 
     update(deltaTime = 1) {
