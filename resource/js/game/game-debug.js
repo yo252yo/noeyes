@@ -53,7 +53,6 @@ export function cleanupDebugRendering() {
 
 export function toggleDebugMode() {
     gameConfig.debugMode = !gameConfig.debugMode;
-    console.log(`Debug mode ${gameConfig.debugMode ? 'enabled' : 'disabled'}`);
 
     if (gameConfig.debugMode) {
         initializeDebugRendering();

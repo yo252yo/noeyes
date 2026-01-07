@@ -2,7 +2,7 @@ import { incrementValue, play_value_sfx } from '../common.js';
 import { emoji, max_speed_emoji, min_speed_emoji } from './game-config.js';
 import { spawnTarget, updateScoreAfterClick } from './game-logic.js';
 import { createValueFeedback } from './game-ui.js';
-import { Target, activeTargets, calculateDistance } from './target-base.js';
+import { Target, activeTargets } from './target-base.js';
 
 // Emoji Target class
 export class EmojiTarget extends Target {
@@ -93,7 +93,6 @@ export class EmojiTarget extends Target {
     }
 
     handlePointerDown(event) {
-        console.log(`${this.constructor.name}: pointerdown at (${event.global.x}, ${event.global.y})`);
         this.clickStartTime = Date.now();
         this.clickStartX = event.global.x;
         this.clickStartY = event.global.y;
@@ -108,14 +107,9 @@ export class EmojiTarget extends Target {
                 Math.pow(event.global.y - this.clickStartY, 2)
             );
 
-            console.log(`${this.constructor.name}: pointerup - duration: ${duration}ms, distance: ${distance.toFixed(1)}px`);
-
             // Allow up to 10px movement and 500ms duration for a valid click
             if (duration < 500 && distance < 10) {
-                console.log(`${this.constructor.name}: VALID CLICK - processing`);
                 this.handleClick(event);
-            } else {
-                console.log(`${this.constructor.name}: INVALID CLICK - ${duration >= 500 ? 'too slow' : 'moved too much'}`);
             }
         }
         this.isPotentialClick = false;
@@ -165,46 +159,4 @@ export class EmojiTarget extends Target {
         // Spawn replacement
         spawnTarget();
     }
-
-    findBestSpawnPosition(width, height, candidates = 3) {
-        const candidatePositions = [];
-        for (let i = 0; i < candidates; i++) {
-            candidatePositions.push({
-                x: Math.random() * (window.innerWidth - width),
-                y: Math.random() * (window.innerHeight - height)
-            });
-        }
-
-        if (activeTargets.length === 0) {
-            return candidatePositions[Math.floor(Math.random() * candidatePositions.length)];
-        }
-
-        let bestPosition = candidatePositions[0];
-        let bestMinDistance = 0;
-
-        for (const candidate of candidatePositions) {
-            let minDistance = Infinity;
-
-            for (const existingTarget of activeTargets) {
-                const existingBounds = existingTarget.container.getBounds();
-                const existingCenterX = existingBounds.x + existingBounds.width / 2;
-                const existingCenterY = existingBounds.y + existingBounds.height / 2;
-
-                const candidateCenterX = candidate.x + width / 2;
-                const candidateCenterY = candidate.y + height / 2;
-
-                const distance = calculateDistance(candidateCenterX, candidateCenterY, existingCenterX, existingCenterY);
-                minDistance = Math.min(minDistance, distance);
-            }
-
-            if (minDistance > bestMinDistance) {
-                bestMinDistance = minDistance;
-                bestPosition = candidate;
-            }
-        }
-
-        return bestPosition;
-    }
 }
-
-// Helper functions that need to be imported from game-ui.js and game-logic.js

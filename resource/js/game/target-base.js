@@ -1,3 +1,5 @@
+import { gameConfig } from './game-config.js';
+
 // Game state
 export let score = 0;
 
@@ -32,8 +34,6 @@ export let gameContainer = null;
 // Scroll handling
 export let lastScrollY = 0;
 
-import { gameConfig } from './game-config.js';
-
 
 // Helper function to get a lighter shade of a color for gradients
 export function getLighterColor(color) {
@@ -42,18 +42,13 @@ export function getLighterColor(color) {
         'blue': '#6666ff',
         'green': '#66ff66',
         'yellow': '#ffff66',
-        'purple': '#ff66ff',
         'orange': '#ffaa66',
         'pink': '#ff66aa',
-        'cyan': '#66ffff',
-        'magenta': '#ff66ff',
         'lime': '#aaff66',
         'maroon': '#aa6666',
         'navy': '#6666aa',
         'olive': '#aaaa66',
-        'teal': '#66aaaa',
-        'aqua': '#66ffff',
-        'fuchsia': '#ff66ff'
+        'teal': '#66aaaa'
     };
     return colorMap[color] || '#ffffff';
 }
@@ -169,5 +164,45 @@ export class Target {
             this.container.parent.removeChild(this.container);
             this.container.destroy();
         }
+    }
+
+    findBestSpawnPosition(width, height, candidates = 3) {
+        const candidatePositions = [];
+        for (let i = 0; i < candidates; i++) {
+            candidatePositions.push({
+                x: Math.random() * (window.innerWidth - width),
+                y: Math.random() * (window.innerHeight - height)
+            });
+        }
+
+        if (activeTargets.length === 0) {
+            return candidatePositions[Math.floor(Math.random() * candidatePositions.length)];
+        }
+
+        let bestPosition = candidatePositions[0];
+        let bestMinDistance = 0;
+
+        for (const candidate of candidatePositions) {
+            let minDistance = Infinity;
+
+            for (const existingTarget of activeTargets) {
+                const existingBounds = existingTarget.container.getBounds();
+                const existingCenterX = existingBounds.x + existingBounds.width / 2;
+                const existingCenterY = existingBounds.y + existingBounds.height / 2;
+
+                const candidateCenterX = candidate.x + width / 2;
+                const candidateCenterY = candidate.y + height / 2;
+
+                const distance = calculateDistance(candidateCenterX, candidateCenterY, existingCenterX, existingCenterY);
+                minDistance = Math.min(minDistance, distance);
+            }
+
+            if (minDistance > bestMinDistance) {
+                bestMinDistance = minDistance;
+                bestPosition = candidate;
+            }
+        }
+
+        return bestPosition;
     }
 }

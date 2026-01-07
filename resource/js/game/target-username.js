@@ -1,7 +1,7 @@
 import { getChatters, play_click_sfx } from '../common.js';
 import { generateMultiple, generateTwitchUsername } from '../fake_users.js';
 import { borderColors, max_speed_username, min_speed_username } from './game-config.js';
-import { Target, activeTargets, calculateDistance, spawnedUsernames } from './target-base.js';
+import { Target, spawnedUsernames } from './target-base.js';
 
 // Username Target class
 export class UsernameTarget extends Target {
@@ -100,11 +100,9 @@ export class UsernameTarget extends Target {
     }
 
     setupInteraction() {
-        console.log(`${this.constructor.name}: Setting up interaction at (${this.container.x}, ${this.container.y})`);
         this.container.interactive = true;
         this.container.buttonMode = true;
         this.container.hitArea = new window.PIXI.Circle(this.container.width / 2, this.container.height / 2, Math.max(this.container.width, this.container.height) / 2 + 15); // Even larger hit area
-        console.log(`${this.constructor.name}: Hit area set to circle(${this.container.width / 2}, ${this.container.height / 2}, ${Math.max(this.container.width, this.container.height) / 2 + 15}), bounds:`, this.container.getBounds());
 
         // Create extra click detection zone (50% larger than hit area for maximum leniency)
         const hitRadius = Math.max(this.container.width, this.container.height) + 20; // Same as hit area
@@ -157,13 +155,9 @@ export class UsernameTarget extends Target {
 
         this.clickZone.on('touchstart', touchStartHandler);
         this.clickZone.on('touchend', touchEndHandler);
-
-        console.log(`${this.constructor.name}: Extra click zone added (${(clickZoneSize * 2).toFixed(1)}px diameter)`);
-        console.log(`${this.constructor.name}: Interaction setup complete`);
     }
 
     handlePointerDown(event) {
-        console.log(`${this.constructor.name}: pointerdown at (${event.global.x}, ${event.global.y})`);
         this.clickStartTime = Date.now();
         this.clickStartX = event.global.x;
         this.clickStartY = event.global.y;
@@ -178,14 +172,9 @@ export class UsernameTarget extends Target {
                 Math.pow(event.global.y - this.clickStartY, 2)
             );
 
-            console.log(`${this.constructor.name}: pointerup - duration: ${duration}ms, distance: ${distance.toFixed(1)}px`);
-
             // Allow up to 10px movement and 500ms duration for a valid click
             if (duration < 500 && distance < 10) {
-                console.log(`${this.constructor.name}: VALID CLICK - processing`);
                 this.handleClick(event);
-            } else {
-                console.log(`${this.constructor.name}: INVALID CLICK - ${duration >= 500 ? 'too slow' : 'moved too much'}`);
             }
         }
         this.isPotentialClick = false;
@@ -218,19 +207,15 @@ export class UsernameTarget extends Target {
     handleClick(event) {
         // Guard against destroyed containers
         if (!this.container || this.destroyed) {
-            console.log('UsernameTarget: handleClick called on destroyed container');
             return;
         }
 
         // Prevent double-clicking from both container and clickZone
         const now = Date.now();
         if (this.lastClickTime && now - this.lastClickTime < 100) {
-            console.log('UsernameTarget: Ignoring duplicate click');
             return;
         }
         this.lastClickTime = now;
-
-        console.log(`UsernameTarget: handleClick called - reversing direction from (${this.dx.toFixed(2)}, ${this.dy.toFixed(2)})`);
 
         // Play ding sound
         play_click_sfx();
@@ -238,47 +223,5 @@ export class UsernameTarget extends Target {
         // Reverse direction
         this.dx = -this.dx;
         this.dy = -this.dy;
-
-        console.log(`UsernameTarget: direction reversed to (${this.dx.toFixed(2)}, ${this.dy.toFixed(2)})`);
-    }
-
-    findBestSpawnPosition(width, height, candidates = 3) {
-        const candidatePositions = [];
-        for (let i = 0; i < candidates; i++) {
-            candidatePositions.push({
-                x: Math.random() * (window.innerWidth - width),
-                y: Math.random() * (window.innerHeight - height)
-            });
-        }
-
-        if (activeTargets.length === 0) {
-            return candidatePositions[Math.floor(Math.random() * candidatePositions.length)];
-        }
-
-        let bestPosition = candidatePositions[0];
-        let bestMinDistance = 0;
-
-        for (const candidate of candidatePositions) {
-            let minDistance = Infinity;
-
-            for (const existingTarget of activeTargets) {
-                const existingBounds = existingTarget.container.getBounds();
-                const existingCenterX = existingBounds.x + existingBounds.width / 2;
-                const existingCenterY = existingBounds.y + existingBounds.height / 2;
-
-                const candidateCenterX = candidate.x + width / 2;
-                const candidateCenterY = candidate.y + height / 2;
-
-                const distance = calculateDistance(candidateCenterX, candidateCenterY, existingCenterX, existingCenterY);
-                minDistance = Math.min(minDistance, distance);
-            }
-
-            if (minDistance > bestMinDistance) {
-                bestMinDistance = minDistance;
-                bestPosition = candidate;
-            }
-        }
-
-        return bestPosition;
     }
 }

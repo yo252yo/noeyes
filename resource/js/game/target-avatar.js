@@ -142,7 +142,6 @@ export class AvatarTarget extends Target {
     }
 
     handlePointerDown(event) {
-        console.log(`${this.constructor.name}: pointerdown at (${event.global.x}, ${event.global.y})`);
         this.clickStartTime = Date.now();
         this.clickStartX = event.global.x;
         this.clickStartY = event.global.y;
@@ -157,14 +156,9 @@ export class AvatarTarget extends Target {
                 Math.pow(event.global.y - this.clickStartY, 2)
             );
 
-            console.log(`${this.constructor.name}: pointerup - duration: ${duration}ms, distance: ${distance.toFixed(1)}px`);
-
             // Allow up to 10px movement and 500ms duration for a valid click
             if (duration < 500 && distance < 10) {
-                console.log(`${this.constructor.name}: VALID CLICK - processing`);
                 this.handleClick(event);
-            } else {
-                console.log(`${this.constructor.name}: INVALID CLICK - ${duration >= 500 ? 'too slow' : 'moved too much'}`);
             }
         }
         this.isPotentialClick = false;
@@ -272,46 +266,6 @@ export class AvatarTarget extends Target {
         updateScoreAfterClick();
     }
 
-    findBestSpawnPosition(width, height, candidates = 3) {
-        const candidatePositions = [];
-        for (let i = 0; i < candidates; i++) {
-            candidatePositions.push({
-                x: Math.random() * (window.innerWidth - width),
-                y: Math.random() * (window.innerHeight - height)
-            });
-        }
-
-        if (activeTargets.length === 0) {
-            return candidatePositions[Math.floor(Math.random() * candidatePositions.length)];
-        }
-
-        let bestPosition = candidatePositions[0];
-        let bestMinDistance = 0;
-
-        for (const candidate of candidatePositions) {
-            let minDistance = Infinity;
-
-            for (const existingTarget of activeTargets) {
-                const existingBounds = existingTarget.container.getBounds();
-                const existingCenterX = existingBounds.x + existingBounds.width / 2;
-                const existingCenterY = existingBounds.y + existingBounds.height / 2;
-
-                const candidateCenterX = candidate.x + width / 2;
-                const candidateCenterY = candidate.y + height / 2;
-
-                const distance = calculateDistance(candidateCenterX, candidateCenterY, existingCenterX, existingCenterY);
-                minDistance = Math.min(minDistance, distance);
-            }
-
-            if (minDistance > bestMinDistance) {
-                bestMinDistance = minDistance;
-                bestPosition = candidate;
-            }
-        }
-
-        return bestPosition;
-    }
-
     update() {
         if (this.destroyed) return;
 
@@ -339,9 +293,3 @@ export class AvatarTarget extends Target {
         this.container.y = y;
     }
 }
-
-import { incrementValue } from '../common.js';
-import { updateScoreAfterClick } from './game-logic.js';
-import { createValueFeedback } from './game-ui.js';
-import { calculateDistance } from './target-base.js';
-
