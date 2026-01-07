@@ -10,9 +10,10 @@
     <script src="../../resource/js/pixi.min.js"></script>
     <script type="module">
         import { start } from '../../resource/engine/engine.js';
+        import { TARGET_TYPES } from '../../resource/engine/config.js';
 
-        // Start the game with 5 targets
-        start(5);
+        // Start the game with 5 emoji targets
+        start(TARGET_TYPES.EMOJI, 5);
     </script>
 </head>
 

@@ -1,11 +1,14 @@
 // Engine module that imports and initializes the window
+import { TARGET_TYPES } from './config.js';
 import { Target, TARGETS_LIST } from './target.js';
+import { Emoji } from './target_emoji.js';
 import { initializeEngine } from './window.js';
 
 // Global time accumulator for second-based events
 let secondAccumulator = 0;
 
 let NUM_TARGETS = 0;
+let CURRENT_TARGET_TYPE = TARGET_TYPES.BASIC;
 
 // Global app reference for spawning
 let globalApp = null;
@@ -13,7 +16,14 @@ let globalApp = null;
 // Function to spawn a single target
 function spawnTarget() {
     if (!globalApp) return;
-    const target = new Target();
+
+    let target;
+    if (CURRENT_TARGET_TYPE === TARGET_TYPES.EMOJI) {
+        target = new Emoji();
+    } else {
+        target = new Target();
+    }
+
     globalApp.stage.addChild(target.graphics);
 }
 
@@ -41,10 +51,11 @@ function app_ticker(deltaTime) {
     }
 }
 
-// Start the game with specified number of tutorial targets
-export function start(tutorial_targets = 0) {
+// Start the game with specified target type and number
+export function start(targetType = TARGET_TYPES.BASIC, tutorial_targets = 0) {
     globalApp = initializeEngine();
 
+    CURRENT_TARGET_TYPE = targetType;
     NUM_TARGETS = tutorial_targets;
 
     // Main game loop using PIXI's ticker (better than setInterval)

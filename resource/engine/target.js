@@ -71,18 +71,22 @@ export class Target {
         // Add to global targets list
         TARGETS_LIST.push(this);
 
-        // Create PIXI graphics
-        this.graphics = new window.PIXI.Graphics();
+        // Create PIXI graphics container
+        this.graphics = new window.PIXI.Container();
         this.draw();
     }
 
     draw() {
-        this.graphics.clear();
+        this.graphics.removeChildren(); // Clear container children
+
         if (DEBUG) {
             // Draw square with green border
-            this.graphics.lineStyle(2, 0x00ff00, 1); // Green border
-            this.graphics.drawRect(-this.size / 2, -this.size / 2, this.size, this.size);
+            const debugBorder = new window.PIXI.Graphics();
+            debugBorder.lineStyle(2, 0x00ff00, 1); // Green border
+            debugBorder.drawRect(-this.size / 2, -this.size / 2, this.size, this.size);
+            this.graphics.addChild(debugBorder);
         }
+
         this.graphics.x = this.x;
         this.graphics.y = this.y;
     }
