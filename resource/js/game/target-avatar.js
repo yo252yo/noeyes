@@ -77,6 +77,9 @@ export class AvatarTarget extends Target {
         this.container.x = spawnPos.x;
         this.container.y = spawnPos.y;
 
+        // Set pivot to center the container on the visual center
+        this.container.pivot.set(0, 0);
+
         const speed = min_speed_avatar + Math.random() * (max_speed_avatar - min_speed_avatar);
         const angle = Math.random() * 2 * Math.PI;
         this.dx = Math.cos(angle) * speed;
@@ -241,8 +244,8 @@ export class AvatarTarget extends Target {
         x += this.dx * speedScale;
         y += this.dy * speedScale;
 
-        const bounds = this.container.getBounds();
-        const collisionResult = this.handleWallCollision(x, y, bounds.width, bounds.height);
+        // Use fixed hitbox size (diameter of hit area circle = 60)
+        const collisionResult = this.handleWallCollision(x, y, 60, 60);
         x = collisionResult.x;
         y = collisionResult.y;
         this.dx = collisionResult.dx;
