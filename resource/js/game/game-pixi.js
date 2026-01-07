@@ -35,6 +35,46 @@ export function initializePixiApp() {
     container.interactive = false; // Don't let container consume events
     container.interactiveChildren = true; // Allow children to receive events
 
+    // Manual click detection system - robust fallback for PIXI interactive system
+    app.view.addEventListener('click', (event) => {
+        const rect = app.view.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        // Find the target that contains this click
+        let targetFound = null;
+        let minDistance = Infinity;
+
+        activeTargets.forEach((target) => {
+            if (!target.container || target.destroyed) return;
+
+            const bounds = target.container.getBounds();
+            const centerX = bounds.x + bounds.width / 2;
+            const centerY = bounds.y + bounds.height / 2;
+            const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+
+            // Check if click is within bounds with some tolerance
+            const tolerance = 20;
+            const withinBounds = x >= bounds.x - tolerance &&
+                x <= bounds.x + bounds.width + tolerance &&
+                y >= bounds.y - tolerance &&
+                y <= bounds.y + bounds.height + tolerance;
+
+            if (withinBounds && distance < minDistance) {
+                minDistance = distance;
+                targetFound = target;
+            }
+        });
+
+        if (targetFound) {
+            // Simulate the click on the target
+            const clickEvent = {
+                global: { x, y }
+            };
+            targetFound.handleClick(clickEvent);
+        }
+    });
+
     // Handle resize
     window.addEventListener('resize', () => {
         app.renderer.resize(window.innerWidth, window.innerHeight);

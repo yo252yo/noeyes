@@ -92,54 +92,6 @@ export class EmojiTarget extends Target {
         this.clickZone.on('touchend', touchEndHandler);
     }
 
-    handleMouseDown(event) {
-        this.clickStartTime = Date.now();
-        this.clickStartX = event.clientX;
-        this.clickStartY = event.clientY;
-        this.isPotentialClick = true;
-    }
-
-    handleMouseUp(event) {
-        if (this.isPotentialClick) {
-            const duration = Date.now() - this.clickStartTime;
-            const distance = Math.sqrt(
-                Math.pow(event.clientX - this.clickStartX, 2) +
-                Math.pow(event.clientY - this.clickStartY, 2)
-            );
-
-            // Allow up to 10px movement and 500ms duration for a valid click
-            if (duration < 500 && distance < 10) {
-                this.handleClick({ global: { x: event.clientX, y: event.clientY } });
-            }
-        }
-        this.isPotentialClick = false;
-    }
-
-    handleTouchStart(event) {
-        const touch = event.touches[0];
-        this.clickStartTime = Date.now();
-        this.clickStartX = touch.clientX;
-        this.clickStartY = touch.clientY;
-        this.isPotentialClick = true;
-    }
-
-    handleTouchEnd(event) {
-        if (this.isPotentialClick && event.changedTouches.length > 0) {
-            const touch = event.changedTouches[0];
-            const duration = Date.now() - this.clickStartTime;
-            const distance = Math.sqrt(
-                Math.pow(touch.clientX - this.clickStartX, 2) +
-                Math.pow(touch.clientY - this.clickStartY, 2)
-            );
-
-            // Allow up to 10px movement and 500ms duration for a valid click
-            if (duration < 500 && distance < 10) {
-                this.handleClick({ global: { x: touch.clientX, y: touch.clientY } });
-            }
-        }
-        this.isPotentialClick = false;
-    }
-
     handlePointerDown(event) {
         console.log(`${this.constructor.name}: pointerdown at (${event.global.x}, ${event.global.y})`);
         this.clickStartTime = Date.now();
@@ -170,51 +122,23 @@ export class EmojiTarget extends Target {
     }
 
     handleMouseDown(event) {
-        this.clickStartTime = Date.now();
-        this.clickStartX = event.clientX;
-        this.clickStartY = event.clientY;
-        this.isPotentialClick = true;
+        // Alias for handlePointerDown for mouse events
+        this.handlePointerDown(event);
     }
 
     handleMouseUp(event) {
-        if (this.isPotentialClick) {
-            const duration = Date.now() - this.clickStartTime;
-            const distance = Math.sqrt(
-                Math.pow(event.clientX - this.clickStartX, 2) +
-                Math.pow(event.clientY - this.clickStartY, 2)
-            );
-
-            // Allow up to 10px movement and 500ms duration for a valid click
-            if (duration < 500 && distance < 10) {
-                this.handleClick({ global: { x: event.clientX, y: event.clientY } });
-            }
-        }
-        this.isPotentialClick = false;
+        // Alias for handlePointerUp for mouse events
+        this.handlePointerUp(event);
     }
 
     handleTouchStart(event) {
-        const touch = event.touches[0];
-        this.clickStartTime = Date.now();
-        this.clickStartX = touch.clientX;
-        this.clickStartY = touch.clientY;
-        this.isPotentialClick = true;
+        // Alias for handlePointerDown for touch events
+        this.handlePointerDown(event);
     }
 
     handleTouchEnd(event) {
-        if (this.isPotentialClick && event.changedTouches.length > 0) {
-            const touch = event.changedTouches[0];
-            const duration = Date.now() - this.clickStartTime;
-            const distance = Math.sqrt(
-                Math.pow(touch.clientX - this.clickStartX, 2) +
-                Math.pow(touch.clientY - this.clickStartY, 2)
-            );
-
-            // Allow up to 10px movement and 500ms duration for a valid click
-            if (duration < 500 && distance < 10) {
-                this.handleClick({ global: { x: touch.clientX, y: touch.clientY } });
-            }
-        }
-        this.isPotentialClick = false;
+        // Alias for handlePointerUp for touch events
+        this.handlePointerUp(event);
     }
 
     cancelClick() {
