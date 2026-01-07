@@ -1,6 +1,5 @@
 // Simple bouncing square target
 import { DEBUG } from './config.js';
-import { createAttFeedback } from './ui.js';
 
 // Global list of all targets
 export const TARGETS_LIST = [];
@@ -62,6 +61,9 @@ export class Target {
         this.y = spawnPos.y;
         this.size = size;
 
+        // Wall detection extra - can be overridden by subclasses
+        this.wall_detection_extra = 0;
+
         // Generate random velocity within speed bounds
         const speed = this.constructor.MIN_SPEED + Math.random() * (this.constructor.MAX_SPEED - this.constructor.MIN_SPEED);
         const angle = Math.random() * Math.PI * 2; // Random direction
@@ -96,22 +98,22 @@ export class Target {
         this.x += this.dx * deltaTime;
         this.y += this.dy * deltaTime;
 
-        // Check bounds and bounce
+        // Check bounds and bounce (with leeway)
         const clientWidth = document.documentElement.clientWidth;
         const clientHeight = document.documentElement.clientHeight;
 
         // Left and right boundaries
-        if (this.x - this.size / 2 <= 0 || this.x + this.size / 2 >= clientWidth) {
+        if (this.x - this.size / 2 <= -this.wall_detection_extra || this.x + this.size / 2 >= clientWidth + this.wall_detection_extra) {
             this.dx = -this.dx;
-            // Keep within bounds
-            this.x = Math.max(this.size / 2, Math.min(clientWidth - this.size / 2, this.x));
+            // Keep within bounds (accounting for wall detection extra)
+            this.x = Math.max(this.size / 2 - this.wall_detection_extra, Math.min(clientWidth - this.size / 2 + this.wall_detection_extra, this.x));
         }
 
         // Top and bottom boundaries
-        if (this.y - this.size / 2 <= 0 || this.y + this.size / 2 >= clientHeight) {
+        if (this.y - this.size / 2 <= -this.wall_detection_extra || this.y + this.size / 2 >= clientHeight + this.wall_detection_extra) {
             this.dy = -this.dy;
-            // Keep within bounds
-            this.y = Math.max(this.size / 2, Math.min(clientHeight - this.size / 2, this.y));
+            // Keep within bounds (accounting for wall detection extra)
+            this.y = Math.max(this.size / 2 - this.wall_detection_extra, Math.min(clientHeight - this.size / 2 + this.wall_detection_extra, this.y));
         }
 
         // Update graphics position
@@ -128,8 +130,9 @@ export class Target {
 
     // Called every second by the engine
     tick() {
+        console.log('tick recorded');
         // Create "Att" feedback bubble at target position
-        createAttFeedback('Att', this.x, this.y);
+        // createAttFeedback('Att', this.x, this.y);
     }
 
     // Called when target is clicked/touched

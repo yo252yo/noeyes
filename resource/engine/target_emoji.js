@@ -4,6 +4,8 @@ import { Target } from './target.js';
 export class Emoji extends Target {
     constructor(size = 50) {
         super(size);
+        // Allow 5px wall detection extra for emoji targets
+        this.wall_detection_extra = 5;
         // Override graphics to use a container with background and text
         this.graphics = new window.PIXI.Container();
         this.wiggleTime = Math.random() * Math.PI * 2; // Random start phase for wiggle
