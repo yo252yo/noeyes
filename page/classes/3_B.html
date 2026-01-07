@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Working with Chat</title>
+    <link rel="stylesheet" href="../../resource/css/style.css">
+    <link rel="stylesheet" href="../../resource/css/class.css">
+    <script src="../../resource/js/pixi.min.js"></script>
+    <script type="module">
+        import { start } from '../../resource/engine/engine.js';
+        import { TARGET_TYPES } from '../../resource/engine/config.js';
+        import { getAtt } from '../../resource/js/common.js';
+
+        // Start the game with username targets
+        start(TARGET_TYPES.USERNAME, 6);
+
+        // Score tracking and next button logic
+        const WIN_SCORE = 50;
+        const scoreDisplay = document.getElementById('score-display');
+        const nextButton = document.getElementById('next-button');
+
+        // Function to update score display
+        function updateScoreDisplay() {
+            const currentScore = getAtt();
+            scoreDisplay.textContent = `${currentScore}/${WIN_SCORE}`;
+
+            // Show next button when win condition is met
+            if (currentScore >= WIN_SCORE && nextButton.style.display === 'none') {
+                nextButton.style.display = 'block';
+            }
+        }
+
+        // Update score display every 300ms
+        setInterval(updateScoreDisplay, 300);
+    </script>
+</head>
+
+<body
+    style="margin: 0; padding: 0; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; overflow: hidden;">
+    <div style="overflow-y: auto; height: 100vh; padding: 20px; width: 100vw; box-sizing: border-box;">
+        <h1 class="welcome-text">Working with Chat</h1>
+        <p><span class="highlight-text">Chat</span> need a lot of care and pampering.</p>
+        <p>For them, privacy is paramount. <span class="highlight-text">Chat</span>
+            will instantly die if they interact with another <span class="highlight-text">Chat</span>.</p>
+
+        <div class="info-panel">
+            <b>Be careful!</b><br />
+            When two <span class="highlight-text">Chat</span> bubble collide, they disappear and are replaced by only
+            one!
+        </div>
+
+        <p>Change the direction of <span class="highlight-text">Chat</span> by clicking on them to protect them from
+            unwanted encounters! It's always ok to lose a few.</p>
+
+        <div class="info-panel">
+            <p>Accumulate 50 Att. to validate this class. (<span id="score-display">0/50</span>)</p>
+            <p>Can you protect <span class="highlight-text">Chat</span> with your moderation skills?</p>
+        </div>
+
+        <div style="text-align: center; display:none;" id="next-button">
+            <a href="3_3.html" class="next-button">
+                <img src="../../resource/icons/next.png" alt="Continue" />
+                NEXT
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

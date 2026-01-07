@@ -5,5 +5,6 @@ export const DEBUG = true;
 export const TARGET_TYPES = {
     EMPTY: 'empty',
     EMOJI: 'emoji',
-    AVATAR: 'avatar'
+    AVATAR: 'avatar',
+    USERNAME: 'username'
 };

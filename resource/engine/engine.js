@@ -3,6 +3,7 @@ import { TARGET_TYPES } from './config.js';
 import { Target, TARGETS_LIST } from './target.js';
 import { Avatar } from './target_avatar.js';
 import { Emoji } from './target_emoji.js';
+import { Username } from './target_username.js';
 import { initializeEngine } from './window.js';
 
 // Global time accumulator for second-based events
@@ -28,6 +29,8 @@ function spawnTarget() {
         target = new Emoji();
     } else if (CURRENT_TARGET_TYPE === TARGET_TYPES.AVATAR) {
         target = new Avatar();
+    } else if (CURRENT_TARGET_TYPE === TARGET_TYPES.USERNAME) {
+        target = new Username();
     } else {
         target = new Target();
     }
