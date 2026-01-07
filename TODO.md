@@ -30,6 +30,7 @@ dont come back to me until it's in working condition, observe your own web brows
 
 * the default avatar resource is failing
 
+* new audio
 
 * accentuate chat/streamer ratio, in particular make influencers consume more att and make chat smaller and cheaper
 
