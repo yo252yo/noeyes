@@ -1,5 +1,5 @@
 // Engine configuration
-export const DEBUG = true;
+export const DEBUG = false;
 
 // Target types enum
 export const TARGET_TYPES = {
