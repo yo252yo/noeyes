@@ -1,6 +1,7 @@
 // Engine module that imports and initializes the window
 import { TARGET_TYPES } from './config.js';
 import { Target, TARGETS_LIST } from './target.js';
+import { Avatar } from './target_avatar.js';
 import { Emoji } from './target_emoji.js';
 import { initializeEngine } from './window.js';
 
@@ -20,6 +21,8 @@ function spawnTarget() {
     let target;
     if (CURRENT_TARGET_TYPE === TARGET_TYPES.EMOJI) {
         target = new Emoji();
+    } else if (CURRENT_TARGET_TYPE === TARGET_TYPES.AVATAR) {
+        target = new Avatar();
     } else {
         target = new Target();
     }

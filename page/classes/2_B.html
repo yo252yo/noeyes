@@ -13,9 +13,9 @@
         import { TARGET_TYPES } from '../../resource/engine/config.js';
         import { getValue, getDay } from '../../resource/js/common.js';
 
-        // Start the game with empty targets (4 if day 2, 2 otherwise)
+        // Start the game with avatar targets (4 if day 2, 2 otherwise)
         const tutorialTargets = getDay() === 2 ? 4 : 2;
-        start(TARGET_TYPES.EMPTY, tutorialTargets);
+        start(TARGET_TYPES.AVATAR, tutorialTargets);
 
         // Score tracking and next button logic
         const WIN_SCORE = 50;
