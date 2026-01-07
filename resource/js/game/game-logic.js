@@ -11,6 +11,7 @@ import { UsernameTarget } from './target-username.js';
 
 // Core game logic functions
 export function startGame() {
+    console.log('startGame called with config:', gameConfig);
     if (gameActive) return;
     setGameActive(true);
 
@@ -29,6 +30,7 @@ export function startGame() {
 
     // Start game loop
     pixiApp.ticker.add(gameLoop);
+    console.log('Game started successfully');
 }
 
 export function gameLoop() {
@@ -114,6 +116,7 @@ export function setupGameIntervals() {
 }
 
 export async function spawnTarget() {
+    console.log('spawnTarget called');
     let target;
     if (gameConfig.targets === 'avatar') {
         target = new AvatarTarget();
@@ -126,6 +129,7 @@ export async function spawnTarget() {
 
     activeTargets.push(target);
     gameContainer.addChild(target.container);
+    console.log('Target spawned:', target.constructor.name);
 }
 
 export async function spawnSpecificStreamerAvatar(username) {
