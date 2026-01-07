@@ -4,8 +4,8 @@ import { value } from './logic.js';
 import { Target } from './target.js';
 
 export class Emoji extends Target {
-    constructor(size = 50) {
-        super(size);
+    constructor(width = 50, height = 50) {
+        super(width, height);
         // Allow 5px wall detection extra for emoji targets
         this.wall_detection_extra = 5;
         // Override graphics to use a container with background and text
@@ -22,7 +22,7 @@ export class Emoji extends Target {
         // Create random emoji text from game config
         const randomEmoji = emoji[Math.floor(Math.random() * emoji.length)];
         this.emojiText = new window.PIXI.Text(randomEmoji, {
-            fontSize: this.size * 0.8, // Scale font to fit target size
+            fontSize: this.width * 0.8, // Scale font to fit target size
             fontFamily: 'Arial'
         });
         this.emojiText.anchor.set(0.5); // Center the text

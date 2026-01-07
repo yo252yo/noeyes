@@ -54,12 +54,13 @@ export class Target {
         return bestCandidate;
     }
 
-    constructor(size = 50) {
+    constructor(width = 50, height = 50) {
         // Find the best spawn position
         const spawnPos = this.constructor.find_free_spawn();
         this.x = spawnPos.x;
         this.y = spawnPos.y;
-        this.size = size;
+        this.width = width;
+        this.height = height;
 
         // Wall detection extra - can be overridden by subclasses
         this.wall_detection_extra = 0;
@@ -82,10 +83,10 @@ export class Target {
         this.graphics.removeChildren(); // Clear container children
 
         if (DEBUG) {
-            // Draw square with green border
+            // Draw rectangle with green border
             const debugBorder = new window.PIXI.Graphics();
             debugBorder.lineStyle(2, 0x00ff00, 1); // Green border
-            debugBorder.drawRect(-this.size / 2, -this.size / 2, this.size, this.size);
+            debugBorder.drawRect(-this.width / 2, -this.height / 2, this.width, this.height);
             this.graphics.addChild(debugBorder);
         }
 
@@ -106,17 +107,17 @@ export class Target {
         const clientHeight = document.documentElement.clientHeight;
 
         // Left and right boundaries
-        if (this.x - this.size / 2 <= -this.wall_detection_extra || this.x + this.size / 2 >= clientWidth + this.wall_detection_extra) {
+        if (this.x - this.width / 2 <= -this.wall_detection_extra || this.x + this.width / 2 >= clientWidth + this.wall_detection_extra) {
             this.dx = -this.dx;
             // Keep within bounds (accounting for wall detection extra)
-            this.x = Math.max(this.size / 2 - this.wall_detection_extra, Math.min(clientWidth - this.size / 2 + this.wall_detection_extra, this.x));
+            this.x = Math.max(this.width / 2 - this.wall_detection_extra, Math.min(clientWidth - this.width / 2 + this.wall_detection_extra, this.x));
         }
 
         // Top and bottom boundaries
-        if (this.y - this.size / 2 <= -this.wall_detection_extra || this.y + this.size / 2 >= clientHeight + this.wall_detection_extra) {
+        if (this.y - this.height / 2 <= -this.wall_detection_extra || this.y + this.height / 2 >= clientHeight + this.wall_detection_extra) {
             this.dy = -this.dy;
             // Keep within bounds (accounting for wall detection extra)
-            this.y = Math.max(this.size / 2 - this.wall_detection_extra, Math.min(clientHeight - this.size / 2 + this.wall_detection_extra, this.y));
+            this.y = Math.max(this.height / 2 - this.wall_detection_extra, Math.min(clientHeight - this.height / 2 + this.wall_detection_extra, this.y));
         }
 
         // Update graphics position

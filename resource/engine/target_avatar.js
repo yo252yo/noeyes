@@ -5,8 +5,8 @@ import { attention, collab } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
 
 export class Avatar extends Target {
-    constructor(size = 50) {
-        super(size);
+    constructor(width = 50, height = 50) {
+        super(width, height);
         // No extra wall detection for avatar targets
         this.wall_detection_extra = 0;
         // Select a streamer for this avatar
@@ -38,7 +38,7 @@ export class Avatar extends Target {
         this.avatarContainer = new window.PIXI.Container();
 
         // Create circular border - fill the target size
-        const radius = this.size / 2;
+        const radius = this.width / 2;
         const borderGraphics = new window.PIXI.Graphics();
         borderGraphics.beginFill(window.PIXI.utils.string2hex(randomColor));
         borderGraphics.drawCircle(0, 0, radius); // Fill the target size

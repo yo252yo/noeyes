@@ -14,8 +14,8 @@ export class Username extends Target {
     static MIN_SPEED = .3;
     static MAX_SPEED = 1.5;
 
-    constructor(size = 50) {
-        super(size);
+    constructor(width = 50, height = 50) {
+        super(width, height);
 
         // Override graphics to use a container with background and text
         this.graphics = new window.PIXI.Container();
