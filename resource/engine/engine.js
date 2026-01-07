@@ -1,11 +1,10 @@
 // Engine module that imports and initializes the window
-import { NUM_TARGETS } from './config.js';
 import { Target, TARGETS_LIST } from './target.js';
 import { initializeEngine } from './window.js';
 
 // Function to spawn targets
-function spawnTargets(app) {
-    for (let i = 0; i < NUM_TARGETS; i++) {
+function spawnTargets(app, numTargets) {
+    for (let i = 0; i < numTargets; i++) {
         const target = new Target();
         app.stage.addChild(target.graphics);
     }
@@ -26,10 +25,10 @@ function secondTicker() {
     });
 }
 
-// Auto-initialize when imported
-document.addEventListener('DOMContentLoaded', () => {
+// Start the game with specified number of targets
+export function start(numTargets) {
     const app = initializeEngine();
-    spawnTargets(app);
+    spawnTargets(app, numTargets);
     update();
     setInterval(secondTicker, 1000); // Call tick every second
-});
+}
