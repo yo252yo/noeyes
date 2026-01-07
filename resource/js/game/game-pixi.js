@@ -21,7 +21,7 @@ export function initializePixiApp() {
     app.view.style.top = '0';
     app.view.style.left = '0';
     app.view.style.pointerEvents = 'none'; // Start with none to allow buttons to work
-    app.view.style.zIndex = '50';
+    app.view.style.zIndex = '200';
 
     const container = new window.PIXI.Container();
     setGameContainer(container);
