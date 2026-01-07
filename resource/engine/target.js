@@ -1,5 +1,6 @@
 // Simple bouncing square target
 import { DEBUG } from './config.js';
+import { createAttFeedback } from './ui.js';
 
 // Global list of all targets
 export const TARGETS_LIST = [];
@@ -112,6 +113,12 @@ export class Target {
         // Update graphics position
         this.graphics.x = this.x;
         this.graphics.y = this.y;
+    }
+
+    // Called every second by the engine
+    tick() {
+        // Create "Att" feedback bubble at target position
+        createAttFeedback('Att', this.x, this.y);
     }
 
     destroy() {

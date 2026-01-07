@@ -11,7 +11,7 @@ function spawnTargets(app) {
     }
 }
 
-// Update loop
+// Update loop (60fps)
 function update() {
     TARGETS_LIST.forEach(target => {
         target.update();
@@ -19,9 +19,17 @@ function update() {
     requestAnimationFrame(update);
 }
 
+// Second ticker (1fps) - calls tick on all targets
+function secondTicker() {
+    TARGETS_LIST.forEach(target => {
+        target.tick();
+    });
+}
+
 // Auto-initialize when imported
 document.addEventListener('DOMContentLoaded', () => {
     const app = initializeEngine();
     spawnTargets(app);
     update();
+    setInterval(secondTicker, 1000); // Call tick every second
 });
