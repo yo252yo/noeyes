@@ -115,6 +115,13 @@ export class Target {
         this.graphics.y = this.y;
     }
 
+    destroy() {
+        if (this.graphics && this.graphics.parent) {
+            this.graphics.parent.removeChild(this.graphics);
+            this.graphics.destroy();
+        }
+    }
+
     // Called every second by the engine
     tick() {
         // Create "Att" feedback bubble at target position
@@ -124,13 +131,5 @@ export class Target {
     // Called when target is clicked/touched
     click() {
         console.log('click recorded');
-        alert("!");
-    }
-
-    destroy() {
-        if (this.graphics && this.graphics.parent) {
-            this.graphics.parent.removeChild(this.graphics);
-            this.graphics.destroy();
-        }
     }
 }
