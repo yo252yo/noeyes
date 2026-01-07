@@ -6,14 +6,9 @@ another lesson about before the fall explaining that they had class division bas
 file:// protocol isnt supported =x
 ================== GAME ENGINE
 
-* Sometimes targets, mostly usernames, seem to change direction arbitrarily i think mb they collide with notification divs or something can you make sure 
-
 * the default avatar resource is failing
 
-* new audio
-
 * accentuate chat/streamer ratio, in particular make influencers consume more att and make chat smaller and cheaper
-
 
 * add farmbot feature (class and feature day 6), Ending I shows you your stats if they're machine enough, ending c could show you the list of chats who died 
 
@@ -25,9 +20,6 @@ file:// protocol isnt supported =x
 
 * achivevements for certification every day
 
-* farm should display the current number of influencers
-
-* Make sure that names of dead schater can appear twice 
 
 
 ================== LONG TERM

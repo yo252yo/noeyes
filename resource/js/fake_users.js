@@ -34,7 +34,7 @@ function pick(arr) {
 
 export function generateTwitchUsername() {
     const pattern = pick(patterns);
-    return "<i>" + pattern(chunks) + "</i>";
+    return pattern(chunks);
 }
 
 export function generateMultiple(count = 10) {

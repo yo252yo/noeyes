@@ -16,7 +16,7 @@ export class Username extends Target {
 
     constructor() {
         // Create temporary text to measure size
-        const username = Username.selectUsername();
+        const { username, isFake } = Username.selectUsername();
         const usernameText = new window.PIXI.Text(username, {
             fontSize: 12,
             fontFamily: 'Arial',
@@ -32,6 +32,7 @@ export class Username extends Target {
         // Override graphics to use a container with background and text
         this.graphics = new window.PIXI.Container();
         this.username = username;
+        this.isFake = isFake;
         this.draw();
     }
 
@@ -42,7 +43,7 @@ export class Username extends Target {
         if (availableChatters.length > 0) {
             const username = availableChatters[Math.floor(Math.random() * availableChatters.length)];
             spawnedUsernames.add(username);
-            return username;
+            return { username, isFake: false };
         }
 
         // Fallback to fake users
@@ -52,26 +53,26 @@ export class Username extends Target {
         if (availableFakeUsers.length > 0) {
             const username = availableFakeUsers[Math.floor(Math.random() * availableFakeUsers.length)];
             spawnedUsernames.add(username);
-            return username;
+            return { username, isFake: true };
         }
 
         // Last resort
         const username = generateTwitchUsername();
         spawnedUsernames.add(username);
-        return username;
+        return { username, isFake: true };
     }
 
     draw() {
         // Call parent draw to add debug border
         super.draw();
 
-        // Create placeholder username text
-        const username = this.username;
-        this.usernameText = new window.PIXI.Text(username, {
+        // Create username text with italic styling for fake users
+        this.usernameText = new window.PIXI.Text(this.username, {
             fontSize: 10,
             fontFamily: 'Arial',
             fill: 0xffffff,
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            fontStyle: this.isFake ? 'italic' : 'normal'
         });
         this.usernameText.anchor.set(0.5); // Center the text
 
