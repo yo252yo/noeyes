@@ -1,5 +1,6 @@
+import { TARGET_TYPES } from '../engine/config.js';
+import { requestNewTarget, start } from '../engine/engine.js';
 import { addStreamer, addSuggestedStreamer, getResourcePath, getStreamers, getSuggestedStreamers, getValue } from './common.js';
-import { spawnSpecificStreamerAvatar } from './game.js';
 import { getAvatarUrl } from './twitch.js';
 
 // Price calculation function
@@ -57,14 +58,6 @@ function updateStreamerCellAppearances() {
         }
     });
 }
-
-// Make functions available globally
-window.getStreamers = getStreamers;
-window.getSuggestedStreamers = getSuggestedStreamers;
-window.addStreamer = addStreamer;
-window.addSuggestedStreamer = addSuggestedStreamer;
-window.getAvatarUrl = getAvatarUrl;
-window.spawnSpecificStreamerAvatar = spawnSpecificStreamerAvatar;
 
 window.gameConfig = {
     targets: 'avatar',
@@ -148,9 +141,7 @@ async function createStreamerCell(username) {
             addStreamer(username);
             incrementValue(-price);
             play_chime_sfx();
-            if (window.spawnSpecificStreamerAvatar) {
-                window.spawnSpecificStreamerAvatar(username);
-            }
+            requestNewTarget();
             updateFarmStats();
             window.buildStreamerList();
         }
@@ -190,7 +181,9 @@ window.changeBackgroundColor = function (color) {
 };
 
 // Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
+    start(TARGET_TYPES.AVATAR, 0);
+
     // Load saved background color on page load
     const savedColor = localStorage.getItem('farmBackgroundColor');
     if (savedColor) {

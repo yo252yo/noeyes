@@ -1,5 +1,5 @@
 // Engine module that imports and initializes the window
-import { getNbChatters } from '../js/common.js';
+import { getNbChatters, getStreamers } from '../js/common.js';
 import { NUM_TARGETS, setNumTargets, TARGET_TYPES } from './config.js';
 import { interaction } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
@@ -107,6 +107,9 @@ export function start(targetType = TARGET_TYPES.EMPTY, tutorial_targets = 0) {
     // If target type is username and tutorial_targets is 0, set to number of chatters
     if (targetType === TARGET_TYPES.USERNAME && tutorial_targets === 0) {
         setNumTargets(getNbChatters());
+    } else if (targetType === TARGET_TYPES.AVATAR && tutorial_targets === 0) {
+        console.log(getStreamers().length);
+        setNumTargets(getStreamers().length);
     } else {
         setNumTargets(tutorial_targets);
     }
