@@ -13,9 +13,9 @@
         import { TARGET_TYPES } from '../../resource/engine/config.js';
         import { getValue, getDay } from '../../resource/js/common.js';
 
-        // Start the game with basic targets (4 if day 2, 2 otherwise)
+        // Start the game with empty targets (4 if day 2, 2 otherwise)
         const tutorialTargets = getDay() === 2 ? 4 : 2;
-        start(TARGET_TYPES.BASIC, tutorialTargets);
+        start(TARGET_TYPES.EMPTY, tutorialTargets);
 
         // Score tracking and next button logic
         const WIN_SCORE = 50;
@@ -33,8 +33,8 @@
             }
         }
 
-        // Update score display every 300ms
-        setInterval(updateScoreDisplay, 300);
+        // Update score display every 100ms
+        setInterval(updateScoreDisplay, 100);
     </script>
 </head>
 

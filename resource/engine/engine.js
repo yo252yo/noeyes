@@ -8,7 +8,7 @@ import { initializeEngine } from './window.js';
 let secondAccumulator = 0;
 
 let NUM_TARGETS = 0;
-let CURRENT_TARGET_TYPE = TARGET_TYPES.BASIC;
+let CURRENT_TARGET_TYPE = TARGET_TYPES.EMPTY;
 
 // Global app reference for spawning
 let globalApp = null;
@@ -52,7 +52,7 @@ function app_ticker(deltaTime) {
 }
 
 // Start the game with specified target type and number
-export function start(targetType = TARGET_TYPES.BASIC, tutorial_targets = 0) {
+export function start(targetType = TARGET_TYPES.EMPTY, tutorial_targets = 0) {
     globalApp = initializeEngine();
 
     CURRENT_TARGET_TYPE = targetType;
