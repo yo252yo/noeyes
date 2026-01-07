@@ -9,13 +9,30 @@
     <link rel="stylesheet" href="../../resource/css/class.css">
     <script src="../../resource/js/pixi.min.js"></script>
     <script type="module">
-        import '../../resource/js/game.js';
+        import { start } from '../../resource/engine/engine.js';
+        import { TARGET_TYPES } from '../../resource/engine/config.js';
+        import { getValue } from '../../resource/js/common.js';
 
-        window.gameConfig = {
-            targets: 'emoji',
-            winScore: 5,
-            fixedTargetNb: 10
-        };
+        start(TARGET_TYPES.EMOJI, 8);
+
+        // Score tracking and next button logic
+        const WIN_SCORE = 5;
+        const scoreDisplay = document.getElementById('score-display');
+        const nextButton = document.getElementById('next-button');
+
+        // Function to update score display
+        function updateScoreDisplay() {
+            const currentScore = getValue();
+            scoreDisplay.textContent = `${currentScore}/${WIN_SCORE}`;
+
+            // Show next button when win condition is met
+            if (currentScore >= WIN_SCORE && nextButton.style.display === 'none') {
+                nextButton.style.display = 'block';
+            }
+        }
+
+        // Update score display every 300ms
+        setInterval(updateScoreDisplay, 300);
     </script>
 </head>
 

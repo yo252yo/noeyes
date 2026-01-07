@@ -9,14 +9,31 @@
     <link rel="stylesheet" href="../../resource/css/class.css">
     <script src="../../resource/js/pixi.min.js"></script>
     <script type="module">
-        import { getDay } from '../../resource/js/common.js';
-        import '../../resource/js/game.js';
+        import { start } from '../../resource/engine/engine.js';
+        import { TARGET_TYPES } from '../../resource/engine/config.js';
+        import { getValue, getDay } from '../../resource/js/common.js';
 
-        window.gameConfig = {
-            targets: 'avatar',
-            winScore: 50,
-            fixedTargetNb: getDay() === 2 ? 4 : 2
-        };
+        // Start the game with avatar targets (4 if day 2, 2 otherwise)
+        const tutorialTargets = getDay() === 2 ? 4 : 2;
+        start(TARGET_TYPES.AVATAR, tutorialTargets);
+
+        // Score tracking and next button logic
+        const WIN_SCORE = 50;
+        const scoreDisplay = document.getElementById('score-display');
+        const nextButton = document.getElementById('next-button');
+
+        // Function to update score display
+        function updateScoreDisplay() {
+            const currentScore = getValue();
+            scoreDisplay.textContent = `${currentScore}/${WIN_SCORE}`;
+
+            // Show next button when win condition is met
+            if (currentScore >= WIN_SCORE && nextButton.style.display === 'none') {
+                nextButton.style.display = 'block';
+            }
+        }
+
+        setInterval(updateScoreDisplay, 300);
     </script>
 </head>
 
@@ -40,7 +57,7 @@
         </div>
         <div class="info-panel">
             <p>Gather 50 <span class="highlight-text">Value</span> to validate this class. (<span
-                    id="score-display">0/30</span>)</p>
+                    id="score-display">0/50</span>)</p>
             <p>Can you capture the right moment?</p>
         </div>
 
