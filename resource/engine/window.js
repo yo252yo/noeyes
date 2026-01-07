@@ -1,4 +1,9 @@
 // Simple PIXI engine that draws screen border
+import { Target } from './target.js';
+
+// Number of targets to spawn
+const NUM_TARGETS = 5;
+
 export function initializeEngine() {
     // Create PIXI application
     const app = new window.PIXI.Application({
@@ -24,6 +29,9 @@ export function initializeEngine() {
     const graphics = new window.PIXI.Graphics();
     app.stage.addChild(graphics);
 
+    // Array to hold targets
+    const targets = [];
+
     // Function to draw border
     function drawBorder() {
         graphics.clear();
@@ -33,8 +41,38 @@ export function initializeEngine() {
         graphics.drawRect(1, 1, clientWidth - 2, clientHeight - 2);
     }
 
-    // Initial draw
+    // Function to spawn targets
+    function spawnTargets() {
+        const clientWidth = document.documentElement.clientWidth;
+        const clientHeight = document.documentElement.clientHeight;
+
+        for (let i = 0; i < NUM_TARGETS; i++) {
+            // Random position within bounds
+            const x = Math.random() * (clientWidth - 100) + 50;
+            const y = Math.random() * (clientHeight - 100) + 50;
+
+            // Random velocity
+            const dx = (Math.random() - 0.5) * 4; // -2 to 2
+            const dy = (Math.random() - 0.5) * 4; // -2 to 2
+
+            const target = new Target(x, y, dx, dy);
+            targets.push(target);
+            app.stage.addChild(target.graphics);
+        }
+    }
+
+    // Update loop
+    function update() {
+        targets.forEach(target => {
+            target.update();
+        });
+        requestAnimationFrame(update);
+    }
+
+    // Initial setup
     drawBorder();
+    spawnTargets();
+    update();
 
     // Handle resize
     window.addEventListener('resize', () => {
