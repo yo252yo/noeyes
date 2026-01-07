@@ -128,6 +128,17 @@ export class Target {
         }
     }
 
+    // Remove target from game (destroy graphics and remove from global list)
+    remove() {
+        this.destroy();
+
+        // Remove from global targets list
+        const index = TARGETS_LIST.indexOf(this);
+        if (index > -1) {
+            TARGETS_LIST.splice(index, 1);
+        }
+    }
+
     // Called every second by the engine
     tick() {
         console.log('tick recorded');

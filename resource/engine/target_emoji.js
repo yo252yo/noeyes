@@ -1,4 +1,5 @@
 import { emoji } from '../js/game/game-config.js';
+import { value } from './logic.js';
 import { Target } from './target.js';
 
 export class Emoji extends Target {
@@ -48,8 +49,12 @@ export class Emoji extends Target {
         // Do nothing
     }
 
-    // Empty click behavior
+    // Click behavior - award value and remove target
     click() {
-        // Do nothing
+        // Call value function to increment value and show feedback
+        value(1, this.x, this.y);
+
+        // Remove the target from the game
+        this.remove();
     }
 }
