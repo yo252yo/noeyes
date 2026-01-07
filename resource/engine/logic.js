@@ -1,7 +1,8 @@
 // Game logic functions for the engine
 import { incrementAtt, incrementValue, play_error_sfx, play_value_sfx } from '../js/common.js';
+import { decreaseNumTargets } from './config.js';
 import { TARGETS_LIST } from './target.js';
-import { createAttFeedback, createCollabPopup, createValueFeedback, drawCollaborationLine } from './ui.js';
+import { createAttFeedback, createCollabPopup, createInteractionFeedback, createValueFeedback, drawCollaborationLine } from './ui.js';
 
 // Handle value increment and feedback
 export function value(amount = 1, x, y) {
@@ -63,4 +64,22 @@ export function collab(clickedAvatar, closestAvatar) {
 
     // Always remove the clicked avatar
     clickedAvatar.remove();
+}
+
+// Handle username target interaction (collision)
+export function interaction(targetA, targetB) {
+    // Play problem sound
+    play_error_sfx();
+
+    // Create interaction feedback at midpoint
+    const midX = (targetA.x + targetB.x) / 2;
+    const midY = (targetA.y + targetB.y) / 2;
+    createInteractionFeedback(midX, midY);
+
+    // Remove both targets
+    targetA.remove();
+    targetB.remove();
+
+    // Decrease target count
+    decreaseNumTargets(1);
 }

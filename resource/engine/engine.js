@@ -1,5 +1,6 @@
 // Engine module that imports and initializes the window
-import { TARGET_TYPES } from './config.js';
+import { NUM_TARGETS, setNumTargets, TARGET_TYPES } from './config.js';
+import { interaction } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
 import { Avatar } from './target_avatar.js';
 import { Emoji } from './target_emoji.js';
@@ -9,7 +10,6 @@ import { initializeEngine } from './window.js';
 // Global time accumulator for second-based events
 let secondAccumulator = 0;
 
-let NUM_TARGETS = 0;
 let CURRENT_TARGET_TYPE = TARGET_TYPES.EMPTY;
 
 // Global app reference for spawning
@@ -38,12 +38,42 @@ function spawnTarget() {
     globalApp.stage.addChild(target.graphics);
 }
 
+// Check for overlapping username targets and trigger interactions
+function check_username_collisions() {
+    if (CURRENT_TARGET_TYPE !== TARGET_TYPES.USERNAME) return;
+
+    const usernameTargets = TARGETS_LIST.filter(target => target instanceof Username);
+    if (usernameTargets.length < 2) return;
+
+    // Simple collision check - check each pair
+    for (let i = 0; i < usernameTargets.length; i++) {
+        for (let j = i + 1; j < usernameTargets.length; j++) {
+            const targetA = usernameTargets[i];
+            const targetB = usernameTargets[j];
+
+            // Check if they overlap (simple bounding box check)
+            const overlap = targetA.x - targetA.width / 2 < targetB.x + targetB.width / 2 &&
+                targetA.x + targetA.width / 2 > targetB.x - targetB.width / 2 &&
+                targetA.y - targetA.height / 2 < targetB.y + targetB.height / 2 &&
+                targetA.y + targetA.height / 2 > targetB.y - targetB.height / 2;
+
+            if (overlap) {
+                interaction(targetA, targetB);
+                return; // Only handle one collision per check
+            }
+        }
+    }
+}
+
 // Dedicated ticker function for the main game loop
 function app_ticker(deltaTime) {
     // Update all targets (60fps)
     TARGETS_LIST.forEach(target => {
         target.update(deltaTime);
     });
+
+    // Check for username target collisions
+    check_username_collisions();
 
     // Accumulate time for second-based events
     secondAccumulator += deltaTime / 100; // Convert to seconds
@@ -67,7 +97,7 @@ export function start(targetType = TARGET_TYPES.EMPTY, tutorial_targets = 0) {
     globalApp = initializeEngine();
 
     CURRENT_TARGET_TYPE = targetType;
-    NUM_TARGETS = tutorial_targets;
+    setNumTargets(tutorial_targets);
 
     // Main game loop using PIXI's ticker (better than setInterval)
     globalApp.ticker.add(app_ticker);

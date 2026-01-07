@@ -106,3 +106,30 @@ export function createCollabPopup(x, y) {
         }
     }, 2000);
 }
+
+// Create interaction message popup for username collisions
+export function createInteractionFeedback(x, y) {
+    const interactionMsg = document.createElement('div');
+    interactionMsg.textContent = '💣interaction💣';
+    interactionMsg.style.position = 'absolute';
+    interactionMsg.style.left = (x - 50) + 'px';
+    interactionMsg.style.top = (y - 10) + 'px';
+    interactionMsg.style.color = 'black';
+    interactionMsg.style.fontSize = '14px';
+    interactionMsg.style.fontWeight = 'bold';
+    interactionMsg.style.pointerEvents = 'none';
+    interactionMsg.style.zIndex = '102';
+    interactionMsg.style.textAlign = 'center';
+    interactionMsg.style.backgroundColor = 'rgba(255, 255, 255, 0.4)';
+    interactionMsg.style.padding = '2px 6px';
+    interactionMsg.style.borderRadius = '4px';
+    interactionMsg.style.textShadow = '0 0 5px black, 0 0 10px black, 0 0 15px black, 0 0 20px black';
+    interactionMsg.style.animation = 'collabGrow 2s ease-out forwards';
+    document.body.appendChild(interactionMsg);
+
+    setTimeout(() => {
+        if (interactionMsg.parentNode) {
+            interactionMsg.parentNode.removeChild(interactionMsg);
+        }
+    }, 2000);
+}
