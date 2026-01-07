@@ -121,6 +121,12 @@ export class Target {
         createAttFeedback('Att', this.x, this.y);
     }
 
+    // Called when target is clicked/touched
+    click() {
+        console.log('click recorded');
+        alert("!");
+    }
+
     destroy() {
         if (this.graphics && this.graphics.parent) {
             this.graphics.parent.removeChild(this.graphics);
