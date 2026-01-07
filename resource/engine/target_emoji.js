@@ -1,3 +1,4 @@
+import { play_click_sfx } from '../js/common.js';
 import { emoji } from '../js/game/game-config.js';
 import { value } from './logic.js';
 import { Target } from './target.js';
@@ -54,6 +55,9 @@ export class Emoji extends Target {
         if (!this.preventDoubleClick()) {
             return;
         }
+
+        // Play value sound
+        play_click_sfx();
 
         // Call value function to increment value and show feedback
         value(1, this.x, this.y);

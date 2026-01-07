@@ -1,5 +1,5 @@
 // Game logic functions for the engine
-import { incrementAtt, incrementValue } from '../js/common.js';
+import { incrementAtt, incrementValue, play_error_sfx, play_value_sfx } from '../js/common.js';
 import { TARGETS_LIST } from './target.js';
 import { createAttFeedback, createCollabPopup, createValueFeedback, drawCollaborationLine } from './ui.js';
 
@@ -39,9 +39,13 @@ export function collab(clickedAvatar, closestAvatar) {
         const lineColor = valueGained > 5 ? 0xff00ff : 0x4CAF50;
         drawCollaborationLine(clickedAvatar.x, clickedAvatar.y, closestAvatar.x, closestAvatar.y, lineColor);
 
-        // Create COLLAB popup for high scores
+        // Create COLLAB popup and play notification SFX for high scores
         if (valueGained > 5) {
             createCollabPopup(clickedAvatar.x, clickedAvatar.y);
+            play_value_sfx();
+        } else {
+            // Play error SFX for low score collaborations
+            play_error_sfx();
         }
 
         // Remove the closest avatar
