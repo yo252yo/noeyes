@@ -1,7 +1,9 @@
-import { getAtt, getStreamers } from '../common.js';
+import { getAtt, getStreamers, incrementValue } from '../common.js';
 import { getAvatarUrl } from '../twitch.js';
 import { borderColors, max_speed_avatar, min_speed_avatar } from './game-config.js';
-import { Target, activeTargets, isTutorial } from './target-base.js';
+import { updateScoreAfterClick } from './game-logic.js';
+import { createValueFeedback } from './game-ui.js';
+import { Target, activeTargets, calculateDistance, isTutorial } from './target-base.js';
 
 // Avatar Target class
 export class AvatarTarget extends Target {
