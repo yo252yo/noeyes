@@ -94,6 +94,8 @@ export function manageTextTargetCollisions() {
         if (target.username) {
             spawnedUsernames.delete(target.username);
         }
+        // Mark as destroyed to prevent popup creation for this target
+        target.destroyed = true;
         target.destroy();
     });
 }

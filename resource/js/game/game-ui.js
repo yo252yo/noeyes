@@ -35,18 +35,22 @@ export function createAttFeedback(text, x, y) {
     feedback.style.fontSize = '20px';
     feedback.style.fontWeight = 'bold';
     feedback.style.pointerEvents = 'none';
-    feedback.style.animation = 'valueFeedback 1s ease-out forwards';
+    feedback.style.animation = 'attFeedback 2s ease-out forwards';
     feedback.style.zIndex = '101';
-    feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+    feedback.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
     feedback.style.padding = '4px 8px';
     feedback.style.borderRadius = '6px';
     feedback.style.textShadow = 'none';
+    feedback.style.color = '#2196F3'; // Bright blue color for both + and -
 
-    // Color based on text content
-    if (text.includes('-1')) {
-        feedback.style.color = '#2196F3'; // Blue for -1 Att
-    } else {
-        feedback.style.color = '#000000'; // Black for +1 Att
+    // Prevent scrolling by constraining to viewport
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // If popup would go outside viewport, hide it instead
+    if (x < 0 || x > viewportWidth - 100 || y < 0 || y > viewportHeight - 50) {
+        feedback.style.display = 'none';
+        return; // Don't add to DOM if outside viewport
     }
 
     document.body.appendChild(feedback);
@@ -55,7 +59,7 @@ export function createAttFeedback(text, x, y) {
         if (feedback.parentNode) {
             feedback.parentNode.removeChild(feedback);
         }
-    }, 5000);
+    }, 3000); // 3 seconds total visibility
 }
 
 export function updateScoreDisplay() {

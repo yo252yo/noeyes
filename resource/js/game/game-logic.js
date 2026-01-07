@@ -5,7 +5,7 @@ import { initializeDebugRendering, renderDebugInfo } from './game-debug.js';
 import { initializePixiApp } from './game-pixi.js';
 import { createAttFeedback, showNextButton, updateAttDisplay, updateScoreDisplay } from './game-ui.js';
 import { AvatarTarget } from './target-avatar.js';
-import { activeTargets, gameActive, gameContainer, gameIntervals, lastScrollY, pixiApp, score, setGameActive, setScore } from './target-base.js';
+import { activeTargets, gameActive, gameContainer, gameIntervals, isTutorial, lastScrollY, pixiApp, score, setGameActive, setScore } from './target-base.js';
 import { EmojiTarget } from './target-emoji.js';
 import { UsernameTarget } from './target-username.js';
 
@@ -41,75 +41,81 @@ export function gameLoop() {
 }
 
 export function setupGameIntervals() {
-    if (gameConfig.targets === 'avatar') {
-        gameIntervals.avatarAttConsumption = setInterval(() => {
-            // Always show -1 Att popup for avatars and consume Att
-            if (activeTargets.length > 0) {
-                activeTargets.forEach(target => {
-                    if (target instanceof AvatarTarget) {
-                        const bounds = target.container.getBounds();
-                        let popupX = bounds.x + bounds.width / 2;
-                        let popupY = bounds.y - 15;
+    // Unified attention computation interval - handles all target types
+    gameIntervals.attentionComputation = setInterval(() => {
+        let totalAttChange = 0;
 
-                        // Adjust Y position if too high
-                        if (popupY < 20) {
-                            popupY = bounds.y + bounds.height + 15;
-                        }
+        // Process attention for all active targets
+        activeTargets.forEach(target => {
+            if (target.destroyed) return;
 
-                        // Adjust X position if too far right
-                        if (popupX > window.innerWidth - 100) {
-                            popupX = bounds.x - 50;
-                        }
+            if (target instanceof AvatarTarget) {
+                // Avatars consume -1 Att
+                const bounds = target.container.getBounds();
+                let popupX = bounds.x + bounds.width / 2;
+                let popupY = bounds.y - 15;
 
-                        // Ensure minimum bounds
-                        popupX = Math.max(20, popupX);
-                        popupY = Math.max(20, popupY);
+                // Adjust Y position if too high
+                if (popupY < 20) {
+                    popupY = bounds.y + bounds.height + 15;
+                }
 
-                        createAttFeedback('-1 Att', popupX, popupY);
-                    }
-                });
-                incrementAtt(-activeTargets.length);
-                updateAttDisplay();
+                // Adjust X position if too far right
+                if (popupX > window.innerWidth - 100) {
+                    popupX = bounds.x - 50;
+                }
+
+                // Ensure minimum bounds
+                popupX = Math.max(20, popupX);
+                popupY = Math.max(20, popupY);
+
+                // Only consume attention in non-tutorial modes
+                if (!isTutorial()) {
+                    createAttFeedback('-1 Att', popupX, popupY);
+                    totalAttChange -= 1;
+                }
+            } else if (target instanceof UsernameTarget) {
+                // Usernames generate +1 Att
+                const bounds = target.container.getBounds();
+                createAttFeedback('+1 Att', bounds.x + bounds.width / 2, bounds.y - 10);
+                totalAttChange += 1;
             }
-        }, 1000);
+        });
 
-        gameIntervals.avatarSpawning = setInterval(() => {
-            const maxSpawn = gameConfig.fixedTargetNb || Math.max(1, getStreamers().length);
-            if (activeTargets.length >= maxSpawn) return;
-            spawnTarget();
-        }, 1000);
-    } else if (gameConfig.targets === 'username') {
-        gameIntervals.usernameValueGeneration = setInterval(() => {
-            if (activeTargets.length > 0) {
-                activeTargets.forEach(target => {
-                    if (target instanceof UsernameTarget) {
-                        const bounds = target.container.getBounds();
-                        createAttFeedback('+1 Att', bounds.x + bounds.width / 2, bounds.y - 10);
-                    }
-                });
-                incrementAtt(activeTargets.length);
+        // Apply total attention change
+        if (totalAttChange !== 0) {
+            incrementAtt(totalAttChange);
+            if (gameConfig.targets === 'username') {
                 setScore(getAtt());
                 updateScoreDisplay();
-                updateAttDisplay(); // Update the attention span
-
                 if (score >= gameConfig.winScore) {
                     showNextButton();
                 }
             }
-        }, 1000);
+            updateAttDisplay();
+        }
 
-        gameIntervals.textTargetCollision = setInterval(manageTextTargetCollisions, 500);
-
-        gameIntervals.usernameSpawning = setInterval(() => {
+        // Handle spawning based on target type
+        if (gameConfig.targets === 'avatar') {
+            const maxSpawn = gameConfig.fixedTargetNb || Math.max(1, getStreamers().length);
+            if (activeTargets.length < maxSpawn) {
+                spawnTarget();
+            }
+        } else if (gameConfig.targets === 'username') {
             const maxSpawn = gameConfig.fixedTargetNb || Math.max(1, getNbChatters());
-            if (activeTargets.length >= maxSpawn) return;
-            spawnTarget();
-        }, 1000);
-    } else if (gameConfig.targets === 'emoji') {
-        gameIntervals.emojiSpawning = setInterval(() => {
-            if (activeTargets.length >= gameConfig.fixedTargetNb) return;
-            spawnTarget();
-        }, 1000);
+            if (activeTargets.length < maxSpawn) {
+                spawnTarget();
+            }
+        } else if (gameConfig.targets === 'emoji') {
+            if (activeTargets.length < gameConfig.fixedTargetNb) {
+                spawnTarget();
+            }
+        }
+    }, 1000);
+
+    // Separate collision detection for username mode
+    if (gameConfig.targets === 'username') {
+        gameIntervals.textTargetCollision = setInterval(manageTextTargetCollisions, 500);
     }
 }
 
