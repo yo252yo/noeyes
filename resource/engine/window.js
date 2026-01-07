@@ -1,8 +1,6 @@
 // Simple PIXI engine that draws screen border
+import { DEBUG, NUM_TARGETS } from './config.js';
 import { Target } from './target.js';
-
-// Number of targets to spawn
-const NUM_TARGETS = 5;
 
 export function initializeEngine() {
     // Create PIXI application
@@ -35,10 +33,12 @@ export function initializeEngine() {
     // Function to draw border
     function drawBorder() {
         graphics.clear();
-        const clientWidth = document.documentElement.clientWidth;
-        const clientHeight = document.documentElement.clientHeight;
-        graphics.lineStyle(3, 0xff0000, 1); // Red 3px line
-        graphics.drawRect(1, 1, clientWidth - 2, clientHeight - 2);
+        if (DEBUG) {
+            const clientWidth = document.documentElement.clientWidth;
+            const clientHeight = document.documentElement.clientHeight;
+            graphics.lineStyle(3, 0xff0000, 1); // Red 3px line
+            graphics.drawRect(1, 1, clientWidth - 2, clientHeight - 2);
+        }
     }
 
     // Function to spawn targets

@@ -1,4 +1,6 @@
 // Simple bouncing square target
+import { DEBUG } from './config.js';
+
 export class Target {
     constructor(x, y, dx, dy, size = 50) {
         this.x = x;
@@ -14,9 +16,11 @@ export class Target {
 
     draw() {
         this.graphics.clear();
-        // Draw square with green border
-        this.graphics.lineStyle(2, 0x00ff00, 1); // Green border
-        this.graphics.drawRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        if (DEBUG) {
+            // Draw square with green border
+            this.graphics.lineStyle(2, 0x00ff00, 1); // Green border
+            this.graphics.drawRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        }
         this.graphics.x = this.x;
         this.graphics.y = this.y;
     }
