@@ -1,7 +1,13 @@
-import { play_click_sfx } from '../js/common.js';
+import { getChatters, play_click_sfx } from '../js/common.js';
+import { generateMultiple, generateTwitchUsername } from '../js/fake_users.js';
 import { attention } from './logic.js';
 import { Target } from './target.js';
 
+// Track spawned usernames for uniqueness (local to engine)
+const spawnedUsernames = new Set();
+
+// Color options for username backgrounds
+const borderColors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'magenta', 'lime', 'maroon', 'navy', 'olive', 'teal', 'aqua', 'fuchsia'];
 
 export class Username extends Target {
     // Speed bounds - can be overridden by subclasses
@@ -13,8 +19,34 @@ export class Username extends Target {
 
         // Override graphics to use a container with background and text
         this.graphics = new window.PIXI.Container();
-        this.usernameText = null; // Will be set in draw()
+        this.username = this.selectUsername();
         this.draw();
+    }
+
+    selectUsername() {
+        const chatters = getChatters();
+        const availableChatters = chatters.filter(chatter => !spawnedUsernames.has(chatter));
+
+        if (availableChatters.length > 0) {
+            const username = availableChatters[Math.floor(Math.random() * availableChatters.length)];
+            spawnedUsernames.add(username);
+            return username;
+        }
+
+        // Fallback to fake users
+        const fakeUsers = generateMultiple(100);
+        const availableFakeUsers = fakeUsers.filter(fake => !spawnedUsernames.has(fake));
+
+        if (availableFakeUsers.length > 0) {
+            const username = availableFakeUsers[Math.floor(Math.random() * availableFakeUsers.length)];
+            spawnedUsernames.add(username);
+            return username;
+        }
+
+        // Last resort
+        const username = generateTwitchUsername();
+        spawnedUsernames.add(username);
+        return username;
     }
 
     draw() {
@@ -22,7 +54,7 @@ export class Username extends Target {
         super.draw();
 
         // Create placeholder username text
-        const username = 'User' + Math.floor(Math.random() * 1000);
+        const username = this.username;
         this.usernameText = new window.PIXI.Text(username, {
             fontSize: 12,
             fontFamily: 'Arial',
@@ -66,5 +98,16 @@ export class Username extends Target {
 
         this.dx *= -1;
         this.dy *= -1;
+    }
+
+    // Override remove to clean up username from spawned set
+    remove() {
+        // Remove username from spawned set so it can be reused
+        if (this.username) {
+            spawnedUsernames.delete(this.username);
+        }
+
+        // Call parent remove method
+        super.remove();
     }
 }
