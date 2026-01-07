@@ -1,11 +1,16 @@
 import { play_click_sfx } from '../js/common.js';
+import { attention } from './logic.js';
 import { Target } from './target.js';
 
+
 export class Username extends Target {
+    // Speed bounds - can be overridden by subclasses
+    static MIN_SPEED = .3;
+    static MAX_SPEED = 1.5;
+
     constructor(size = 50) {
         super(size);
-        // Allow 5px wall detection extra for username targets
-        this.wall_detection_extra = 5;
+
         // Override graphics to use a container with background and text
         this.graphics = new window.PIXI.Container();
         this.usernameText = null; // Will be set in draw()
@@ -47,7 +52,7 @@ export class Username extends Target {
 
     // Empty tick behavior
     tick() {
-        // Do nothing
+        attention(1, this.x, this.y);
     }
 
     // Click behavior - award attention and remove target
@@ -58,5 +63,8 @@ export class Username extends Target {
 
         // Play value sound
         play_click_sfx();
+
+        this.dx *= -1;
+        this.dy *= -1;
     }
 }
