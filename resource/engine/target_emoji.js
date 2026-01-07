@@ -4,6 +4,9 @@ import { value } from './logic.js';
 import { Target } from './target.js';
 
 export class Emoji extends Target {
+    static MIN_SPEED = .5;
+    static MAX_SPEED = 2;
+
     constructor(width = 50, height = 50) {
         super(width, height);
         // Allow 5px wall detection extra for emoji targets
