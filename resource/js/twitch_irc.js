@@ -28,6 +28,15 @@ ws.onopen = () => {
     });
 };
 
+// Listen for streamerAdded events to join new streamers dynamically
+window.addEventListener('streamerAdded', (event) => {
+    const { username } = event.detail;
+    if (ws.readyState === WebSocket.OPEN) {
+        console.log('JOINING NEW STREAMER', username);
+        ws.send(`JOIN #${username}`);
+    }
+});
+
 ws.onerror = (e) => {
     console.error('WS ERROR', e);
 };
