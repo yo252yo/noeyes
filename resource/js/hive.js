@@ -12,22 +12,28 @@ window.gameConfig = {
 // Function to calculate next chat price
 window.getNextChatPrice = function (currentChats) {
     const prices = {
-        1: 5,
-        2: 20,
-        3: 30,
-        4: 50,
-        5: 75,
-        6: 100,
-        7: 200,
-        8: 500,
-        9: 1000,
-        10: 5000,
-        11: 10000
+        1: 2,
+        2: 4,
+        3: 6,
+        4: 10,
+        5: 15,
+        6: 20,
+        7: 25,
+        8: 30, // <<< required for the ending
+        9: 40,
+        10: 50,
+        11: 75,
+        12: 100,
+        13: 150,
+        14: 200,
+        15: 300,
+        16: 500,
+        17: 1000
     };
     if (currentChats in prices) {
         return prices[currentChats];
     } else {
-        return Math.pow(10, currentChats - 7);
+        return 1000 * (currentChats - 16);
     }
 };
 
