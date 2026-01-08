@@ -9,7 +9,8 @@ file:// protocol isnt supported =x
 
 ================== GAME ENGINE
 
-PLUG IN THE OPEN FARM HIVE CONDITION IN LOGIC.JS att changes att changes in negative should only happen when
+* clicking within a window should update its z-index
+
 + farmbot actually
 
 * purple coloring of visited links might not be up to date
@@ -22,12 +23,9 @@ PLUG IN THE OPEN FARM HIVE CONDITION IN LOGIC.JS att changes att changes in nega
 
 * add login page (streamer choice) to initialize streamer list, right now its hardcoded
 
-* i got the same color for hive and farm by default
-
 * add disclaimer/explanation about cognitive science
 
 * achivevements for certification every day
-
 
 * proofread/edit text with grok or chatgpt
 * mb adjust speed for phone screens
