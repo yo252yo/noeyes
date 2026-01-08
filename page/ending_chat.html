@@ -59,11 +59,7 @@
             // Generate tombstones for removed usernames
             const tombstones = [];
             for (const username of usernames) {
-                const messages = removedChatters[username];
-                let randomMessage = '';
-                if (messages && messages.length > 0) {
-                    randomMessage = messages[Math.floor(Math.random() * messages.length)];
-                }
+                const message = removedChatters[username] || '';
 
                 const tombstone = document.createElement('span');
                 tombstone.style.cssText = `
@@ -93,8 +89,8 @@
                     <div style="position: absolute; top: 75px; left: 50%; transform: translateX(-50%); width: 90%;">
                         <div style="font-weight: bold; font-size: 11px; margin-bottom: 4px;">${username}</div>
                 `;
-                if (randomMessage) {
-                    content += `<div style="font-style: italic; font-size: 9px; line-height: 1.1; white-space: normal;">"${randomMessage}"</div>`;
+                if (message) {
+                    content += `<div style="font-style: italic; font-size: 9px; line-height: 1.1; white-space: normal;">"${message}"</div>`;
                 }
                 content += `</div>`;
                 tombstone.innerHTML = content;
@@ -113,11 +109,8 @@
                 noTombstones.textContent = 'No fallen chatters to remember...';
                 marquee.appendChild(noTombstones);
             } else {
-                // Add each tombstone once, repeat the set once if short
+                // Add each tombstone once (no duplicates)
                 tombstones.forEach(t => marquee.appendChild(t));
-                if (tombstones.length < 5) {
-                    tombstones.forEach(t => marquee.appendChild(t.cloneNode(true)));
-                }
             }
 
             container.appendChild(marquee);

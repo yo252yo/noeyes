@@ -1,5 +1,6 @@
-import { getChatters, play_click_sfx } from '../js/common.js';
+import { getChatters, play_click_sfx, setRemovedChatter } from '../js/common.js';
 import { generateMultiple, generateTwitchUsername } from '../js/fake_users.js';
+import { chatters } from '../js/twitch_irc.js';
 import { attention } from './logic.js';
 import { Target } from './target.js';
 
@@ -182,15 +183,16 @@ export class Username extends Target {
     // Override remove to clean up username from spawned set
     remove() {
         // Track removed real chatters in history and localStorage
-        if (this.username && !this.isFake) {
+        if (this.username && !this.isFake && !removedUsernameHistory.includes(this.username)) {
             removedUsernameHistory.push(this.username);
             if (removedUsernameHistory.length > 100) {
                 removedUsernameHistory.shift(); // Remove oldest
             }
 
-            // Store in localStorage
+            // Store in localStorage - pick one random message
             const messages = chatters.get(this.username) || [];
-            setRemovedChatter(this.username, messages);
+            const randomMessage = messages.length > 0 ? messages[Math.floor(Math.random() * messages.length)] : '';
+            setRemovedChatter(this.username, randomMessage);
         }
 
         // Remove username from spawned set so it can be reused

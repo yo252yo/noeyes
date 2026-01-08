@@ -245,10 +245,10 @@ export function getChatters() {
     return stored ? JSON.parse(stored) : {};
 }
 
-export function setRemovedChatter(username, messages) {
+export function setRemovedChatter(username, message) {
     const stored = localStorage.getItem('removed_chatters');
     const removed = stored ? JSON.parse(stored) : {};
-    removed[username] = messages;
+    removed[username] = message;
     localStorage.setItem('removed_chatters', JSON.stringify(removed));
 }
 
