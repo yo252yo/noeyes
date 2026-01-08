@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="../resource/css/style.css">
     <link rel="stylesheet" href="../resource/css/menu.css">
     <script type="module">
-        import { play_value_sfx } from '../resource/js/common.js';
+        import { play_value_sfx, play_click_sfx } from '../resource/js/common.js';
         window.play_value_sfx = play_value_sfx;
+        window.play_click_sfx = play_click_sfx;
     </script>
 </head>
 
@@ -27,7 +28,7 @@
                     with <a href="disclaimer/twitch_live_integration.html">twitch live integration</a> and <a
                         href="disclaimer/scientifically_proven_benefits.html">scientifically proven benefits</a>
                 </div>
-                <a href="computer.html" class="menu-start-btn">Play</a>
+                <a href="computer.html" class="menu-start-btn" onclick="window.play_click_sfx()">Play</a>
 
                 <div class="menu-volume-control">
                     <label for="volume-slider" class="menu-volume-label">Music:</label>
@@ -47,8 +48,8 @@
                 </div>
                 <div class="menu-credit">
                     <a href="#"
-                        onclick="if(confirm('Are you sure you want to reset all data?')) { localStorage.clear(); window.location.reload(); }">Start
-                        over - reset data</a>
+                        onclick="if(confirm('Are you sure you want to reset all data?')) { localStorage.clear(); window.location.reload(); }">
+                        Start over (reset all data)</a>
                 </div>
             </div>
         </div>
@@ -62,7 +63,7 @@
         }
 
         function getMusicVolume() {
-            return parseFloat(localStorage.getItem("music_volume") || "0.8");
+            return parseFloat(localStorage.getItem("music_volume") || "0.5");
         }
 
         function changeSFXVolume(value) {
