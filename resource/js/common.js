@@ -245,6 +245,18 @@ export function getChatters() {
     return stored ? JSON.parse(stored) : {};
 }
 
+export function setRemovedChatter(username, messages) {
+    const stored = localStorage.getItem('removed_chatters');
+    const removed = stored ? JSON.parse(stored) : {};
+    removed[username] = messages;
+    localStorage.setItem('removed_chatters', JSON.stringify(removed));
+}
+
+export function getRemovedChatters() {
+    const stored = localStorage.getItem('removed_chatters');
+    return stored ? JSON.parse(stored) : {};
+}
+
 export function setStreamers(streamers) {
     localStorage.setItem('twitch_streamers', JSON.stringify(streamers));
 }

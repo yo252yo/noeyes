@@ -181,12 +181,16 @@ export class Username extends Target {
 
     // Override remove to clean up username from spawned set
     remove() {
-        // Track removed real chatters in history
+        // Track removed real chatters in history and localStorage
         if (this.username && !this.isFake) {
             removedUsernameHistory.push(this.username);
-            if (removedUsernameHistory.length > 300) {
+            if (removedUsernameHistory.length > 100) {
                 removedUsernameHistory.shift(); // Remove oldest
             }
+
+            // Store in localStorage
+            const messages = chatters.get(this.username) || [];
+            setRemovedChatter(this.username, messages);
         }
 
         // Remove username from spawned set so it can be reused

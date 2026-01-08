@@ -8,18 +8,139 @@
     <link rel="stylesheet" href="../resource/css/style.css">
     <link rel="stylesheet" href="../resource/css/class.css">
     <script type="module">
-        import { play_problem_sfx } from '../resource/js/common.js';
+        import { play_problem_sfx, getRemovedChatters } from '../resource/js/common.js';
 
         // Play problem SFX when ending loads
         document.addEventListener('DOMContentLoaded', function () {
             play_problem_sfx();
+
+            // Create tombstones marquee if there are fallen chatters
+            createTombstonesMarquee();
         });
+
+        function createTombstonesMarquee() {
+            const container = document.getElementById('tombstones-marquee');
+            if (!container) return;
+
+            // Get fallen chatters from localStorage
+            const removedChatters = getRemovedChatters();
+            const usernames = Object.keys(removedChatters);
+
+            // If no fallen chatters, don't show the marquee container at all
+            if (usernames.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+
+            // Make container relative for absolute positioning and give it height
+            container.style.position = 'relative';
+            container.style.height = '160px';
+
+            // Create marquee element
+            const marquee = document.createElement('marquee');
+            marquee.style.cssText = `
+                position: fixed;
+                left: 0;
+                width: 100vw;
+                height: 160px;
+                padding: 10px 0;
+                overflow: hidden;
+                white-space: nowrap;
+                z-index: 10;
+            `;
+            marquee.behavior = 'scroll';
+            marquee.direction = 'left';
+            marquee.scrollamount = '0.5';
+
+            // Position it at the container's location
+            const rect = container.getBoundingClientRect();
+            marquee.style.top = rect.top + 'px';
+
+            // Generate tombstones for removed usernames
+            const tombstones = [];
+            for (const username of usernames) {
+                const messages = removedChatters[username];
+                let randomMessage = '';
+                if (messages && messages.length > 0) {
+                    randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                }
+
+                const tombstone = document.createElement('span');
+                tombstone.style.cssText = `
+                    display: inline-block;
+                    background-color: #708090;
+                    color: #fff;
+                    border: 1px solid #999;
+                    border-radius: 50% 50% 10px 10px;
+                    width: 100px;
+                    height: 140px;
+                    padding: 5px 5px 8px;
+                    margin: 0 12px;
+                    font-family: 'MS Sans Serif', Tahoma, sans-serif;
+                    font-size: 11px;
+                    text-align: center;
+                    vertical-align: top;
+                    box-shadow: 3px 3px 6px rgba(0,0,0,0.7);
+                    position: relative;
+                    overflow: hidden;
+                `;
+
+
+
+                // Build tombstone content: RIP in top semicircle, text centered in bottom rectangle
+                let content = `
+                    <div style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: bold;">† R.I.P. †</div>
+                    <div style="position: absolute; top: 75px; left: 50%; transform: translateX(-50%); width: 90%;">
+                        <div style="font-weight: bold; font-size: 11px; margin-bottom: 4px;">${username}</div>
+                `;
+                if (randomMessage) {
+                    content += `<div style="font-style: italic; font-size: 9px; line-height: 1.1; white-space: normal;">"${randomMessage}"</div>`;
+                }
+                content += `</div>`;
+                tombstone.innerHTML = content;
+
+                tombstones.push(tombstone);
+            }
+
+            // If no tombstones (shouldn't happen), show a message
+            if (tombstones.length === 0) {
+                const noTombstones = document.createElement('span');
+                noTombstones.style.cssText = `
+                    color: #fff;
+                    font-family: 'MS Sans Serif', Tahoma, sans-serif;
+                    font-size: 14px;
+                `;
+                noTombstones.textContent = 'No fallen chatters to remember...';
+                marquee.appendChild(noTombstones);
+            } else {
+                // Add each tombstone once, repeat the set once if short
+                tombstones.forEach(t => marquee.appendChild(t));
+                if (tombstones.length < 5) {
+                    tombstones.forEach(t => marquee.appendChild(t.cloneNode(true)));
+                }
+            }
+
+            container.appendChild(marquee);
+
+            // Show disclaimer positioned over the marquee
+            const disclaimer = document.getElementById('disclaimer');
+            disclaimer.textContent = 'DISCLAIMER: Although you let these Chat members die in your game, we have no reason to believe they actually died.';
+            disclaimer.style.display = 'block';
+            disclaimer.style.position = 'absolute';
+            disclaimer.style.top = '50%';
+            disclaimer.style.left = '50%';
+            disclaimer.style.transform = 'translate(-50%, -50%)';
+            disclaimer.style.opacity = '0.5';
+            disclaimer.style.zIndex = '0';
+            disclaimer.style.width = '80%';
+            disclaimer.style.maxWidth = '600px';
+        }
     </script>
 </head>
 
 <body
-    style="background: linear-gradient(180deg, #008080 0%, #004040 100%); margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column; overflow: auto;">
-    <div style="text-align: center; padding: 40px; max-width: 800px;">
+    style="background: linear-gradient(180deg, #008080 0%, #004040 100%); margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+    <div style="text-align: center; padding: 40px; overflow-x:hidden;">
         <div class="highlight-text" style="font-size: 24px; margin-bottom: 20px;">Ending C</div>
         <h1
             style="font-family: 'MS Sans Serif', Tahoma, sans-serif; color: #fff; font-size: 36px; margin-bottom: 40px; line-height: 1.2;">
@@ -27,12 +148,15 @@
         </h1>
 
         <div style="margin-top: 40px;">
+            <div id="tombstones-marquee" style="margin-bottom: 20px;"></div>
+            <div id="disclaimer"
+                style="margin-bottom: 40px; display: none; font-style: italic; font-size: 12px; color: #ccc; text-align: center;">
+            </div>
             <a href="ending.html" class="next-button">
                 <img src="../resource/icons/next.png" alt="Continue" />
                 CONTINUE
             </a>
         </div>
-
     </div>
 </body>
 
