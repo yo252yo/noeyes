@@ -1,9 +1,15 @@
 
 
-import { getStreamers, setChatters } from './common.js';
+import { getChatters, getStreamers, setChatters } from './common.js';
 
-export const chatters = new Set();
+export const chatters = new Map();
 const MAX_CHATTERS = 200;
+
+// Load existing chatters from storage
+const storedChatters = getChatters();
+for (const [user, msgs] of Object.entries(storedChatters)) {
+    chatters.set(user, msgs);
+}
 
 // Expose chatters globally for access from iframes
 window.chatters = chatters;
@@ -43,6 +49,11 @@ ws.onmessage = (e) => {
 
         if (!line.includes('PRIVMSG')) return;
 
+        // Parse the message content
+        let messageMatch = line.match(/PRIVMSG #[^:]+:(.+)$/);
+        let message = messageMatch?.[1];
+        if (!message) return;
+
         // 1) Try display-name from tags
         let userMatch = line.match(/display-name=([^;]*)/);
         let username = userMatch?.[1];
@@ -60,16 +71,18 @@ ws.onmessage = (e) => {
         if (!chatters.has(username)) {
             // If we've reached the max limit, remove the oldest chatter
             if (chatters.size >= MAX_CHATTERS) {
-                const firstChatter = chatters.values().next().value;
+                const firstChatter = chatters.keys().next().value;
                 chatters.delete(firstChatter);
             }
 
-            chatters.add(username);
-            //console.log('NEW CHATTER:', username);
-            // console.log('CHATTER SET:', [...chatters]);
-
-            // Store chatters in localStorage
-            setChatters([...chatters]);
+            chatters.set(username, []);
         }
+
+        // Store the message
+        chatters.get(username).push(message);
+        //console.log(username + ":" + message);
+
+        // Store chatters in localStorage
+        setChatters(Object.fromEntries(chatters));
     }
 };

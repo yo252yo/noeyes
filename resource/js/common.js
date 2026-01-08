@@ -242,7 +242,7 @@ export function setChatters(chatters) {
 
 export function getChatters() {
     const stored = localStorage.getItem('twitch_chatters');
-    return stored ? JSON.parse(stored) : [];
+    return stored ? JSON.parse(stored) : {};
 }
 
 export function setStreamers(streamers) {

@@ -9,6 +9,9 @@ file:// protocol isnt supported =x
 
 ================== GAME ENGINE
 
+PLUG IN THE OPEN FARM HIVE CONDITION IN LOGIC.JS att changes att changes in negative should only happen when
++ farmbot actually
+
 * purple coloring of visited links might not be up to date
 
 * the default avatar resource is failing
