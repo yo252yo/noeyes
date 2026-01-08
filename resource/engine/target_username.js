@@ -6,6 +6,9 @@ import { Target } from './target.js';
 // Track spawned usernames for uniqueness (local to engine)
 const spawnedUsernames = new Set();
 
+// History of removed usernames (latest 300, preferring real chatters)
+let removedUsernameHistory = [];
+
 // Color options for username backgrounds (dark colors as hex codes for consistent styling)
 const backgroundColors = ['#FF0000', '#0000FF', '#00FF00', '#800080', '#FFA500', '#FF00FF', '#800000', '#000080', '#808000', '#008080', '#FF00FF', '#FFFF00', '#00FFFF', '#FFC0CB', '#FFA07A'];
 
@@ -178,6 +181,14 @@ export class Username extends Target {
 
     // Override remove to clean up username from spawned set
     remove() {
+        // Track removed real chatters in history
+        if (this.username && !this.isFake) {
+            removedUsernameHistory.push(this.username);
+            if (removedUsernameHistory.length > 300) {
+                removedUsernameHistory.shift(); // Remove oldest
+            }
+        }
+
         // Remove username from spawned set so it can be reused
         if (this.username) {
             spawnedUsernames.delete(this.username);
@@ -187,3 +198,5 @@ export class Username extends Target {
         super.remove();
     }
 }
+
+export { removedUsernameHistory };
