@@ -15,20 +15,20 @@ const backgroundColors = ['#FF0000', '#0000FF', '#00FF00', '#800080', '#FFA500',
 
 export class Username extends Target {
     // Speed bounds - can be overridden by subclasses
-    static MIN_SPEED = .3;
-    static MAX_SPEED = 1.5;
+    static MIN_SPEED = .1;
+    static MAX_SPEED = .7;
 
     constructor() {
         // Create temporary text to measure size
         const { username, isFake } = Username.selectUsername();
         const usernameText = new window.PIXI.Text(username, {
-            fontSize: 12,
+            fontSize: 8,
             fontFamily: 'Arial',
             fill: 0x000000
         });
 
         // Calculate width and height based on text bubble
-        const width = usernameText.width + 10; // 5px padding on each side
+        const width = usernameText.width + 15; // 5px padding on each side
         const height = usernameText.height + 10;
 
         super(width, height);
@@ -72,7 +72,7 @@ export class Username extends Target {
 
         // Create username text with italic styling for fake users
         this.usernameText = new window.PIXI.Text(this.username, {
-            fontSize: 10,
+            fontSize: 8,
             fontFamily: 'Arial',
             fill: 0xffffff,
             fontWeight: 'bold',

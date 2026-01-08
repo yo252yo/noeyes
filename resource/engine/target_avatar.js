@@ -101,7 +101,7 @@ export class Avatar extends Target {
         }
 
         // Call attention function with -1 to consume attention
-        attention(-1, this.x, this.y);
+        attention(-2, this.x, this.y);
     }
 
     // Click behavior - find closest avatar and collaborate

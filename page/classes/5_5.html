@@ -8,24 +8,44 @@
     <link rel="stylesheet" href="../../resource/css/style.css">
     <link rel="stylesheet" href="../../resource/css/class.css">
     <script type="module">
-        import { setMaxAllowedDay } from '../../resource/js/common.js';
-        setMaxAllowedDay(6);
+        import { getStreamers } from '../../resource/js/common.js';
+
+        window.updateScoreDisplay = function () {
+            const streamers = getStreamers();
+            const scoreDisplay = document.getElementById('score-display');
+            scoreDisplay.textContent = streamers.length + '/4';
+
+            const nextButtonContainer = document.getElementById('next-button');
+            if (streamers.length >= 4) {
+                nextButtonContainer.style.display = 'block';
+            } else {
+                nextButtonContainer.style.display = 'none';
+            }
+        };
+
+        // Update on page load
+        document.addEventListener('DOMContentLoaded', window.updateScoreDisplay);
+
+        // Update periodically in case value changes from other sources
+        setInterval(window.updateScoreDisplay, 1000);
     </script>
 </head>
 
 <body style="margin: 0; padding: 20px;">
-    <h1 class="welcome-text">Time to rest!</h1>
+    <h1 class="welcome-text">Look at you go!</h1>
 
-    <p>Go to sleep, you've earned it!</p>
+    <p>Let's ensure your future by building a solid roster of <span class="highlight-text">Influencers</span>!</p>
 
     <div class="info-panel">
-        The next class will give you a sneak peek of the latest technological innovations revolutionizing our society!
+        <p>Recruit 4 <span class="highlight-text">Influencers</span> to continue this module. (<span
+                id="score-display">0/4</span>)
+        </p>
     </div>
 
-    <div style="text-align: center;">
-        <a href="../class.html" class="next-button">
+    <div style="text-align: center; display:none;" id="next-button">
+        <a href="5_6.html" class="next-button">
             <img src="../../resource/icons/next.png" alt="Continue" />
-            END
+            NEXT
         </a>
     </div>
 </body>

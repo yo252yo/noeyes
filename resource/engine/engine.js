@@ -1,5 +1,5 @@
 // Engine module that imports and initializes the window
-import { getNbChatters, getStreamers } from '../js/common.js';
+import { getAtt, getHiveOpen, getNbChatters, getStreamers, incrementAtt } from '../js/common.js';
 import { NUM_TARGETS, setNumTargets, setTutorialMode, TARGET_TYPES } from './config.js';
 import { interaction } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
@@ -71,6 +71,16 @@ function check_username_collisions() {
     }
 }
 
+// Function to handle attention inflation when hive is open
+function attention_inflation() {
+    if (!getHiveOpen()) {
+        return;
+    }
+    const currentAtt = getAtt();
+    const inflation = Math.ceil(currentAtt * 0.005);
+    incrementAtt(inflation);
+}
+
 // Dedicated ticker function for the main game loop
 function app_ticker(deltaTime) {
     // Update all targets (60fps)
@@ -94,6 +104,10 @@ function app_ticker(deltaTime) {
         TARGETS_LIST.forEach(target => {
             target.tick();
         });
+
+        // Handle attention inflation when hive is open
+        attention_inflation();
+
         secondAccumulator -= 1.0; // Reset accumulator, keeping remainder
     }
 }

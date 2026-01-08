@@ -7,25 +7,25 @@
     <title>The Influencers</title>
     <link rel="stylesheet" href="../../resource/css/style.css">
     <link rel="stylesheet" href="../../resource/css/class.css">
-
-    <script type="module" src="../../resource/js/common.js"></script>
+    <script type="module">
+        import { setMaxAllowedDay } from '../../resource/js/common.js';
+        setMaxAllowedDay(6);
+    </script>
 </head>
 
 <body style="margin: 0; padding: 20px;">
-    <h1 class="welcome-text">The Big Choice</h1>
+    <h1 class="welcome-text">Time to rest!</h1>
 
-    <p>So, today is the big day! Time to finally choose your <span class="highlight-text">Gender™</span>.</p>
+    <p>Go to sleep, you've earned it!</p>
 
     <div class="info-panel">
-        By law, we must remind you that you do not have to move forward if you are not ready.<br />
-        Take all the time you need.<br />
-        This day is as long as you want it to be.
+        The next class will give you a sneak peek of the latest technological innovations revolutionizing our society!
     </div>
 
     <div style="text-align: center;">
-        <a href="7_2.html" class="next-button">
+        <a href="../class.html" class="next-button">
             <img src="../../resource/icons/next.png" alt="Continue" />
-            NEXT
+            END
         </a>
     </div>
 </body>

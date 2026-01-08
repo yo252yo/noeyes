@@ -18,22 +18,20 @@ window.getNextChatPrice = function (currentChats) {
         4: 10,
         5: 15,
         6: 20,
-        7: 25,
-        8: 30, // <<< required for the ending
-        9: 40,
-        10: 50,
-        11: 75,
-        12: 100,
-        13: 150,
-        14: 200,
-        15: 300,
-        16: 500,
-        17: 1000
+        7: 30,
+        8: 50, // <<< required for the ending
+        9: 75,
+        10: 100,
+        11: 150,
+        12: 200,
+        13: 300,
+        14: 500,
+        15: 1000
     };
     if (currentChats in prices) {
         return prices[currentChats];
     } else {
-        return 1000 * (currentChats - 16);
+        return 1000 * (currentChats - 14);
     }
 };
 

@@ -5,9 +5,7 @@
 * any way to make it work with file:// protocol? we'd probably need to have all localstorage be mediated by the top level iframe
 * ofc id rly love to work with someone to prettify it...
 
-
-
-================== GAME ENGINE
+=========================
 
 * clicking within a window should update its z-index
 
@@ -29,3 +27,4 @@
 * iterate on title screen
 * rewrite ending.html blurb
 * ask grok to go over everything and make the CSS more consistent and prettier
+* on mobile in hive the buy button and recolor cant be reached after a while
