@@ -21,16 +21,11 @@ file:// protocol isnt supported =x
 
 * add farmbot feature (class and feature day 6), Ending I shows you your stats if they're machine enough, ending c could show you the list of chats who died 
 
-* add login page (streamer choice) to initialize streamer list, right now its hardcoded
-
 * add disclaimer/explanation about cognitive science
 
 * achivevements for certification every day
 
 * proofread/edit text with grok or chatgpt
-* mb adjust speed for phone screens
-* add OS start
-* update IRC when getting new streamers
 * neurosama narration
 * iterate on title screen
 * rewrite ending.html blurb

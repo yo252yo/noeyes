@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="../resource/css/style.css">
+    <style>
+        body {
+            background-color: #008080;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "MS Sans Serif", Tahoma, sans-serif;
+            overflow: hidden;
+        }
+
+        .startup-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .startup-logo {
+            font-size: 48px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            animation: logoPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 0.9;
+            }
+        }
+
+        .startup-progress {
+            width: 300px;
+            height: 20px;
+            background-color: #c0c0c0;
+            border: 2px inset #c0c0c0;
+            position: relative;
+        }
+
+        .startup-progress-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #000080 0%, #1084d0 100%);
+        }
+
+        .startup-text {
+            color: white;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .login-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-color: #008080;
+        }
+
+        .login-window {
+            background-color: #c0c0c0;
+            border: 2px outset #c0c0c0;
+            width: 400px;
+            padding: 20px;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-title {
+            background: linear-gradient(to right, #000080, #1084d0);
+            color: white;
+            padding: 8px 12px;
+            margin: -20px -20px 20px -20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .login-prompt {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #000;
+            font-size: 14px;
+        }
+
+        .login-input-section {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .login-input {
+            flex: 1;
+            padding: 4px 8px;
+            border: 1px inset #c0c0c0;
+            background-color: white;
+            font-family: "MS Sans Serif", sans-serif;
+            font-size: 12px;
+        }
+
+        .login-button {
+            padding: 4px 12px;
+            background-color: #c0c0c0;
+            border: 1px outset #c0c0c0;
+            font-family: "MS Sans Serif", sans-serif;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .login-button:hover {
+            background-color: #dfdfdf;
+        }
+
+        .login-button:active {
+            border: 1px inset #c0c0c0;
+        }
+
+        .streamers-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px inset #c0c0c0;
+            background-color: white;
+        }
+
+        .streamer-item {
+            padding: 8px 12px;
+            border-bottom: 1px solid #c0c0c0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .streamer-item:hover {
+            background-color: #000080;
+            color: white;
+        }
+
+        .streamer-item:last-child {
+            border-bottom: none;
+        }
+
+        .streamer-name {
+            font-weight: bold;
+            flex: 1;
+        }
+
+        .streamer-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Startup Animation Screen -->
+    <div id="startup-screen" class="startup-screen">
+        <div class="startup-logo">LarvaEduOS</div>
+        <div class="startup-progress">
+            <div id="startup-progress-fill" class="startup-progress-fill"></div>
+        </div>
+        <div id="startup-text" class="startup-text">Starting up...</div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-window">
+            <div class="login-title">LarvaEduOS</div>
+            <div class="login-prompt">To start your training program, pick an account.</div>
+
+            <div id="streamers-list" class="streamers-list">
+                <!-- Streamers will be populated here -->
+            </div>
+
+            <div class="login-input-section">
+                Add new account:
+                <input type="text" id="streamer-input" class="login-input" placeholder="twitch_id">
+                <button id="suggest-button" class="login-button">SUGGEST</button>
+            </div>
+
+            <div style="font-size: 10px; color: #666; margin-top: 8px; text-align: center; font-style: italic;">
+                Our educational software relies on <b>live chat</b> from Twitch. Choose accodingly.<br />
+                It cannot distinguish typos, offline streams and inexisting channels.
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getStreamers, addStreamer, addSuggestedStreamer, getSuggestedStreamers, getResourcePath } from '../resource/js/common.js';
+        import { getAvatarUrl } from '../resource/js/twitch.js';
+
+        // Check if we have streamers
+        const streamers = getStreamers();
+
+        if (streamers.length > 0) {
+            // Show startup animation
+            showStartupAnimation();
+        } else {
+            // Show login screen
+            showLoginScreen();
+        }
+
+        function showStartupAnimation() {
+            const startupScreen = document.getElementById('startup-screen');
+            const progressFill = document.getElementById('startup-progress-fill');
+            const startupText = document.getElementById('startup-text');
+
+            startupScreen.style.display = 'flex';
+
+            const messages = [
+                'Starting LarvaEduOS...',
+                'Loading Larva Training Program...',
+                'Retrieving user history...',
+                'Connecting to Twitch Chat...',
+                'Preparing user interface...',
+                'Almost ready...'
+            ];
+
+            let progress = 0;
+            let messageIndex = 0;
+
+            const interval = setInterval(() => {
+                progress += 2; // Faster progress (was 2)
+                progressFill.style.width = progress + '%';
+
+                // Update status message at certain progress points
+                const newMessageIndex = Math.floor((progress / 100) * messages.length);
+                if (newMessageIndex !== messageIndex && newMessageIndex < messages.length) {
+                    messageIndex = newMessageIndex;
+                    startupText.textContent = messages[messageIndex];
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    startupText.textContent = 'Welcome!';
+                    setTimeout(() => {
+                        window.location.href = 'screen.html';
+                    }, 300); // Shorter delay
+                }
+            }, 40); // Faster interval (was 50ms)
+        }
+
+        function showLoginScreen() {
+            const loginScreen = document.getElementById('login-screen');
+            const streamersList = document.getElementById('streamers-list');
+            const streamerInput = document.getElementById('streamer-input');
+            const suggestButton = document.getElementById('suggest-button');
+
+            loginScreen.style.display = 'flex';
+
+            // Populate suggested streamers
+            updateStreamersList();
+
+            // Handle suggest button
+            suggestButton.addEventListener('click', () => {
+                const username = streamerInput.value.trim().toLowerCase();
+                if (username) {
+                    addSuggestedStreamer(username);
+                    streamerInput.value = '';
+                    updateStreamersList();
+                }
+            });
+
+            // Handle enter key in input
+            streamerInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    suggestButton.click();
+                }
+            });
+        }
+
+        function updateStreamersList() {
+            const streamersList = document.getElementById('streamers-list');
+            const suggestedStreamers = getSuggestedStreamers().slice().reverse(); // Reverse so newest appears first
+
+            streamersList.innerHTML = '';
+
+            if (suggestedStreamers.length === 0) {
+                streamersList.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">No streamers suggested yet</div>';
+                return;
+            }
+
+            suggestedStreamers.forEach(streamer => {
+                const item = document.createElement('div');
+                item.className = 'streamer-item';
+                item.onclick = () => selectStreamer(streamer);
+
+                item.innerHTML = `
+                    <img src="" alt="${streamer}" class="streamer-avatar">
+                    <div class="streamer-name">${streamer}</div>
+                `;
+
+                // Load avatar asynchronously
+                getAvatarUrl(streamer).then(avatarUrl => {
+                    const img = item.querySelector('.streamer-avatar');
+                    img.src = avatarUrl;
+                });
+
+                streamersList.appendChild(item);
+            });
+        }
+
+        function selectStreamer(username) {
+            addStreamer(username);
+            // Refresh the page to trigger startup animation
+            window.location.reload();
+        }
+    </script>
+</body>
+
+</html>
