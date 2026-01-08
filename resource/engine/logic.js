@@ -1,6 +1,6 @@
 // Game logic functions for the engine
-import { incrementAtt, incrementValue, play_error_sfx, play_value_sfx } from '../js/common.js';
-import { decreaseNumTargets } from './config.js';
+import { getFarmOpen, getHiveOpen, incrementAtt, incrementValue, play_error_sfx, play_value_sfx } from '../js/common.js';
+import { decreaseNumTargets, IS_TUTORIAL } from './config.js';
 import { TARGETS_LIST } from './target.js';
 import { createAttFeedback, createCollabPopup, createInteractionFeedback, createValueFeedback, drawCollaborationLine } from './ui.js';
 
@@ -17,6 +17,13 @@ export function value(amount = 1, x, y) {
 
 // Handle attention change and feedback
 export function attention(amount = 1, x, y) {
+    if (IS_TUTORIAL || (amount < 0 && !getFarmOpen())) {
+        return;
+    }
+    if (amount > 0 && !IS_TUTORIAL && !getHiveOpen()) {
+        return;
+    }
+
     // Change attention from common.js
     incrementAtt(amount);
 

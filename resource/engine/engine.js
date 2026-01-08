@@ -1,6 +1,6 @@
 // Engine module that imports and initializes the window
 import { getNbChatters, getStreamers } from '../js/common.js';
-import { NUM_TARGETS, setNumTargets, TARGET_TYPES } from './config.js';
+import { NUM_TARGETS, setNumTargets, setTutorialMode, TARGET_TYPES } from './config.js';
 import { interaction } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
 import { Avatar } from './target_avatar.js';
@@ -103,6 +103,9 @@ export function start(targetType = TARGET_TYPES.EMPTY, tutorial_targets = 0) {
     globalApp = initializeEngine();
 
     CURRENT_TARGET_TYPE = targetType;
+
+    // Set tutorial mode based on tutorial_targets parameter
+    setTutorialMode(tutorial_targets > 0);
 
     // If target type is username and tutorial_targets is 0, set to number of chatters
     if (targetType === TARGET_TYPES.USERNAME && tutorial_targets === 0) {
