@@ -1,9 +1,9 @@
-
-================== THINKING
-should diary be paginated or big flow? should it appear character by character?
-corporate sponsor modifiers ???
-another lesson about before the fall explaining that they had class division based on money etc...
-file:// protocol isnt supported =x
+* should diary be paginated or big flow? should it appear character by character?
+* corporate sponsors modifiers ???
+* neurosama narration
+* extra lessons for worldbuilding
+* any way to make it work with file:// protocol? we'd probably need to have all localstorage be mediated by the top level iframe
+* ofc id rly love to work with someone to prettify it...
 
 
 
@@ -25,7 +25,7 @@ file:// protocol isnt supported =x
 
 * achivevements for certification every day
 
-* proofread/edit text with grok or chatgpt
-* neurosama narration
+* proofread/edit diary text with grok or chatgpt
 * iterate on title screen
 * rewrite ending.html blurb
+* ask grok to go over everything and make the CSS more consistent and prettier
