@@ -17,11 +17,18 @@ export function value(amount = 1, x, y) {
 
 // Handle attention change and feedback
 export function attention(amount = 1, x, y) {
-    if (IS_TUTORIAL || (amount < 0 && !getFarmOpen())) {
-        return;
+    // Avatars only consume attention outside tutorial and when farm is open
+    if (amount < 0) {
+        if (IS_TUTORIAL || !getFarmOpen()) {
+            return;
+        }
     }
-    if (amount > 0 && !IS_TUTORIAL && !getHiveOpen()) {
-        return;
+
+    // Usernames only produce attention if hive is open or during tutorial
+    if (amount > 0) {
+        if (!IS_TUTORIAL && !getHiveOpen()) {
+            return;
+        }
     }
 
     // Change attention from common.js
