@@ -40,8 +40,8 @@ export class Username extends Target {
     }
 
     static selectUsername() {
-        const chatters = getChatters();
-        const availableChatters = chatters.filter(chatter => !spawnedUsernames.has(chatter));
+        const chattersObj = getChatters();
+        const availableChatters = Object.keys(chattersObj).filter(chatter => !spawnedUsernames.has(chatter));
 
         if (availableChatters.length > 0) {
             const username = availableChatters[Math.floor(Math.random() * availableChatters.length)];
