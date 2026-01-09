@@ -1,8 +1,8 @@
 import { getAtt, getDay, getStreamers } from '../js/common.js';
 import { getAvatarUrl } from '../js/twitch.js';
+import { IS_TUTORIAL } from './config.js';
 import { attention, collab } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
-
 
 const borderColors = [
     "#BF0D0D", // Bright Red
@@ -55,7 +55,7 @@ export class Avatar extends Target {
         // Transpose AI spawning logic from Username class
         const regularAvatarCount = TARGETS_LIST.filter(target => target.streamer !== AI_STREAMER_NAME).length;
 
-        if (regularAvatarCount <= getStreamers().length) {
+        if (IS_TUTORIAL || regularAvatarCount <= getStreamers().length) {
             // Spawn regular streamer avatar
             const storedStreamers = getStreamers();
             if (storedStreamers.length > 0) {

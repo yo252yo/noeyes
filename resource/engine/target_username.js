@@ -1,6 +1,7 @@
 import { getChatters, getNbChatters, play_click_sfx, setRemovedChatter } from '../js/common.js';
 import { generateMultiple, generateTwitchUsername } from '../js/fake_users.js';
 import { chatters } from '../js/twitch_irc.js';
+import { IS_TUTORIAL } from './config.js';
 import { attention } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
 
@@ -46,7 +47,7 @@ export class Username extends Target {
             this.isAI = true;
         } else {
             const regularChatCount = TARGETS_LIST.filter(target => !target.isAI).length;
-            if (regularChatCount <= getNbChatters()) { // we are in it from super()
+            if (IS_TUTORIAL || regularChatCount <= getNbChatters()) { // we are in it from super()
                 this.username = username;
                 this.isFake = isFake;
                 this.isAI = false;
