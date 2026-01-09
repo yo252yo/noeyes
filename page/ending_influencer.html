@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../resource/css/class.css">
     <script src="../resource/js/pixi.min.js"></script>
     <script type="module">
-        import { play_problem_sfx, getNbChatters, getNbAIChatters } from '../resource/js/common.js';
+        import { play_problem_sfx, getNbChatters, getNbAIChatters, showAchievementPopup } from '../resource/js/common.js';
         import { start } from '../resource/engine/engine.js';
         import { TARGET_TYPES } from '../resource/engine/config.js';
 
@@ -25,6 +25,25 @@
                 // Integrate engine like in 3_A, with tutorial target being nbAiChatter
                 start(TARGET_TYPES.USERNAME, 0);
             }
+
+            let text = "S[t/c]reaming";
+            let title = "Ending I";
+
+            if (nbChatter <= nbAiChatter - 3) {
+                title = "True " + title;
+                text = "Machinic Eyes";
+
+                let et = document.getElementById("ending-title");
+                et.innerText = "True " + et.innerText;
+                document.getElementById("ending-extra").classList.add("highlight-text");
+                document.getElementById("ending-extra").style.fontSize = "48px";
+                document.getElementById("ending-extra").style.textTransform = "uppercase";
+            }
+
+            // Show achievement popup on page load
+            window.addEventListener('load', () => {
+                showAchievementPopup(text, title);
+            });
         });
     </script>
 </head>
@@ -34,10 +53,10 @@
     <div
         style="overflow-y: auto; height: 100vh; padding: 20px; width: 100vw; box-sizing: border-box; background: linear-gradient(180deg, #008080 0%, #004040 100%);">
         <div style="text-align: center; padding: 40px; max-width: 800px; margin: 0 auto;">
-            <div class="highlight-text" style="font-size: 24px; margin-bottom: 20px;">Ending I</div>
+            <div class="highlight-text" id="ending-title" style="font-size: 24px; margin-bottom: 20px;">Ending I</div>
             <h1
                 style="font-family: 'MS Sans Serif', Tahoma, sans-serif; color: #fff; font-size: 36px; margin-bottom: 20px; line-height: 1.2;">
-                S[t/c]reaming for machinic eyes
+                S[t/c]reaming for <span id="ending-extra">machinic eyes</span>
             </h1>
 
             <div style="margin-top: 40px;">

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../resource/css/style.css">
     <link rel="stylesheet" href="../resource/css/class.css">
     <script type="module">
-        import { play_problem_sfx, getRemovedChatters } from '../resource/js/common.js';
+        import { play_problem_sfx, getRemovedChatters, showAchievementPopup } from '../resource/js/common.js';
 
         // Play problem SFX when ending loads
         document.addEventListener('DOMContentLoaded', function () {
@@ -16,6 +16,27 @@
 
             // Create tombstones marquee if there are fallen chatters
             createTombstonesMarquee();
+
+            const removedChatters = getRemovedChatters();
+
+            let text = "[ESC]aping";
+            let title = "Ending C ";
+
+            if (Object.keys(removedChatters).length > 0) {
+                title = "True " + title;
+                text = "Dire Reality";
+
+                let et = document.getElementById("ending-title");
+                et.innerText = "True " + et.innerText;
+                document.getElementById("ending-extra").classList.add("highlight-text");
+                document.getElementById("ending-extra").style.fontSize = "38px";
+                document.getElementById("ending-extra").style.textTransform = "uppercase";
+            }
+
+            // Show achievement popup on page load
+            window.addEventListener('load', () => {
+                showAchievementPopup(text, title);
+            });
         });
 
         function createTombstonesMarquee() {
@@ -134,10 +155,10 @@
 <body
     style="background: linear-gradient(180deg, #008080 0%, #004040 100%); margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column;">
     <div style="text-align: center; padding: 40px; overflow-x:hidden;">
-        <div class="highlight-text" style="font-size: 24px; margin-bottom: 20px;">Ending C</div>
+        <div class="highlight-text" id="ending-title" style="font-size: 24px; margin-bottom: 20px;">Ending C</div>
         <h1
             style="font-family: 'MS Sans Serif', Tahoma, sans-serif; color: #fff; font-size: 36px; margin-bottom: 20px; line-height: 1.2;">
-            [ESC]aping from reality
+            [ESC]aping from <span id="ending-extra">reality</span>
         </h1>
 
         <div style="margin-top: 40px;">

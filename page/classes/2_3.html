@@ -29,6 +29,15 @@
             END
         </a>
     </div>
+
+    <script type="module">
+        import { showAchievementPopup } from '../../resource/js/common.js';
+
+        // Show achievement popup on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            showAchievementPopup("Licence to Influence");
+        });
+    </script>
 </body>
 
 </html>

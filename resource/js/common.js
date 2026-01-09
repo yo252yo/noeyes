@@ -41,8 +41,8 @@ export function playSFX(soundFile) {
     const sfxVolume = localStorage.getItem('sfx_volume');
     audio.volume = sfxVolume ? parseFloat(sfxVolume) : 0.7; // default to 0.7 if not set
 
-    // Play the sound
-    audio.play().catch(function (error) {
+    // Play the sound and return the promise
+    return audio.play().catch(function (error) {
         console.warn('SFX playback failed:', error);
     });
 }
@@ -81,6 +81,45 @@ export function play_ding_sfx() {
 
 export function play_chime_sfx() {
     playSFX(SFX_FILES.chime);
+}
+
+// Achievement popup functionality
+export function showAchievementPopup(text = "WIP", header = "Accomplishment") {
+    setTimeout(() => {
+        let popup = document.getElementById('achievement-popup');
+        // Create popup if it doesn't exist
+        if (!popup) {
+            popup = document.createElement('div');
+            popup.id = 'achievement-popup';
+            popup.className = 'achievement-popup';
+            popup.innerHTML = `
+            <img src="${getResourcePath('resource/icons/achievement.png')}" alt="Achievement" class="achievement-icon">
+            <div class="achievement-content">
+                <div class="achievement-header">${header}</div>
+                <div class="achievement-text">${text}</div>
+            </div>
+        `;
+            document.body.appendChild(popup);
+        } else {
+            // Update header and text if popup already exists
+            const headerElement = popup.querySelector('.achievement-header');
+            const textElement = popup.querySelector('.achievement-text');
+            if (headerElement) {
+                headerElement.textContent = header;
+            }
+            if (textElement) {
+                textElement.textContent = text;
+            }
+        }
+
+        play_value_sfx();
+    }, 500);
+
+    // Show popup with animation after delay
+    setTimeout(() => {
+        let popup = document.getElementById('achievement-popup');
+        popup.style.display = 'flex';
+    }, 1000);
 }
 
 // Windows 98 style loading bar functions
