@@ -465,6 +465,21 @@ export function incrementNbAIChatters(amount = 1) {
     setNbAIChatters(current + amount);
 }
 
+export function getNbAIStreamers() {
+    const stored = localStorage.getItem('nb_ai_streamers');
+    return stored ? parseInt(stored, 10) : 0;
+}
+
+export function setNbAIStreamers(nb) {
+    nb = Math.max(0, nb);
+    localStorage.setItem('nb_ai_streamers', nb.toString());
+}
+
+export function incrementNbAIStreamers(amount = 1) {
+    const current = getNbAIStreamers();
+    setNbAIStreamers(current + amount);
+}
+
 export function getFarmOpen() {
     const stored = localStorage.getItem('farm_open');
     return stored ? stored === 'true' : false;

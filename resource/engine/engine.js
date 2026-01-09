@@ -1,5 +1,5 @@
 // Engine module that imports and initializes the window
-import { getAtt, getHiveOpen, getNbAIChatters, getNbChatters, getStreamers, incrementAtt } from '../js/common.js';
+import { getAtt, getHiveOpen, getNbAIChatters, getNbAIStreamers, getNbChatters, getStreamers, incrementAtt } from '../js/common.js';
 import { NUM_TARGETS, setNumTargets, setTutorialMode, TARGET_TYPES } from './config.js';
 import { interaction } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
@@ -125,7 +125,7 @@ export function start(targetType = TARGET_TYPES.EMPTY, tutorial_targets = 0) {
     if (targetType === TARGET_TYPES.USERNAME && tutorial_targets === 0) {
         setNumTargets(getNbChatters() + getNbAIChatters());
     } else if (targetType === TARGET_TYPES.AVATAR && tutorial_targets === 0) {
-        setNumTargets(getStreamers().length);
+        setNumTargets(getStreamers().length + getNbAIStreamers());
     } else {
         setNumTargets(tutorial_targets);
     }

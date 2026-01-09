@@ -1,6 +1,6 @@
 import { TARGET_TYPES } from '../engine/config.js';
 import { requestNewTarget, start } from '../engine/engine.js';
-import { addStreamer, addSuggestedStreamer, getResourcePath, getStreamers, getSuggestedStreamers, getValue } from './common.js';
+import { addStreamer, addSuggestedStreamer, getDay, getResourcePath, getStreamers, getSuggestedStreamers, getValue } from './common.js';
 import { getAvatarUrl } from './twitch.js';
 
 // Price calculation function
@@ -16,20 +16,20 @@ function getStreamerPrice(currentCount) {
     }
 }
 
-// Update value and price display
-function updateFarmStats() {
-    const valueElement = document.getElementById('farm-value');
-    const priceElement = document.getElementById('next-price');
-    if (valueElement && priceElement) {
-        const currentValue = getValue();
-        const currentStreamers = getStreamers().length;
-        const nextPrice = getStreamerPrice(currentStreamers);
-        valueElement.textContent = currentValue;
-        priceElement.textContent = nextPrice;
+// Function to calculate next AI streamer price (uses attention currency)
+function getNextAIStreamerPrice(currentAIStreamers) {
+    const prices = {
+        1: 256,
+        2: 512,
+        3: 1024,
+        4: 8192,
+        5: 65536,
+    };
+    if (currentAIStreamers in prices) {
+        return prices[currentAIStreamers];
+    } else {
+        return Math.pow(2, 10 + 3 * (currentAIStreamers - 3));
     }
-
-    // Update streamer cell appearances based on current affordability
-    updateStreamerCellAppearances();
 }
 
 // Update visual state of streamer cells (greying/ungreying)
@@ -180,6 +180,71 @@ window.changeBackgroundColor = function (color) {
     window.closeColorPicker();
 };
 
+// Update farm stats including AI streamer stats
+function updateFarmStats() {
+    const valueElement = document.getElementById('farm-value');
+    const priceElement = document.getElementById('next-price');
+    if (valueElement && priceElement) {
+        const currentValue = getValue();
+        const currentStreamers = getStreamers().length;
+        const nextPrice = getStreamerPrice(currentStreamers);
+        valueElement.textContent = currentValue;
+        priceElement.textContent = nextPrice;
+    }
+
+    // Update AI streamer stats if day >= 6
+    const currentDay = getDay();
+    const aiStreamerRow = document.getElementById('ai-streamer-row');
+    const aiStreamerMembersEl = document.getElementById('ai-streamer-members');
+    const attentionEl = document.getElementById('attention');
+    const aiStreamerNextPriceEl = document.getElementById('ai-streamer-next-price');
+    const aiStreamerBuyButton = document.getElementById('buy-ai-streamer-btn');
+
+    if (currentDay >= 6) { // Show AI streamer row starting from day 6
+        if (aiStreamerRow) aiStreamerRow.style.display = 'table-row';
+
+        // Import AI streamer functions dynamically
+        import('./common.js').then(common => {
+            if (aiStreamerMembersEl) aiStreamerMembersEl.textContent = common.getNbAIStreamers();
+            if (attentionEl) attentionEl.textContent = common.getAtt();
+
+            const currentAIStreamers = common.getNbAIStreamers();
+            const aiStreamerNextPrice = getNextAIStreamerPrice(currentAIStreamers + 1);
+            if (aiStreamerNextPriceEl) aiStreamerNextPriceEl.textContent = aiStreamerNextPrice;
+
+            if (aiStreamerBuyButton) {
+                const currentAtt = common.getAtt();
+                const canAffordAI = currentAtt >= aiStreamerNextPrice;
+                aiStreamerBuyButton.disabled = !canAffordAI;
+                aiStreamerBuyButton.style.opacity = canAffordAI ? '1' : '0.5';
+                aiStreamerBuyButton.style.cursor = canAffordAI ? 'pointer' : 'not-allowed';
+            }
+        });
+    } else {
+        if (aiStreamerRow) aiStreamerRow.style.display = 'none';
+    }
+
+    // Update streamer cell appearances based on current affordability
+    updateStreamerCellAppearances();
+}
+
+// Buy AI streamer function
+window.buyAIStreamer = function () {
+    import('./common.js').then(common => {
+        const currentAIStreamers = common.getNbAIStreamers();
+        const price = getNextAIStreamerPrice(currentAIStreamers + 1);
+        const currentAtt = common.getAtt();
+
+        if (currentAtt >= price) {
+            common.incrementNbAIStreamers(1);
+            common.incrementAtt(-price);
+            common.play_chime_sfx();
+            requestNewTarget(); // Request the engine to spawn a new target
+            updateFarmStats();
+        }
+    });
+};
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', async function () {
     start(TARGET_TYPES.AVATAR, 0);
@@ -209,3 +274,4 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     });
 });
+window.buildStreamerList();

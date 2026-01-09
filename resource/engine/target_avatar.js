@@ -5,6 +5,9 @@ import { Target, TARGETS_LIST } from './target.js';
 
 export const borderColors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'magenta', 'lime', 'maroon', 'navy', 'olive', 'teal', 'aqua', 'fuchsia'];
 
+// AI streamer identifier
+const AI_STREAMER_NAME = '_$_robot';
+
 export class Avatar extends Target {
     constructor(width = 50, height = 50) {
         super(width, height);
@@ -18,18 +21,26 @@ export class Avatar extends Target {
     }
 
     selectStreamer() {
-        const storedStreamers = getStreamers();
-        if (storedStreamers.length > 0) {
-            const activeStreamerNames = TARGETS_LIST.map(target => target.streamer).filter(Boolean);
-            const availableStreamers = storedStreamers.filter(s => !activeStreamerNames.includes(s));
+        // Transpose AI spawning logic from Username class
+        const regularAvatarCount = TARGETS_LIST.filter(target => target.streamer !== AI_STREAMER_NAME).length;
 
-            if (availableStreamers.length > 0) {
-                return availableStreamers[Math.floor(Math.random() * availableStreamers.length)];
-            } else {
-                return storedStreamers[Math.floor(Math.random() * storedStreamers.length)];
+        if (regularAvatarCount <= getStreamers().length) {
+            // Spawn regular streamer avatar
+            const storedStreamers = getStreamers();
+            if (storedStreamers.length > 0) {
+                const activeStreamerNames = TARGETS_LIST.map(target => target.streamer).filter(Boolean);
+                const availableStreamers = storedStreamers.filter(s => !activeStreamerNames.includes(s));
+
+                if (availableStreamers.length > 0) {
+                    return availableStreamers[Math.floor(Math.random() * availableStreamers.length)];
+                } else {
+                    return storedStreamers[Math.floor(Math.random() * storedStreamers.length)];
+                }
             }
+            return 'vedal987'; // Fallback
+        } else {
+            return AI_STREAMER_NAME;
         }
-        return 'vedal987'; // Fallback
     }
 
     async createSprite() {
@@ -96,7 +107,7 @@ export class Avatar extends Target {
 
     // Tick behavior - consume attention
     tick() {
-        if (getDay() < 3) {
+        if (getDay() < 3 || this.streamer === AI_STREAMER_NAME) {
             return;
         }
 

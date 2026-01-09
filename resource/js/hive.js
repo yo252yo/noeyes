@@ -41,21 +41,21 @@ window.getNextChatPrice = function (currentChats) {
 // Function to calculate next AI chat price (uses value currency)
 window.getNextAIChatPrice = function (currentAIChats) {
     const prices = {
-        1: 10,
-        2: 25,
-        3: 50,
-        4: 100,
-        5: 200,
-        6: 400,
-        7: 800,
-        8: 1600,
-        9: 3200,
-        10: 6400
+        1: 8,
+        2: 32,
+        3: 64,
+        4: 128,
+        5: 256,
+        6: 512,
+        7: 1024,
+        8: 2048,
+        9: 4098,
+        10: 8192
     };
     if (currentAIChats in prices) {
         return prices[currentAIChats];
     } else {
-        return 6400 * Math.pow(2, currentAIChats - 10);
+        return Math.pow(2, currentAIChats + 3);
     }
 };
 

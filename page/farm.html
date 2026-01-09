@@ -57,6 +57,27 @@
 
         <div id="overlay" class="overlay" onclick="closeColorPicker()"></div>
 
+        <div class="hive-stats-container">
+            <table class="hive-table">
+                <tr id="ai-streamer-row" style="display: none;">
+                    <td>
+                        <table class="stats-table table-bg-purple">
+                            <tr>
+                                <td><span id="ai-streamer-members"></span> <span class="highlight-text"
+                                        style="margin:0px;padding:0px;font-size:smaller;">A.I. influencers</span></td>
+                                <td>Next: <span id="attention"></span> / <span id="ai-streamer-next-price"></span> Att.
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="button-cell">
+                        <button id="buy-ai-streamer-btn" class="popup-btn" onclick="buyAIStreamer()">Buy 1 A.I.
+                            Influencer</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
         <div class="farm-stats-container">
             <table class="stats-table">
                 <tr class="table-bg-blue">
