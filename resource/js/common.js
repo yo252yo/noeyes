@@ -271,7 +271,7 @@ setupNextButtonListeners();
 
 // Ending sequences configuration
 const ENDING_DAYS = {
-    influencer: [9, 24, 31, 35, 38, 47, 52, 55, 58, 65, 66, 67, 69, 71, 72, 73],
+    influencer: [9, 24, 31, 35, 38, 42, 52, 55, 58, 65, 66, 67, 69, 71, 72, 73],
     chat: [9, 10, 52641, 52642, 52661]
 };
 
