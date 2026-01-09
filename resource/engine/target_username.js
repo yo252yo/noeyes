@@ -37,15 +37,24 @@ export class Username extends Target {
         // Override graphics to use a container with background and text
         this.graphics = new window.PIXI.Container();
 
-        const regularChatCount = TARGETS_LIST.filter(target => !target.isAI).length;
-        if (regularChatCount <= getNbChatters()) { // we are in it from super()
-            this.username = username;
-            this.isFake = isFake;
-            this.isAI = false;
-        } else {
+        // Check if we're on the ending_influencer page - if so, always spawn AI targets
+        const isEndingInfluencer = window.location.pathname.includes('ending_influencer.html');
+
+        if (isEndingInfluencer) {
             this.username = "CHAT_" + AI_CHAT_INDEX;
             AI_CHAT_INDEX++;
             this.isAI = true;
+        } else {
+            const regularChatCount = TARGETS_LIST.filter(target => !target.isAI).length;
+            if (regularChatCount <= getNbChatters()) { // we are in it from super()
+                this.username = username;
+                this.isFake = isFake;
+                this.isAI = false;
+            } else {
+                this.username = "CHAT_" + AI_CHAT_INDEX;
+                AI_CHAT_INDEX++;
+                this.isAI = true;
+            }
         }
         this.draw();
     }

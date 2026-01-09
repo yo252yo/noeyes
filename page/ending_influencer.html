@@ -7,32 +7,47 @@
     <title>The End</title>
     <link rel="stylesheet" href="../resource/css/style.css">
     <link rel="stylesheet" href="../resource/css/class.css">
+    <script src="../resource/js/pixi.min.js"></script>
     <script type="module">
-        import { play_problem_sfx } from '../resource/js/common.js';
+        import { play_problem_sfx, getNbChatters, getNbAIChatters } from '../resource/js/common.js';
+        import { start } from '../resource/engine/engine.js';
+        import { TARGET_TYPES } from '../resource/engine/config.js';
 
         // Play problem SFX when ending loads
         document.addEventListener('DOMContentLoaded', function () {
             play_problem_sfx();
+
+            // Check condition for engine integration
+            const nbChatter = getNbChatters();
+            const nbAiChatter = getNbAIChatters();
+
+            if (nbChatter <= nbAiChatter - 3) {
+                // Integrate engine like in 3_A, with tutorial target being nbAiChatter
+                start(TARGET_TYPES.USERNAME, 0);
+            }
         });
     </script>
 </head>
 
 <body
-    style="background: linear-gradient(180deg, #008080 0%, #004040 100%); margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; align-items: center; flex-direction: column; overflow: auto;">
-    <div style="text-align: center; padding: 40px; max-width: 800px;">
-        <div class="highlight-text" style="font-size: 24px; margin-bottom: 20px;">Ending I</div>
-        <h1
-            style="font-family: 'MS Sans Serif', Tahoma, sans-serif; color: #fff; font-size: 36px; margin-bottom: 20px; line-height: 1.2;">
-            S[t/c]reaming for machinic eyes
-        </h1>
+    style="margin: 0; padding: 0; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; overflow: hidden;">
+    <div
+        style="overflow-y: auto; height: 100vh; padding: 20px; width: 100vw; box-sizing: border-box; background: linear-gradient(180deg, #008080 0%, #004040 100%);">
+        <div style="text-align: center; padding: 40px; max-width: 800px; margin: 0 auto;">
+            <div class="highlight-text" style="font-size: 24px; margin-bottom: 20px;">Ending I</div>
+            <h1
+                style="font-family: 'MS Sans Serif', Tahoma, sans-serif; color: #fff; font-size: 36px; margin-bottom: 20px; line-height: 1.2;">
+                S[t/c]reaming for machinic eyes
+            </h1>
 
-        <div style="margin-top: 40px;">
-            <a href="ending.html" class="next-button">
-                <img src="../resource/icons/next.png" alt="Continue" />
-                CONTINUE
-            </a>
+            <div style="margin-top: 40px;">
+                <a href="ending.html" class="next-button">
+                    <img src="../resource/icons/next.png" alt="Continue" />
+                    CONTINUE
+                </a>
+            </div>
+
         </div>
-
     </div>
 </body>
 
