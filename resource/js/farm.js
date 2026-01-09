@@ -274,4 +274,3 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     });
 });
-window.buildStreamerList();
