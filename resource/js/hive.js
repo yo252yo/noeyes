@@ -1,7 +1,10 @@
 import { TARGET_TYPES } from '../engine/config.js';
 import { requestNewTarget, start } from '../engine/engine.js';
-import { getAtt, getNbChatters, incrementAtt, incrementNbChatters, play_chime_sfx } from './common.js';
+import { getAtt, getDay, getNbAIChatters, getNbChatters, getValue, incrementAtt, incrementNbAIChatters, incrementNbChatters, incrementValue, play_chime_sfx } from './common.js';
 
+// Make functions available on window
+window.getValue = getValue;
+window.getNbAIChatters = getNbAIChatters;
 
 window.gameConfig = {
     targets: 'username',
@@ -35,6 +38,27 @@ window.getNextChatPrice = function (currentChats) {
     }
 };
 
+// Function to calculate next AI chat price (uses value currency)
+window.getNextAIChatPrice = function (currentAIChats) {
+    const prices = {
+        1: 10,
+        2: 25,
+        3: 50,
+        4: 100,
+        5: 200,
+        6: 400,
+        7: 800,
+        8: 1600,
+        9: 3200,
+        10: 6400
+    };
+    if (currentAIChats in prices) {
+        return prices[currentAIChats];
+    } else {
+        return 6400 * Math.pow(2, currentAIChats - 10);
+    }
+};
+
 // Update stats display
 window.updateHiveStats = function () {
     const chatMembersEl = document.getElementById('chat-members');
@@ -56,6 +80,39 @@ window.updateHiveStats = function () {
         buyButton.style.opacity = canAfford ? '1' : '0.5';
         buyButton.style.cursor = canAfford ? 'pointer' : 'not-allowed';
     }
+
+    // Update AI chat stats if day >= 6
+    const currentDay = getDay();
+    const aiChatRow = document.getElementById('ai-chat-row');
+    const aiBuyRow = document.getElementById('ai-buy-row');
+
+    if (currentDay >= 6) {
+        if (aiChatRow) aiChatRow.style.display = 'table-row';
+        if (aiBuyRow) aiBuyRow.style.display = 'table-row';
+
+        const aiChatMembersEl = document.getElementById('ai-chat-members');
+        const valueEl = document.getElementById('value');
+        const aiNextPriceEl = document.getElementById('ai-next-price');
+        const aiBuyButton = document.getElementById('buy-ai-chat-btn');
+
+        if (aiChatMembersEl) aiChatMembersEl.textContent = getNbAIChatters();
+        if (valueEl) valueEl.textContent = getValue();
+
+        const currentAIChats = getNbAIChatters();
+        const aiNextPrice = getNextAIChatPrice(currentAIChats + 1); // Next price for buying one more
+        if (aiNextPriceEl) aiNextPriceEl.textContent = aiNextPrice;
+
+        if (aiBuyButton) {
+            const currentValue = getValue();
+            const canAffordAI = currentValue >= aiNextPrice;
+            aiBuyButton.disabled = !canAffordAI;
+            aiBuyButton.style.opacity = canAffordAI ? '1' : '0.5';
+            aiBuyButton.style.cursor = canAffordAI ? 'pointer' : 'not-allowed';
+        }
+    } else {
+        if (aiChatRow) aiChatRow.style.display = 'none';
+        if (aiBuyRow) aiBuyRow.style.display = 'none';
+    }
 };
 
 // Buy chat function
@@ -69,6 +126,21 @@ window.buyChat = function () {
         incrementAtt(-price);
         play_chime_sfx();
         requestNewTarget(); // Request the engine to spawn a new target
+        updateHiveStats();
+    }
+};
+
+// Buy AI chat function
+window.buyAIChat = function () {
+    const currentAIChats = getNbAIChatters();
+    const price = getNextAIChatPrice(currentAIChats + 1);
+    const currentValue = getValue();
+
+    if (currentValue >= price) {
+        incrementNbAIChatters(1);
+        incrementValue(-price);
+        play_chime_sfx();
+        requestNewTarget(); // Request the engine to spawn a new AI target
         updateHiveStats();
     }
 };

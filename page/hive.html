@@ -19,23 +19,53 @@
         </div>
 
         <div class="hive-stats-container">
-            <table class="stats-table table-bg-blue">
+            <table class="hive-table">
                 <tr>
-                    <td>Chat members:</td>
-                    <td><span id="chat-members"></span></td>
+                    <td>
+                        <table class="stats-table table-bg-blue">
+                            <tr>
+                                <td>Chat members:</td>
+                                <td><span id="chat-members"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Attention:</td>
+                                <td><span id="attention"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Next Chat price:</td>
+                                <td><span id="next-price"></span> Att.</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="button-cell">
+                        <button id="buy-chat-btn" class="popup-btn" onclick="buyChat()">Buy 1 Chat</button>
+                    </td>
                 </tr>
-                <tr>
-                    <td>Attention:</td>
-                    <td><span id="attention"></span></td>
+                <tr class="spacer-row">
+                    <td colspan="2" style="height: 50px;"></td>
                 </tr>
-                <tr>
-                    <td>Next Chat price:</td>
-                    <td><span id="next-price"></span> Att.</td>
+                <tr id="ai-chat-row" style="display: none;">
+                    <td>
+                        <table class="stats-table table-bg-purple">
+                            <tr>
+                                <td>A.I. Chat members:</td>
+                                <td><span id="ai-chat-members"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Value:</td>
+                                <td><span id="value"></span></td>
+                            </tr>
+                            <tr>
+                                <td>Next A.I. Chat price:</td>
+                                <td><span id="ai-next-price"></span> Val.</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="button-cell">
+                        <button id="buy-ai-chat-btn" class="popup-btn" onclick="buyAIChat()">Buy 1 A.I. Chat</button>
+                    </td>
                 </tr>
             </table>
-            <div class="buy-column">
-                <button id="buy-chat-btn" class="popup-btn" onclick="buyChat()">Buy 1 Chat</button>
-            </div>
         </div>
 
         <div id="color-picker-popup" class="color-picker-popup">

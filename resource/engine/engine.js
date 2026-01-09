@@ -1,5 +1,5 @@
 // Engine module that imports and initializes the window
-import { getAtt, getHiveOpen, getNbChatters, getStreamers, incrementAtt } from '../js/common.js';
+import { getAtt, getHiveOpen, getNbAIChatters, getNbChatters, getStreamers, incrementAtt } from '../js/common.js';
 import { NUM_TARGETS, setNumTargets, setTutorialMode, TARGET_TYPES } from './config.js';
 import { interaction } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
@@ -48,7 +48,7 @@ export function requestNewTarget() {
 function check_username_collisions() {
     if (CURRENT_TARGET_TYPE !== TARGET_TYPES.USERNAME) return;
 
-    const usernameTargets = TARGETS_LIST.filter(target => target instanceof Username);
+    const usernameTargets = TARGETS_LIST.filter(target => ((target instanceof Username) && !target.isAI));
     if (usernameTargets.length < 2) return;
 
     // Simple collision check - check each pair
@@ -123,7 +123,7 @@ export function start(targetType = TARGET_TYPES.EMPTY, tutorial_targets = 0) {
 
     // If target type is username and tutorial_targets is 0, set to number of chatters
     if (targetType === TARGET_TYPES.USERNAME && tutorial_targets === 0) {
-        setNumTargets(getNbChatters());
+        setNumTargets(getNbChatters() + getNbAIChatters());
     } else if (targetType === TARGET_TYPES.AVATAR && tutorial_targets === 0) {
         setNumTargets(getStreamers().length);
     } else {

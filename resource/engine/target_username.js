@@ -1,8 +1,8 @@
-import { getChatters, play_click_sfx, setRemovedChatter } from '../js/common.js';
+import { getChatters, getNbChatters, play_click_sfx, setRemovedChatter } from '../js/common.js';
 import { generateMultiple, generateTwitchUsername } from '../js/fake_users.js';
 import { chatters } from '../js/twitch_irc.js';
 import { attention } from './logic.js';
-import { Target } from './target.js';
+import { Target, TARGETS_LIST } from './target.js';
 
 // Track spawned usernames for uniqueness (local to engine)
 const spawnedUsernames = new Set();
@@ -12,6 +12,7 @@ let removedUsernameHistory = [];
 
 // Color options for username backgrounds (dark colors as hex codes for consistent styling)
 const backgroundColors = ['#FF0000', '#0000FF', '#00FF00', '#800080', '#FFA500', '#FF00FF', '#800000', '#000080', '#808000', '#008080', '#FF00FF', '#FFFF00', '#00FFFF', '#FFC0CB', '#FFA07A'];
+let AI_CHAT_INDEX = 0;
 
 export class Username extends Target {
     // Speed bounds - can be overridden by subclasses
@@ -35,8 +36,17 @@ export class Username extends Target {
 
         // Override graphics to use a container with background and text
         this.graphics = new window.PIXI.Container();
-        this.username = username;
-        this.isFake = isFake;
+
+        const regularChatCount = TARGETS_LIST.filter(target => !target.isAI).length;
+        if (regularChatCount <= getNbChatters()) { // we are in it from super()
+            this.username = username;
+            this.isFake = isFake;
+            this.isAI = false;
+        } else {
+            this.username = "CHAT_" + AI_CHAT_INDEX;
+            AI_CHAT_INDEX++;
+            this.isAI = true;
+        }
         this.draw();
     }
 

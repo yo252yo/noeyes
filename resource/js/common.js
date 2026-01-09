@@ -450,6 +450,21 @@ export function incrementNbChatters(amount = 1) {
     setNbChatters(Math.max(1, current + amount));
 }
 
+export function getNbAIChatters() {
+    const stored = localStorage.getItem('nb_ai_chatters');
+    return stored ? parseInt(stored, 10) : 0;
+}
+
+export function setNbAIChatters(nb) {
+    nb = Math.max(0, nb);
+    localStorage.setItem('nb_ai_chatters', nb.toString());
+}
+
+export function incrementNbAIChatters(amount = 1) {
+    const current = getNbAIChatters();
+    setNbAIChatters(current + amount);
+}
+
 export function getFarmOpen() {
     const stored = localStorage.getItem('farm_open');
     return stored ? stored === 'true' : false;
