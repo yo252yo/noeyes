@@ -135,7 +135,7 @@ class WindowDragger {
     startDrag(e) {
         this.isDragging = true;
         // Update interaction timestamp when dragging starts
-        windowZIndexManager.updateInteraction(this.windowElement);
+        windowManager.bringToFront(this.windowElement);
         const rect = this.windowElement.getBoundingClientRect();
         const coords = this.getClientCoords(e);
         this.offsetX = coords.clientX - rect.left;
@@ -146,8 +146,12 @@ class WindowDragger {
     moveDrag(e) {
         if (this.isDragging) {
             const coords = this.getClientCoords(e);
+            // Use transform for smoother dragging performance
             this.windowElement.style.left = (coords.clientX - this.offsetX) + 'px';
             this.windowElement.style.top = (coords.clientY - this.offsetY) + 'px';
+
+            // Bring window to front during dragging to ensure it stays on top
+            windowManager.bringToFront(this.windowElement);
             e.preventDefault();
         }
     }
@@ -168,6 +172,7 @@ class WindowDragger {
         document.addEventListener('touchend', (e) => this.endDrag(e));
     }
 }
+
 
 // Shared Close Button Touch Handler
 class CloseButtonHandler {
@@ -194,22 +199,27 @@ class CloseButtonHandler {
     }
 }
 
-// Window Z-Index Manager
-class WindowZIndexManager {
+// Window Manager - Unified class handling z-index and interactions
+class WindowManager {
     constructor() {
         this.windows = new Map(); // window element -> last interaction timestamp
         this.baseZIndex = 1000;
+        this.isDragging = false;
+        this.isResizing = false;
+        this.activeWindow = null;
     }
 
     registerWindow(windowElement) {
         this.windows.set(windowElement, 0);
         this.updateZIndices();
+        this.setupWindowListeners(windowElement);
     }
 
-    updateInteraction(windowElement) {
+    bringToFront(windowElement) {
         const now = Date.now();
         this.windows.set(windowElement, now);
         this.updateZIndices();
+        this.activeWindow = windowElement;
     }
 
     updateZIndices() {
@@ -224,14 +234,68 @@ class WindowZIndexManager {
         });
     }
 
+    setupWindowListeners(windowElement) {
+        // Window element listeners (capturing phase)
+        windowElement.addEventListener('mousedown', () => this.bringToFront(windowElement), true);
+        windowElement.addEventListener('touchstart', () => this.bringToFront(windowElement), true);
+
+        // Window content area listeners
+        const contentArea = windowElement.querySelector('.window-content');
+        if (contentArea) {
+            contentArea.addEventListener('mousedown', () => this.bringToFront(windowElement));
+            contentArea.addEventListener('touchstart', () => this.bringToFront(windowElement));
+        }
+
+        // Iframe listeners
+        const iframe = windowElement.querySelector('.window-content iframe');
+        if (iframe) {
+            this.setupIframeListeners(iframe, windowElement);
+        }
+    }
+
+    setupIframeListeners(iframe, windowElement) {
+        try {
+            // Direct iframe element listeners
+            iframe.addEventListener('mousedown', () => this.bringToFront(windowElement), true);
+            iframe.addEventListener('touchstart', () => this.bringToFront(windowElement), true);
+
+            // Iframe content listeners (if same-origin)
+            if (iframe.contentDocument) {
+                iframe.contentDocument.addEventListener('mousedown', () => this.bringToFront(windowElement));
+                iframe.contentDocument.addEventListener('touchstart', () => this.bringToFront(windowElement));
+
+                if (iframe.contentDocument.body) {
+                    iframe.contentDocument.body.addEventListener('mousedown', () => this.bringToFront(windowElement));
+                    iframe.contentDocument.body.addEventListener('touchstart', () => this.bringToFront(windowElement));
+                }
+            }
+
+            // Handle dynamically loaded content
+            iframe.addEventListener('load', () => {
+                if (iframe.contentDocument) {
+                    iframe.contentDocument.addEventListener('mousedown', () => this.bringToFront(windowElement));
+                    iframe.contentDocument.addEventListener('touchstart', () => this.bringToFront(windowElement));
+
+                    if (iframe.contentDocument.body) {
+                        iframe.contentDocument.body.addEventListener('mousedown', () => this.bringToFront(windowElement));
+                        iframe.contentDocument.body.addEventListener('touchstart', () => this.bringToFront(windowElement));
+                    }
+                }
+            });
+        } catch (e) {
+            // Cross-origin iframes will throw security errors
+            console.log('Could not access iframe content:', e.message);
+        }
+    }
+
     unregisterWindow(windowElement) {
         this.windows.delete(windowElement);
         this.updateZIndices();
     }
 }
 
-// Global Z-Index Manager instance
-const windowZIndexManager = new WindowZIndexManager();
+// Global Window Manager instance
+const windowManager = new WindowManager();
 
 // Global resize variables
 let isResizing = false;
@@ -315,7 +379,7 @@ function startResize(e, windowElement) {
     resizeWindow = windowElement;
 
     // Update interaction timestamp when resizing starts
-    windowZIndexManager.updateInteraction(windowElement);
+    windowManager.bringToFront(windowElement);
 
     const coords = e.touches && e.touches.length > 0 ?
         { clientX: e.touches[0].clientX, clientY: e.touches[0].clientY } :
@@ -330,11 +394,14 @@ function startResize(e, windowElement) {
     startLeft = rect.left;
     startTop = rect.top;
 
-    // Disable pointer events on iframe during resize to allow proper event handling
-    const iframe = windowElement.querySelector('.window-content iframe');
-    if (iframe) {
+    // Disable pointer events on ALL iframes during resize to prevent cursor capture
+    const allIframes = document.querySelectorAll('iframe');
+    allIframes.forEach(iframe => {
         iframe.style.pointerEvents = 'none';
-    }
+    });
+
+    // Set a high z-index on the resizing window to ensure it stays on top
+    windowElement.style.zIndex = '9999';
 
     e.preventDefault();
     document.addEventListener('mousemove', doResize);
@@ -396,10 +463,15 @@ function doResize(e) {
 
 function endResize(e) {
     if (isResizing) {
-        // Re-enable pointer events on iframe after resize
-        const iframe = resizeWindow.querySelector('.window-content iframe');
-        if (iframe) {
+        // Re-enable pointer events on ALL iframes after resize
+        const allIframes = document.querySelectorAll('iframe');
+        allIframes.forEach(iframe => {
             iframe.style.pointerEvents = '';
+        });
+
+        // Restore the window's z-index to be managed by the window manager
+        if (resizeWindow) {
+            windowManager.bringToFront(resizeWindow);
         }
 
         isResizing = false;
@@ -427,24 +499,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const hiveIcon = document.getElementById('hive-icon');
     const hiveWindow = document.getElementById('hive-window');
 
-    // Register windows with z-index manager
-    windowZIndexManager.registerWindow(diaryWindow);
-    windowZIndexManager.registerWindow(classWindow);
-    windowZIndexManager.registerWindow(farmWindow);
-    windowZIndexManager.registerWindow(hiveWindow);
+    // Register windows with window manager
+    windowManager.registerWindow(diaryWindow);
+    windowManager.registerWindow(classWindow);
+    windowManager.registerWindow(farmWindow);
+    windowManager.registerWindow(hiveWindow);
 
     // Toggle functions
     function displayDiary() {
         diaryWindow.style.visibility = 'visible';
         // Update interaction when opening window
-        windowZIndexManager.updateInteraction(diaryWindow);
+        windowManager.bringToFront(diaryWindow);
         play_click_sfx();
     }
 
     function displayClass() {
         classWindow.style.visibility = 'visible';
         // Update interaction when opening window
-        windowZIndexManager.updateInteraction(classWindow);
+        windowManager.bringToFront(classWindow);
         play_click_sfx();
     }
 
@@ -452,7 +524,7 @@ document.addEventListener('DOMContentLoaded', function () {
         farmWindow.style.visibility = 'visible';
         setFarmOpen(true);
         // Update interaction when opening window
-        windowZIndexManager.updateInteraction(farmWindow);
+        windowManager.bringToFront(farmWindow);
         play_click_sfx();
     }
 
@@ -460,19 +532,9 @@ document.addEventListener('DOMContentLoaded', function () {
         hiveWindow.style.visibility = 'visible';
         setHiveOpen(true);
         // Update interaction when opening window
-        windowZIndexManager.updateInteraction(hiveWindow);
+        windowManager.bringToFront(hiveWindow);
         play_click_sfx();
     }
-
-    // Add click event listeners to window content areas for interaction tracking
-    diaryWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(diaryWindow));
-    diaryWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(diaryWindow));
-    classWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(classWindow));
-    classWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(classWindow));
-    farmWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(farmWindow));
-    farmWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(farmWindow));
-    hiveWindow.addEventListener('mousedown', () => windowZIndexManager.updateInteraction(hiveWindow));
-    hiveWindow.addEventListener('touchstart', () => windowZIndexManager.updateInteraction(hiveWindow));
 
     // Instantiate icon draggers
     const diaryIconDragger = new IconDragger(diaryIcon, displayDiary);
