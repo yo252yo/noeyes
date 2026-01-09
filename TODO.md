@@ -11,7 +11,6 @@
 * the default avatar resource is failing on itch?
 * achivevements for certification every day
 * proofread/edit diary text with grok or chatgpt
-* rewrite ending.html blurb
 * ask grok to go over everything and make the CSS more consistent and prettier
 * on mobile in hive the buy button and recolor cant be reached after a while
 * play all the game jam games
