@@ -3,7 +3,38 @@ import { getAvatarUrl } from '../js/twitch.js';
 import { attention, collab } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
 
-export const borderColors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'magenta', 'lime', 'maroon', 'navy', 'olive', 'teal', 'aqua', 'fuchsia'];
+
+const borderColors = [
+    "#BF0D0D", // Bright Red
+    "#E6B700", // Golden Yellow
+    "#00AEE5", // Bright Blue
+    "#00C957", // Emerald Green
+    "#8A2BE2", // Blue Violet
+    "#FF6EC7", // Hot Pink
+    "#1AA34A", // Medium Green
+    "#914E00", // Brown
+    "#0072B5", // Dark Blue
+    "#C90076", // Deep Pink
+    "#915F1F", // Light Brown
+    "#009D9B", // Teal
+    "#F26522", // Orange
+    "#7F38EC", // Purple
+    "#5C3317", // Dark Brown
+    "#3D8C84", // Blue-Green
+    "#DB70DB", // Orchid
+    "#C11B17", // Crimson
+    "#EDDA74", // Light Yellow
+    "#70DB93"  // Light Green
+];
+
+// Function to darken a hex color
+function darkenHex(hex, factor = 0.8) {
+    const num = parseInt(hex.slice(1), 16);
+    const r = Math.floor((num >> 16) * factor);
+    const g = Math.floor(((num >> 8) & 0xff) * factor);
+    const b = Math.floor((num & 0xff) * factor);
+    return '#' + ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0');
+}
 
 // AI streamer identifier
 const AI_STREAMER_NAME = '_$_robot';
@@ -46,14 +77,18 @@ export class Avatar extends Target {
     async createSprite() {
         const avatarUrl = await getAvatarUrl(this.streamer);
         const randomColor = borderColors[Math.floor(Math.random() * borderColors.length)];
+        const darkerColor = darkenHex(randomColor, 0.8);
 
         this.avatarContainer = new window.PIXI.Container();
 
-        // Create circular border - fill the target size
+        // Create circular border with 4px darker border
         const radius = this.width / 2;
         const borderGraphics = new window.PIXI.Graphics();
-        borderGraphics.beginFill(window.PIXI.utils.string2hex(randomColor));
-        borderGraphics.drawCircle(0, 0, radius); // Fill the target size
+        borderGraphics.beginFill(darkerColor);
+        borderGraphics.drawCircle(0, 0, radius);
+        borderGraphics.endFill();
+        borderGraphics.beginFill(randomColor);
+        borderGraphics.drawCircle(0, 0, radius - 4);
         borderGraphics.endFill();
         this.avatarContainer.addChild(borderGraphics);
 
