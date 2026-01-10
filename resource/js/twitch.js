@@ -1,6 +1,6 @@
 // Streamer arrays
 const streamers = [];
-const defaultStreamers = ['vedal987', 'hasanabi', 'shindigs', 'vinesauce', 'dougdoug'];
+const defaultStreamers = ['vedal987', 'hasanabi', 'shindigs', 'vinesauce', 'dougdoug', 'day9tv'];
 const allStreamers = [...(window.customStreamers || []), ...defaultStreamers.filter(s => !(window.customStreamers || []).includes(s))];
 const suggested_streamers = allStreamers.reverse();
 
