@@ -50,6 +50,15 @@
                 console.warn('SFX playback failed:', error);
             });
         }
+
+        // Parse custom streamers from URL parameter 'for'
+        const urlParams = new URLSearchParams(window.location.search);
+        const forParam = urlParams.get('for');
+        let customStreamers = [];
+        if (forParam) {
+            customStreamers = forParam.split(',').map(s => s.trim()).filter(s => s);
+        }
+        window.customStreamers = customStreamers;
     </script>
     <script type="module">
         import './resource/js/common.js';
