@@ -1,7 +1,6 @@
+// Streamer arrays
 const streamers = [];
-const defaultStreamers = ['vedal987', 'dougdoug', 'shindigs', 'ellie_minibot', 'tenma', 'laynalazar'];
-const allStreamers = [...(window.customStreamers || []), ...defaultStreamers.filter(s => !(window.customStreamers || []).includes(s))];
-const suggested_streamers = allStreamers.reverse();
+const suggested_streamers = (['vedal987', 'hasanabi', 'shindigs', 'vinesauce', 'dougdoug']).reverse();
 
 import { getStreamers, getSuggestedStreamers, setStreamers, setSuggestedStreamers } from './common.js';
 
@@ -19,7 +18,7 @@ if (getSuggestedStreamers().length === 0) {
 const streamerAvatars = {};
 
 // Fallback avatar
-const DEFAULT_AVATAR = '/resource/avatars/default.png';
+const DEFAULT_AVATAR = '../resource/avatars/default.png';
 
 export async function getAvatarUrl(username) {
     // Check if we already have this avatar cached
@@ -28,7 +27,7 @@ export async function getAvatarUrl(username) {
     }
 
     // First try local avatar file
-    const localAvatarPath = `/resource/avatars/${username}.png`;
+    const localAvatarPath = `../resource/avatars/${username}.png`;
     try {
         const response = await fetch(localAvatarPath, { method: 'HEAD' });
         if (response.ok) {
