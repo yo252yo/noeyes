@@ -1,6 +1,9 @@
 // Streamer arrays
 const streamers = [];
-const suggested_streamers = (['vedal987', 'hasanabi', 'shindigs', 'vinesauce', 'dougdoug']).reverse();
+const defaultStreamers = ['vedal987', 'hasanabi', 'shindigs', 'vinesauce', 'dougdoug'];
+const allStreamers = [...(window.customStreamers || []), ...defaultStreamers.filter(s => !(window.customStreamers || []).includes(s))];
+const suggested_streamers = allStreamers.reverse();
+
 
 import { getStreamers, getSuggestedStreamers, setStreamers, setSuggestedStreamers } from './common.js';
 
