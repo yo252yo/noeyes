@@ -13,10 +13,10 @@
         window.updateScoreDisplay = function () {
             const value = getValue();
             const scoreDisplay = document.getElementById('score-display');
-            scoreDisplay.textContent = value + '/5000';
+            scoreDisplay.textContent = value + '/2500';
 
             const nextButtonContainer = document.getElementById('next-button');
-            if (value >= 5000) {
+            if (value >= 2500) {
                 nextButtonContainer.style.display = 'block';
             } else {
                 nextButtonContainer.style.display = 'none';
@@ -37,8 +37,8 @@
     <p>Your <span class="highlight-text">future</span> is in your hands. You know what to do.</p>
 
     <div class="info-panel">
-        <p>Gather 5000 <span class="highlight-text">Value</span> to unlock your <span
-                class="highlight-text">Gender™</span>. (<span id="score-display">0/5000</span>)
+        <p>Gather 2500 <span class="highlight-text">Value</span> to unlock your <span
+                class="highlight-text">Gender™</span>. (<span id="score-display">0/2500</span>)
         </p>
     </div>
 
