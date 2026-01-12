@@ -24,7 +24,7 @@ export class Username extends Target {
         // Create temporary text to measure size
         const { username, isFake } = Username.selectUsername();
         const usernameText = new window.PIXI.Text(username, {
-            fontSize: 8,
+            fontSize: 10,
             fontFamily: 'Arial',
             fill: 0x000000
         });
@@ -92,7 +92,7 @@ export class Username extends Target {
 
         // Create username text with italic styling for fake users
         this.usernameText = new window.PIXI.Text(this.username, {
-            fontSize: 8,
+            fontSize: 10,
             fontFamily: 'Arial',
             fill: 0xffffff,
             fontWeight: 'bold',
@@ -111,7 +111,7 @@ export class Username extends Target {
         this.usernameText.style.fill = blendedColor;
 
         // Create oval background with radial gradient (add padding to prevent edge cropping)
-        const bg = this.createGradientOval(Math.ceil(1.1 * this.usernameText.width) + 8, this.usernameText.height + 10, bgColor, highlightRgba, blendedColor);
+        const bg = this.createGradientOval(Math.ceil(1.1 * this.usernameText.width) + 10, this.usernameText.height + 10, bgColor, highlightRgba, blendedColor);
 
         // Position background at center
         bg.x = 0;
