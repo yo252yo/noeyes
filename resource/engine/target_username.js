@@ -1,6 +1,5 @@
 import { getChatters, getNbChatters, play_click_sfx, setRemovedChatter } from '../js/common.js';
 import { generateMultiple, generateTwitchUsername } from '../js/fake_users.js';
-import { chatters } from '../js/twitch_irc.js';
 import { IS_TUTORIAL } from './config.js';
 import { attention } from './logic.js';
 import { Target, TARGETS_LIST } from './target.js';
@@ -210,7 +209,8 @@ export class Username extends Target {
             }
 
             // Store in localStorage - pick one random message
-            const messages = chatters.get(this.username) || [];
+            const chattersObj = getChatters();
+            const messages = chattersObj[this.username] || [];
             const randomMessage = messages.length > 0 ? messages[Math.floor(Math.random() * messages.length)] : '';
             setRemovedChatter(this.username, randomMessage);
         }
