@@ -585,4 +585,12 @@ export function callItADay() {
         showPopup('You must complete all your classes for the day before you can log off', getResourcePath('resource/icons/error.png'), true);
         play_error_sfx();
     }
+
+    // Shift focus to the OK button in the popup to prevent Enter key from triggering callItADay again
+    setTimeout(() => {
+        const okButton = document.querySelector('.popup-ok-btn');
+        if (okButton) {
+            okButton.focus();
+        }
+    }, 100);
 }
