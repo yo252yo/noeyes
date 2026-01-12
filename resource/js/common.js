@@ -327,8 +327,6 @@ export function addStreamer(username) {
     if (!current.includes(username)) {
         current.push(username);
         setStreamers(current);
-        // Dispatch event to notify twitch_irc.js to join the new streamer
-        window.dispatchEvent(new CustomEvent('streamerAdded', { detail: { username } }));
     }
 }
 

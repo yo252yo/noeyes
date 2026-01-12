@@ -14,6 +14,9 @@ for (const [user, msgs] of Object.entries(storedChatters)) {
 // Expose chatters globally for access from iframes
 window.chatters = chatters;
 
+// Track joined streamers to detect new ones
+const joinedStreamers = new Set();
+
 console.log('Starting Twitch IRC client…');
 
 const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
@@ -22,20 +25,21 @@ ws.onopen = () => {
     //console.log('WS OPEN');
     ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
     ws.send(`NICK justinfan${Math.floor(Math.random() * 1e6)}`);
-    getStreamers().forEach(s => {
-        //console.log('JOINING', s);
-        ws.send(`JOIN #${s}`);
-    });
 };
 
-// Listen for streamerAdded events to join new streamers dynamically
-window.addEventListener('streamerAdded', (event) => {
-    const { username } = event.detail;
-    if (ws.readyState === WebSocket.OPEN) {
-        console.log('JOINING NEW STREAMER', username);
-        ws.send(`JOIN #${username}`);
+// Poll localStorage for new streamers to join (since iframe communication is forbidden)
+setInterval(() => {
+    const currentStreamers = getStreamers();
+    for (const streamer of currentStreamers) {
+        if (!joinedStreamers.has(streamer)) {
+            if (ws.readyState === WebSocket.OPEN) {
+                console.log('JOINING NEW STREAMER FROM POLL:', streamer);
+                ws.send(`JOIN #${streamer}`);
+                joinedStreamers.add(streamer);
+            }
+        }
     }
-});
+}, 5000); // Check every 5 seconds
 
 ws.onerror = (e) => {
     console.error('WS ERROR', e);
@@ -89,9 +93,7 @@ ws.onmessage = (e) => {
 
         // Store the message
         chatters.get(username).push(message);
-        //console.log(username + ":" + message);
-
-        // Store chatters in localStorage
+        console.log('CHATTER: ', username + ':', message);
         setChatters(Object.fromEntries(chatters));
     }
 };
