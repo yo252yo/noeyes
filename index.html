@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>I Have No Eyes And I Must Stream</title>
     <link rel="stylesheet" href="resource/css/style.css">
-    <script>
+
+    <script type="module">
         var MUSIC_AUDIO = new Audio();
         MUSIC_AUDIO.loop = "loop";
 
@@ -58,12 +59,15 @@
         if (forParam) {
             customStreamers = forParam.split(',').map(s => s.trim()).filter(s => s);
         }
-        window.customStreamers = customStreamers;
-    </script>
-    <script type="module">
-        import './resource/js/common.js';
-        import './resource/js/twitch.js';
+
+        import { getStreamers, addSuggestedStreamers } from './resource/js/common.js';
+        import { defaultStreamers } from './resource/js/twitch.js';
         import './resource/js/twitch_irc.js';
+
+        addSuggestedStreamers(defaultStreamers.reverse());
+        if (customStreamers) {
+            addSuggestedStreamers(customStreamers);
+        }
     </script>
 </head>
 
