@@ -11,6 +11,19 @@
         import { play_value_sfx, play_click_sfx } from '../resource/js/common.js';
         window.play_value_sfx = play_value_sfx;
         window.play_click_sfx = play_click_sfx;
+
+        // Reset all data function
+        window.resetAllData = function () {
+            if (confirm('Are you sure you want to reset all data?')) {
+                localStorage.clear();
+                setTimeout(() => {
+                    window.top.location.reload();
+                }, 500);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            }
+        };
     </script>
 </head>
 
@@ -47,8 +60,7 @@
                     PROTOTYPE - Beta 0.2
                 </div>
                 <div class="menu-credit">
-                    <a href="#"
-                        onclick="if(confirm('Are you sure you want to reset all data?')) { localStorage.clear(); setTimeout(() => window.top.location.reload(), 500) }">
+                    <a href="#" onclick="resetAllData()">
                         Start over (reset all data)</a>
                 </div>
             </div>

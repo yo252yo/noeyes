@@ -307,8 +307,18 @@ export function getStreamers() {
 
 export function addSuggestedStreamers(suggestedStreamers) {
     const current = getSuggestedStreamers();
-    const updated = [...current, ...suggestedStreamers.filter(s => !current.includes(s))];
-    localStorage.setItem('twitch_suggested_streamers', JSON.stringify(updated));
+    const result = [...current];
+
+    // Flatten the input and iterate through each streamer
+    const streamersToAdd = Array.isArray(suggestedStreamers) ? suggestedStreamers.flat() : [suggestedStreamers];
+
+    for (const streamer of streamersToAdd) {
+        if (streamer && !result.includes(streamer)) {
+            result.push(streamer);
+        }
+    }
+
+    localStorage.setItem('twitch_suggested_streamers', JSON.stringify(result));
 }
 
 export function getSuggestedStreamers() {
