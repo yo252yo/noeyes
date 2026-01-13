@@ -1,21 +1,14 @@
 // Streamer arrays
 const streamers = [];
-const defaultStreamers = ['vedal987', 'hasanabi', 'shindigs', 'vinesauce', 'dougdoug', 'day9tv'];
-const allStreamers = [...(window.customStreamers || []), ...defaultStreamers.filter(s => !(window.customStreamers || []).includes(s))];
-const suggested_streamers = allStreamers.reverse();
+export const defaultStreamers = ['vedal987', 'hasanabi', 'shindigs', 'vinesauce', 'dougdoug', 'day9tv'];
 
 
-import { getStreamers, getSuggestedStreamers, setStreamers, setSuggestedStreamers } from './common.js';
 
-// Store streamers in localStorage on initialization
-if (getStreamers().length === 0) {
-    setStreamers(streamers);
-}
+import { addSuggestedStreamer, getSuggestedStreamers } from './common.js';
 
 if (getSuggestedStreamers().length === 0) {
-    setSuggestedStreamers(suggested_streamers);
+    addSuggestedStreamer(defaultStreamers);
 }
-
 
 // Avatar URLs for streamers - simple dictionary storage
 const streamerAvatars = {};
