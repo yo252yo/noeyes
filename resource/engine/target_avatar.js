@@ -40,6 +40,9 @@ function darkenHex(hex, factor = 0.8) {
 const AI_STREAMER_NAME = '_$_robot';
 
 export class Avatar extends Target {
+    static MIN_SPEED = 1;
+    static MAX_SPEED = 4;
+
     constructor(width = 50, height = 50) {
         super(width, height);
         // No extra wall detection for avatar targets
