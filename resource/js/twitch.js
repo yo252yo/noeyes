@@ -1,6 +1,6 @@
 // Streamer arrays
 const streamers = [];
-export const defaultStreamers = (['vedal987', 'hasanabi', 'shindigs', 'vinesauce', 'dougdoug', 'day9tv']).reverse();
+export const defaultStreamers = (['vedal987', 'hasanabi', 'shindigs', 'merryweather', 'vinesauce', 'dougdoug', 'day9tv']).reverse();
 
 
 
