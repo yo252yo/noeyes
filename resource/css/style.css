@@ -567,7 +567,7 @@ a:hover {
     font-family: "MS Sans Serif", sans-serif;
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     transition: all 0.1s ease;
-    margin-top: 20px;
+    margin-top: 15px;
     animation: pulsate 2s ease-in-out infinite;
 }
 
