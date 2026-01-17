@@ -602,6 +602,8 @@ a:hover {
     height: 24px;
 }
 
+
+
 /* Achievement popup styles */
 .achievement-popup {
     position: fixed;
@@ -673,4 +675,15 @@ a:hover {
     color: #000;
     word-wrap: break-word;
     line-height: 1.2;
+}
+
+/* Epilogue link styles */
+.epilogue-link {
+    color: #ccc;
+    text-decoration: none;
+}
+
+.epilogue-link:hover {
+    color: #0000ff;
+    text-decoration: underline;
 }
